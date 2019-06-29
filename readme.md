@@ -1,8 +1,13 @@
-# play-ts (pronounced 'plates')
+# 🍽️ play-ts (pronounced 'plates')
 
-Start
+Start 🍽️ by
 
 ```
 yarn
+```
+
+to get dependencies, then:
+
+```
 yarn start
 ```
