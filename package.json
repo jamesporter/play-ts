@@ -1,0 +1,23 @@
+{
+  "name": "play-ts",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^16.8.22",
+    "@types/react-dom": "^16.8.4",
+    "autoprefixer": "^9.6.0",
+    "parcel-bundler": "^1.12.3",
+    "postcss-modules": "^1.4.1",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "tailwindcss": "^1.0.4"
+  },
+  "scripts": {
+    "start": "parcel index.html"
+  }
+}
