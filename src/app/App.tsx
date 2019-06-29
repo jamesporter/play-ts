@@ -1,4 +1,5 @@
 import React from "react";
+import Canvas from "./Canvas";
 
 export default function App() {
   return (
@@ -10,11 +11,27 @@ export default function App() {
         </p>
       </div>
 
-      <div className="flex-1" />
+      <div className="flex-1 flex flex-col">
+        <Canvas aspectRatio={1.3333333333} sketch={play => {}} />
+      </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">
-        <div className="flex flex-row">
+        <div className="flex flex-row mr-4">
           {["S", "M", "L", "XL"].map((s, i) => {
+            const colour = i == 1 ? "teal" : "gray";
+            return (
+              <button
+                key={i}
+                className={`bg-${colour}-500 hover:bg-${colour}-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded mx-1`}
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-row mr-4">
+          {["1:1", "4:3", "3:2", "16:9"].map((s, i) => {
             const colour = i == 1 ? "teal" : "gray";
             return (
               <button
