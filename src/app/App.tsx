@@ -12,7 +12,25 @@ export default function App() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <Canvas aspectRatio={1.3333333333} sketch={play => {}} />
+        <Canvas
+          aspectRatio={1.3333333333}
+          sketch={play => {
+            const {
+              context: c,
+              meta: { width, height }
+            } = play;
+
+            console.log(`> w: ${width} h: ${height}`);
+            for (let i = 50; i < width; i += 50) {
+              for (let j = 50; j < height; j += 50) {
+                if (Math.random() > 0.2) {
+                  c.strokeStyle = `hsl(${i / 5}, ${80}%, ${j / 20}%)`;
+                  c.strokeRect(i, j, i / 10, j / 10);
+                }
+              }
+            }
+          }}
+        />
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">

@@ -11,25 +11,38 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
   const canvasRef = useRef();
 
-  let w = null,
-    h = null;
+  console.log(">>", width, height);
+  let w: null | number = null,
+    h: null | number = null;
   if (width && height) {
-    h = height - 20;
-    w = h * aspectRatio;
+    if (width / height > aspectRatio) {
+      h = height - 20;
+      w = h * aspectRatio;
+    } else {
+      w = width - 20;
+      h = w / aspectRatio;
+    }
   }
 
   useLayoutEffect(() => {
     const cvs = canvasRef.current;
     if (cvs) {
-      const ctx = cvs.getContext("2d");
-      ctx.rect(20, 20, 150, 100);
-      ctx.stroke();
+      const ctx = (cvs as HTMLCanvasElement).getContext("2d");
+      if (ctx) {
+        sketch({
+          context: ctx,
+          meta: {
+            width: w || 100 * aspectRatio,
+            height: h || 100
+          }
+        });
+      }
     }
   });
 
   return (
     <div
-      className="flex-1 self-stretch flex items-center justify-center"
+      className="flex-1 self-stretch flex items-center justify-center bg-gray-100"
       ref={ref}
     >
       {w && h && (
@@ -38,7 +51,7 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
           width={w}
           height={h}
           ref={canvasRef}
-          className="shadow-md"
+          className="shadow-md bg-white"
         />
       )}
     </div>

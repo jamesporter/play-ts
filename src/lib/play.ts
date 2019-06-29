@@ -1,8 +1,11 @@
-const play = {} as const;
+export type Play = {
+  context: CanvasRenderingContext2D;
+  meta: {
+    width: number;
+    height: number;
+  };
+};
 
-export type Play = typeof play;
 export type Sketch = {
   (play: Play): void;
 };
-
-export default play;
