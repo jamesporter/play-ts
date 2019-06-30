@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Canvas from "./Canvas";
+import SelectFromChoice from "./SelectFromChoice";
 
 export default function App() {
+  const [size, setSize] = useState(1200);
+  const [aspectRatio, setAspectRatio] = useState(4 / 3);
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="bg-gray-400 px-8 py-4">
@@ -13,14 +16,13 @@ export default function App() {
 
       <div className="flex-1 flex flex-col">
         <Canvas
-          aspectRatio={1.3333333333}
+          aspectRatio={aspectRatio}
           sketch={play => {
             const {
               context: c,
               meta: { width, height }
             } = play;
 
-            console.log(`> w: ${width} h: ${height}`);
             for (let i = 50; i < width; i += 50) {
               for (let j = 50; j < height; j += 50) {
                 if (Math.random() > 0.2) {
@@ -34,33 +36,39 @@ export default function App() {
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">
-        <div className="flex flex-row mr-4">
-          {["S", "M", "L", "XL"].map((s, i) => {
-            const colour = i == 1 ? "teal" : "gray";
-            return (
-              <button
-                key={i}
-                className={`bg-${colour}-500 hover:bg-${colour}-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded mx-1`}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
+        <SelectFromChoice
+          value={size}
+          choices={[
+            { label: "S", value: 1200 },
+            { label: "M", value: 1920 },
+            { label: "L", value: 3200 },
+            { label: "XL", value: 4096 }
+          ]}
+          onSelect={setSize}
+        />
 
-        <div className="flex flex-row mr-4">
-          {["1:1", "4:3", "3:2", "16:9"].map((s, i) => {
-            const colour = i == 1 ? "teal" : "gray";
-            return (
-              <button
-                key={i}
-                className={`bg-${colour}-500 hover:bg-${colour}-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded mx-1`}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
+        <SelectFromChoice
+          value={aspectRatio}
+          choices={[
+            {
+              label: "1:1",
+              value: 1
+            },
+            {
+              label: "4:3",
+              value: 4 / 3
+            },
+            {
+              label: "3:2",
+              value: 1.5
+            },
+            {
+              label: "16:9",
+              value: 16 / 9
+            }
+          ]}
+          onSelect={setAspectRatio}
+        />
 
         <button className="bg-teal-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded">
           Save

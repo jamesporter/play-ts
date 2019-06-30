@@ -9,7 +9,9 @@ type CanvasProps = {
 
 export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
-  const canvasRef = useRef();
+  const canvasRef = useRef(null);
+  // seems to be way more performant to re-use context
+  const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
   console.log(">>", width, height);
   let w: null | number = null,
@@ -25,18 +27,25 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
   }
 
   useLayoutEffect(() => {
-    const cvs = canvasRef.current;
-    if (cvs) {
-      const ctx = (cvs as HTMLCanvasElement).getContext("2d");
-      if (ctx) {
-        sketch({
-          context: ctx,
-          meta: {
-            width: w || 100 * aspectRatio,
-            height: h || 100
-          }
-        });
+    let ctx;
+    if (!ctxRef.current) {
+      const cvs = canvasRef.current;
+      if (cvs) {
+        ctx = (cvs as HTMLCanvasElement).getContext("2d");
       }
+    } else {
+      ctx = ctxRef.current;
+    }
+
+    if (ctx) {
+      ctx.clearRect(0, 0, w, h);
+      sketch({
+        context: ctx,
+        meta: {
+          width: w || 100 * aspectRatio,
+          height: h || 100
+        }
+      });
     }
   });
 
