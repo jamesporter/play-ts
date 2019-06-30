@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import Canvas from "./Canvas";
 import SelectFromChoice from "./SelectFromChoice";
+import {
+  sizeChoices,
+  aspectRatioChoices,
+  defaultSize,
+  defaultAspectRatio
+} from "./config";
+import sketch from "../sketch";
 
 export default function App() {
-  const [size, setSize] = useState(1200);
-  const [aspectRatio, setAspectRatio] = useState(4 / 3);
+  const [size, setSize] = useState(defaultSize);
+  const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="bg-gray-400 px-8 py-4">
@@ -15,58 +22,19 @@ export default function App() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <Canvas
-          aspectRatio={aspectRatio}
-          sketch={play => {
-            const {
-              context: c,
-              meta: { width, height }
-            } = play;
-
-            for (let i = 50; i < width; i += 50) {
-              for (let j = 50; j < height; j += 50) {
-                if (Math.random() > 0.2) {
-                  c.strokeStyle = `hsl(${i / 5}, ${80}%, ${j / 20}%)`;
-                  c.strokeRect(i, j, i / 10, j / 10);
-                }
-              }
-            }
-          }}
-        />
+        <Canvas aspectRatio={aspectRatio} sketch={sketch} />
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">
         <SelectFromChoice
           value={size}
-          choices={[
-            { label: "S", value: 1200 },
-            { label: "M", value: 1920 },
-            { label: "L", value: 3200 },
-            { label: "XL", value: 4096 }
-          ]}
+          choices={sizeChoices}
           onSelect={setSize}
         />
 
         <SelectFromChoice
           value={aspectRatio}
-          choices={[
-            {
-              label: "1:1",
-              value: 1
-            },
-            {
-              label: "4:3",
-              value: 4 / 3
-            },
-            {
-              label: "3:2",
-              value: 1.5
-            },
-            {
-              label: "16:9",
-              value: 16 / 9
-            }
-          ]}
+          choices={aspectRatioChoices}
           onSelect={setAspectRatio}
         />
 
