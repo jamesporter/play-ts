@@ -1,4 +1,4 @@
-import { Play } from "./lib/play";
+import { Play } from "./types/play";
 
 const sketch = (play: Play) => {
   const {
