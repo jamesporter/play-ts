@@ -19,6 +19,7 @@
     "tailwindcss": "^1.0.4"
   },
   "scripts": {
-    "start": "parcel index.html"
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url ./"
   }
 }

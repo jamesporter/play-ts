@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Canvas from "./Canvas";
-import SelectFromChoice from "./SelectFromChoice";
+import SelectFromChoice from "./components/SelectFromChoice";
 import {
   sizeChoices,
   aspectRatioChoices,
