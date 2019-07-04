@@ -13,7 +13,6 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
   // seems to be way more performant to re-use context
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-  console.log(">>", width, height);
   let w: null | number = null,
     h: null | number = null;
   if (width && height) {

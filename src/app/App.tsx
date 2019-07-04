@@ -17,7 +17,7 @@ export default function App() {
       <div className="bg-gray-400 px-8 py-4">
         <div className="font-bold text-xl mb-2">play-ts</div>
         <p className="text-gray-700 text-base">
-          A simple, lightweight but modern TypeScript first Algorithmic Art Tool
+          A simple, modern TypeScript-first Algorithmic Art Tool
         </p>
       </div>
 
@@ -26,11 +26,11 @@ export default function App() {
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">
-        <SelectFromChoice
+        {/* <SelectFromChoice
           value={size}
           choices={sizeChoices}
           onSelect={setSize}
-        />
+        /> */}
 
         <SelectFromChoice
           value={aspectRatio}
