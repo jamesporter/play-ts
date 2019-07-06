@@ -26,7 +26,6 @@ export class SimplePath {
 
 type PathEdge =
   | { kind: "line"; from: Point2D; to: Point2D }
-  | { kind: "quad"; from: Point2D; to: Point2D; control: Point2D }
   | {
       kind: "cubic";
       from: Point2D;
@@ -35,29 +34,17 @@ type PathEdge =
       control2: Point2D;
     };
 
-type CurveConfig =
-  | {
-      curveSize: number;
-    }
-  | {
-      curveSize: number;
-      curveAngle: number;
-    }
-  | {
-      curveSize: number;
-      curveAngle: number;
-      bulbousness: number;
-    }
-  | {
-      curveSize: number;
-      curveAngle: number;
-      bulbousness: number;
-      twist: number;
-    };
+type CurveConfig = {
+  polarlity?: 1 | -1;
+  curveSize?: number;
+  curveAngle?: number;
+  bulbousness?: number;
+  twist?: number;
+};
 
 export class Path {
   private currentPoint: Point2D;
-  private edges: PathEdge[];
+  private edges: PathEdge[] = [];
 
   private constructor(path: Point2D) {
     this.currentPoint = path;
@@ -67,7 +54,7 @@ export class Path {
     return new Path(point);
   }
 
-  addLineTo(point: Point2D): Path {
+  addLineTo = (point: Point2D): Path => {
     this.edges.push({
       kind: "line",
       from: this.currentPoint,
@@ -75,11 +62,59 @@ export class Path {
     });
     this.currentPoint = point;
     return this;
-  }
+  };
 
-  addCurveTo(point: Point2D, config: CurveConfig);
+  addCurveTo = (point: Point2D, config: CurveConfig = {}): Path => {
+    const {
+      curveSize = 1,
+      polarlity = 1,
+      bulbousness = 1,
+      curveAngle = 0,
+      twist = 0
+    } = config;
 
-  traceIn(ctx: CanvasRenderingContext2D) {
+    const u = v.subtract(point, this.currentPoint);
+    const d = v.magnitude(u);
+    const m = v.add(this.currentPoint, v.scale(u, 0.5));
+    const perp = v.normalise(v.rotate(u, -Math.PI / 2));
+    const rotatedPerp = v.rotate(perp, curveAngle);
+
+    console.log({
+      u,
+      d,
+      m,
+      perp,
+      rotatedPerp
+    });
+
+    const controlMid = v.add(
+      m,
+      v.scale(rotatedPerp, curveSize * polarlity * d * 0.5)
+    );
+    const perpOfRot = v.normalise(v.rotate(rotatedPerp, -Math.PI / 2 - twist));
+
+    const control1 = v.add(
+      controlMid,
+      v.scale(perpOfRot, (bulbousness * d) / 2)
+    );
+    const control2 = v.add(
+      controlMid,
+      v.scale(perpOfRot, (-bulbousness * d) / 2)
+    );
+
+    this.edges.push({
+      kind: "cubic",
+      control1,
+      control2,
+      to: point,
+      from: this.currentPoint
+    });
+    console.log(this.edges[this.edges.length - 1]);
+    this.currentPoint = point;
+    return this;
+  };
+
+  traceIn = (ctx: CanvasRenderingContext2D) => {
     const { from } = this.edges[0];
     ctx.moveTo(...from);
     for (let edge of this.edges) {
@@ -87,26 +122,21 @@ export class Path {
         case "line":
           ctx.lineTo(...edge.to);
           break;
-        case "quad": {
-          const { to, control } = edge;
-          ctx.quadraticCurveTo(to[0], to[1], control[0], control[1]);
-          break;
-        }
         case "cubic": {
           const { to, control1, control2 } = edge;
           ctx.bezierCurveTo(
-            to[0],
-            to[1],
             control1[0],
             control1[1],
             control2[0],
-            control2[1]
+            control2[1],
+            to[0],
+            to[1]
           );
           break;
         }
       }
     }
-  }
+  };
 
   get svgPath() {
     return "TODO";

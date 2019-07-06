@@ -1,5 +1,6 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
+import { Path } from "./path";
 
 export default class PlayCanvas {
   readonly aspectRatio: number;
@@ -71,6 +72,12 @@ export default class PlayCanvas {
     this.ctx.stroke();
   }
 
+  drawPath(path: Path) {
+    this.ctx.beginPath();
+    path.traceIn(this.ctx);
+    this.ctx.stroke();
+  }
+
   fillRect(location: Point2D, size: Vector2D) {
     this.ctx.fillRect(location[0], location[1], size[0], size[1]);
   }
@@ -79,11 +86,18 @@ export default class PlayCanvas {
     config: { n: number; type?: "square" | "proportionate"; margin?: number },
     callback: (point: Point2D, delta: Vector2D) => void
   ) => {
+    // TODO this isn't done yet... need to take margin properly into account, probably add more
+    // to allow for square tiling etc
     const { n, type = "proportionate", margin = 0 } = config;
-    const deltaX = 1 / n;
-    const deltaY = 1 / (n * (type === "square" ? 1 : this.aspectRatio));
-    for (let i = margin; i < 1 - margin; i += deltaX) {
-      for (let j = margin; j < 1 / this.aspectRatio - margin; j += deltaY) {
+    const deltaX = (1 - margin * 2) / n;
+    const deltaY =
+      (1 - margin * 2) / (n * (type === "square" ? 1 : this.aspectRatio));
+    for (let i = margin; i < 1 - 1.0001 * margin; i += deltaX) {
+      for (
+        let j = margin;
+        j < 1 / this.aspectRatio - 1.0001 * margin;
+        j += deltaY
+      ) {
         callback([i, j], [deltaX, deltaY]);
       }
     }

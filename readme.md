@@ -19,7 +19,7 @@ Opionated, agile (code is easy to change) framework for algorithmic art.
 
 ## Early
 
-Not even packaged nicely as library yet, but as simple demo using Parcel/React to give UI.
+Not even packaged nicely as library yet, but as simple demo using Parcel/React to give UI. [Live Demo](https://focused-agnesi-2a3bda.netlify.com)
 
 Start 🍽️ by
 

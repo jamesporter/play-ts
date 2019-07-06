@@ -1,5 +1,7 @@
-import { Play } from "./types/play";
+import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
+import { Path } from "./lib/path";
+import vectors from "./lib/vectors";
 
 const sketch = (play: Play) => {
   const {
@@ -77,9 +79,68 @@ const sketch3 = (play: Play) => {
   });
 };
 
+const flower = (play: Play) => {
+  const {
+    context: c,
+    meta: { width, height }
+  } = play;
+
+  const p = new PlayCanvas(c, { width, height });
+  p.lineStyle = { cap: "round" };
+
+  const {
+    dimensions: { right, bottom }
+  } = p.meta;
+
+  const midX = right / 2;
+  const midY = bottom / 2;
+  const ir = midX / 4;
+  const da = Math.PI / 10;
+
+  p.setStrokeColour(40, 90, 50);
+  let path = Path.startAt([midX + ir, midY]);
+  for (let a = 0; a < Math.PI * 2; a += da) {
+    const pt: Point2D = [
+      midX + ir * Math.cos(a + da),
+      midY + ir * Math.sin(a + da)
+    ];
+
+    path.addCurveTo(pt, {
+      curveSize: 12,
+      bulbousness: 2,
+      curveAngle: Math.random() / 8
+    });
+  }
+  p.drawPath(path);
+};
+
+const curves1 = (play: Play) => {
+  const {
+    context: c,
+    meta: { width, height }
+  } = play;
+
+  const p = new PlayCanvas(c, { width, height });
+
+  p.lineStyle = { cap: "round" };
+  p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
+    p.drawPath(
+      Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
+        polarlity: p.randomPolarity(),
+        curveSize: x * 2,
+        curveAngle: x,
+        bulbousness: y
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (play: Play) => void }[] = [
   { sketch: sketch3, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
-  { sketch: sketch2, name: "Rainbow" }
+  { sketch: sketch2, name: "Rainbow" },
+  { sketch: curves1, name: "Curves Demo" },
+  { sketch: flower, name: "Flower" }
 ];
 export default sketches;
