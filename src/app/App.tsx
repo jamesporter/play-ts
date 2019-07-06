@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import Canvas from "./Canvas";
 import SelectFromChoice from "./components/SelectFromChoice";
+import SelectFromOptions from "./components/SelectFromOptions";
 import {
   sizeChoices,
   aspectRatioChoices,
   defaultSize,
   defaultAspectRatio
 } from "./config";
-import sketch from "../sketch";
+import sketches from "../sketches";
 
 export default function App() {
   const [size, setSize] = useState(defaultSize);
+  const [sketchNo, setSketchNo] = useState(0);
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   return (
     <div className="flex flex-col h-screen w-screen">
@@ -22,7 +24,7 @@ export default function App() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <Canvas aspectRatio={aspectRatio} sketch={sketch} />
+        <Canvas aspectRatio={aspectRatio} sketch={sketches[sketchNo].sketch} />
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row justify-between">
@@ -31,6 +33,15 @@ export default function App() {
           choices={sizeChoices}
           onSelect={setSize}
         /> */}
+
+        <SelectFromOptions
+          options={sketches.map(s => s.name)}
+          onSelect={name => {
+            const idx = sketches.findIndex(s => s.name === name);
+            if (idx !== null) setSketchNo(idx);
+          }}
+          selection={sketches[sketchNo].name}
+        />
 
         <SelectFromChoice
           value={aspectRatio}

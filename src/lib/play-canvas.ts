@@ -6,6 +6,7 @@ export default class PlayCanvas {
   readonly originalScale: number;
 
   constructor(private ctx: CanvasRenderingContext2D, { width, height }: Size) {
+    ctx.resetTransform();
     this.aspectRatio = width / height;
     // i.e. size 1 = entire width
     this.originalScale = width;
@@ -70,10 +71,10 @@ export default class PlayCanvas {
     this.ctx.fillRect(location[0], location[1], size[0], size[1]);
   }
 
-  forTiling(
+  forTiling = (
     config: { n: number; type?: "square" | "proportionate"; margin?: number },
     callback: (point: Point2D, delta: Vector2D) => void
-  ) {
+  ) => {
     const { n, type = "proportionate", margin = 0 } = config;
     const deltaX = 1 / n;
     const deltaY = 1 / (n * (type === "square" ? 1 : this.aspectRatio));
@@ -82,6 +83,60 @@ export default class PlayCanvas {
         callback([i, j], [deltaX, deltaY]);
       }
     }
+  };
+
+  forHorizontal = (
+    config: {
+      n: number;
+      margin?: number;
+    },
+    callback: (point: Point2D, delta: Vector2D) => void
+  ) => {
+    const { n, margin = 0 } = config;
+
+    const sX = margin;
+    const eX = 1 - margin;
+    const sY = margin;
+    const dY = 1 / this.aspectRatio - 2 * margin;
+    const dX = (eX - sX) / n;
+
+    for (let i = 0; i < n; i++) {
+      callback([sX + i * dX, sY], [dX, dY]);
+    }
+  };
+
+  withRandomOrder<C, T extends any[]>(
+    iterFn: (config: C, callback: (...args: T) => void) => void,
+    config: C,
+    cb: (...T) => void
+  ) {
+    const args: T[] = [];
+    iterFn(config, (...as: T) => {
+      args.push(as);
+    });
+    this.shuffle(args);
+
+    for (let a of args) {
+      cb(...a);
+    }
+  }
+
+  shuffle<T>(items: T[]): T[] {
+    let currentIndex = items.length;
+    let temporaryValue: T;
+    let randomIndex = 0;
+
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = items[currentIndex];
+      items[currentIndex] = items[randomIndex];
+      items[randomIndex] = temporaryValue;
+    }
+
+    return items;
   }
 
   doProportion(p: number, callback: () => void) {
