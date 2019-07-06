@@ -32,6 +32,10 @@ export default class PlayCanvas {
     this.ctx.lineWidth = width;
   }
 
+  set lineStyle({ cap = "round" }: { cap?: "round" | "butt" | "square" }) {
+    this.ctx.lineCap = cap;
+  }
+
   setFillColour(h: number, s: number, l: number, a: number = 1) {
     this.ctx.fillStyle = hsla(h, s, l, a);
   }
@@ -142,6 +146,21 @@ export default class PlayCanvas {
   doProportion(p: number, callback: () => void) {
     if (Math.random() < p) {
       callback();
+    }
+  }
+
+  proportionately(cases: [number, () => void][]) {
+    const total = cases.map(c => c[0]).reduce((a, b) => a + b, 0);
+    if (total <= 0) throw new Error("Must be positive total");
+    let r = Math.random() * total;
+
+    for (let i = 0; i < cases.length; i++) {
+      if (cases[i][0] > r) {
+        cases[i][1]();
+        return;
+      } else {
+        r -= cases[i][0];
+      }
     }
   }
 

@@ -9,10 +9,14 @@ import {
   defaultAspectRatio
 } from "./config";
 import sketches from "../sketches";
+import { getNumber, setNumber } from "../lib/util";
+
+const INDEX_KEY = "play-ts.index";
 
 export default function App() {
   const [size, setSize] = useState(defaultSize);
-  const [sketchNo, setSketchNo] = useState(0);
+  const idx = getNumber(INDEX_KEY);
+  const [sketchNo, setSketchNo] = useState(idx || 0);
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   return (
     <div className="flex flex-col h-screen w-screen">
@@ -38,6 +42,7 @@ export default function App() {
           options={sketches.map(s => s.name)}
           onSelect={name => {
             const idx = sketches.findIndex(s => s.name === name);
+            setNumber(INDEX_KEY, idx);
             if (idx !== null) setSketchNo(idx);
           }}
           selection={sketches[sketchNo].name}

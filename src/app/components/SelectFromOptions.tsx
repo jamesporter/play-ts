@@ -15,7 +15,7 @@ export default function SelectOption({
     <select
       className="appearance-none bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 w-40"
       onChange={evt => onSelect(evt.target.value)}
-      value={selection}
+      value={selection || ""}
     >
       {options.map((opt, i) => (
         <option value={opt} key={i}>

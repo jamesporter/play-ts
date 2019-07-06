@@ -47,8 +47,39 @@ const sketch2 = (play: Play) => {
   });
 };
 
+const sketch3 = (play: Play) => {
+  console.log("calling sketch 2");
+  const {
+    context: c,
+    meta: { width, height }
+  } = play;
+
+  const pts = new PlayCanvas(c, { width, height });
+
+  pts.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
+    pts.lineStyle = { cap: "round" };
+    pts.proportionately([
+      [
+        1,
+        () => {
+          pts.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
+          pts.drawLine([x, y], [x + dX, y + dY]);
+        }
+      ],
+      [
+        2,
+        () => {
+          pts.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
+          pts.drawLine([x + dX, y], [x, y + dY]);
+        }
+      ]
+    ]);
+  });
+};
+
 const sketches: { name: string; sketch: (play: Play) => void }[] = [
   { sketch, name: "Rainbow Drips" },
-  { sketch: sketch2, name: "Rainbow" }
+  { sketch: sketch2, name: "Rainbow" },
+  { sketch: sketch3, name: "Tiling" }
 ];
 export default sketches;
