@@ -2,7 +2,6 @@ import { Play } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 
 const sketch = (play: Play) => {
-  console.log("calling sketch");
   const {
     context: c,
     meta: { width, height }
@@ -21,11 +20,14 @@ const sketch = (play: Play) => {
     { n: 20, type: "square", margin: 0.1 },
     ([i, j], [di, dj]) => {
       pts.doProportion(0.7, () => {
-        pts.setStrokeColour(i * 100, 80, 10 + j * 50);
-        pts.lineWidth = 0.04 * (1 - i);
+        pts.setStrokeColour(i * 100, 80, 30 + j * 30);
+        pts.lineWidth = 0.02 + 0.02 * (1 - i);
         pts.drawLine(
           [i + di / 4, j + dj / 4],
-          [i + (di * 3) / 4, j + (dj * 10) / 4]
+          [
+            i + (di * 3 * j * pts.randomPolarity()) / 4,
+            j + (dj * 5 * (1 + Math.random())) / 4
+          ]
         );
       });
     }
@@ -33,7 +35,6 @@ const sketch = (play: Play) => {
 };
 
 const sketch2 = (play: Play) => {
-  console.log("calling sketch 2");
   const {
     context: c,
     meta: { width, height }
@@ -48,7 +49,6 @@ const sketch2 = (play: Play) => {
 };
 
 const sketch3 = (play: Play) => {
-  console.log("calling sketch 2");
   const {
     context: c,
     meta: { width, height }
@@ -78,8 +78,8 @@ const sketch3 = (play: Play) => {
 };
 
 const sketches: { name: string; sketch: (play: Play) => void }[] = [
+  { sketch: sketch3, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
-  { sketch: sketch2, name: "Rainbow" },
-  { sketch: sketch3, name: "Tiling" }
+  { sketch: sketch2, name: "Rainbow" }
 ];
 export default sketches;

@@ -112,7 +112,7 @@ export default class PlayCanvas {
   withRandomOrder<C, T extends any[]>(
     iterFn: (config: C, callback: (...args: T) => void) => void,
     config: C,
-    cb: (...T) => void
+    cb: (...args: T) => void
   ) {
     const args: T[] = [];
     iterFn(config, (...as: T) => {
@@ -162,6 +162,10 @@ export default class PlayCanvas {
         r -= cases[i][0];
       }
     }
+  }
+
+  randomPolarity(): 1 | -1 {
+    return Math.random() > 0.5 ? 1 : -1;
   }
 
   get info() {
