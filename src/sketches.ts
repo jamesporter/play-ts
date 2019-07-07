@@ -168,9 +168,9 @@ const tilesOfChaiken = (p: PlayCanvas) => {
       const sp = SimplePath.startAt(points[0]);
       points.slice(1).forEach(p => sp.addPoint(p));
       sp.close();
-      sp.chaiken(3);
+      sp.chaiken(1 + n);
       p.lineWidth = 0.005;
-      p.setStrokeColour(190 + x * 100, 90, 40 + y * 10, 0.75);
+      p.setStrokeColour(190 + x * 100, 90, 40 + y * 10, 0.75 * ((n + 3) / 5));
       p.draw(sp);
     });
   });
