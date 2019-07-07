@@ -53,6 +53,9 @@ export const perturb = (
   ];
 };
 
+export const dot = ([x1, y1]: Point2D, [x2, y2]: Point2D): number =>
+  x1 * x2 + y1 * y2;
+
 export default {
   add,
   subtract,
@@ -62,5 +65,6 @@ export default {
   scale,
   polarToCartesian,
   pointAlong,
-  perturb
+  perturb,
+  dot
 };

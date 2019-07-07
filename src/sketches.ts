@@ -1,8 +1,9 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc } from "./lib/path";
-import vectors from "./lib/vectors";
+import vectors, { add, perturb, pointAlong } from "./lib/vectors";
 import r from "./lib/randomness";
+import { perlin2 } from "./lib/noise";
 
 const sketch = (pts: PlayCanvas) => {
   const {
@@ -14,7 +15,7 @@ const sketch = (pts: PlayCanvas) => {
     pts.forTiling,
     { n: 20, type: "square", margin: 0.1 },
     ([i, j], [di, dj]) => {
-      pts.doProportion(0.7, () => {
+      pts.doProportion(0.6, () => {
         pts.setStrokeColour(i * 100, 80, 30 + j * 30, 0.9);
         pts.lineWidth = 0.02 + 0.02 * (1 - i);
         pts.drawLine(
@@ -29,14 +30,14 @@ const sketch = (pts: PlayCanvas) => {
   );
 };
 
-const sketch2 = (pts: PlayCanvas) => {
+const horizontal = (pts: PlayCanvas) => {
   pts.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     pts.setStrokeColour(x * 360, 90, 40);
     pts.drawLine([x, y], [x + dX, y + dY]);
   });
 };
 
-const sketch4 = (p: PlayCanvas) => {
+const vertical = (p: PlayCanvas) => {
   p.forVertical({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     const points = p.build(p.range, { from: x, to: x + dX, steps: 20 }, vX => {
       return vectors.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
@@ -47,7 +48,7 @@ const sketch4 = (p: PlayCanvas) => {
   });
 };
 
-const sketch3 = (p: PlayCanvas) => {
+const tiling = (p: PlayCanvas) => {
   p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
     p.lineStyle = { cap: "round" };
     p.proportionately([
@@ -78,9 +79,23 @@ const flower = (p: PlayCanvas) => {
 
   const midX = right / 2;
   const midY = bottom / 2;
-  const ir = midX / 4;
+  const ir = Math.random() * 0.025 + midX / 4;
   const da = Math.PI / 10;
 
+  const start = perturb([midX, bottom * 0.95]);
+  const end: Point2D = [midX, midY];
+  const second = perturb(pointAlong(start, end, 0.4));
+
+  p.setStrokeColour(140, 50, 25);
+  p.lineWidth = 0.02;
+  p.draw(
+    SimplePath.startAt(start)
+      .addPoint(second)
+      .addPoint(end)
+      .chaiken(3)
+  );
+
+  p.lineWidth = 0.01;
   let path = Path.startAt([midX + ir, midY]);
   for (let a = 0; a < Math.PI * 2; a += da) {
     const pt: Point2D = [
@@ -91,14 +106,23 @@ const flower = (p: PlayCanvas) => {
     path.addCurveTo(pt, {
       curveSize: 12,
       bulbousness: 2,
-      curveAngle: Math.random() / 8
+      curveAngle: Math.random() / 6
     });
   }
-  p.setFillColour(40, 90, 50);
+  p.setFillColour(10 + Math.random() * 320, 90, 50, 0.95);
   p.fill(path);
   p.lineWidth = 0.005;
-  p.setStrokeColour(20, 90, 50);
-  p.draw(path);
+
+  p.setFillColour(40, 90, 90);
+  p.fill(
+    new Arc({
+      cX: midX,
+      cY: midY,
+      radius: ir / 1.4,
+      startAngle: 0,
+      endAngle: Math.PI * 2
+    })
+  );
 };
 
 const curves1 = (p: PlayCanvas) => {
@@ -213,16 +237,57 @@ const arcs = (p: PlayCanvas) => {
   });
 };
 
+const noise = (p: PlayCanvas) => {
+  p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
+    const v = perlin2(x, y) * Math.PI * 2;
+    p.setFillColour(120 + v * 20, 80, 40);
+    p.fill(
+      new Arc({
+        cX: x + dX / 2,
+        cY: y + dY / 2,
+        radius: dX / 2,
+        startAngle: v,
+        endAngle: v + Math.PI / 2
+      })
+    );
+  });
+};
+
+const noiseField = (p: PlayCanvas) => {
+  const delta = 0.01;
+  const s = 8;
+  p.lineWidth = 0.0025;
+  p.setStrokeColour(195, 90, 30, 0.7);
+
+  p.times(200, () => {
+    let pt = p.randomPoint;
+    const sp = SimplePath.startAt(pt);
+    while (true) {
+      const a = Math.PI * 2 * perlin2(pt[0] * s, pt[1] * s);
+      const nPt = add(pt, [delta * Math.cos(a), delta * Math.sin(a)]);
+      if (p.inDrawing(nPt)) {
+        pt = nPt;
+        sp.addPoint(nPt);
+      } else {
+        break;
+      }
+    }
+    p.draw(sp);
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
-  { sketch: sketch3, name: "Tiling" },
+  { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
-  { sketch: sketch2, name: "Rainbow" },
-  { sketch: sketch4, name: "Vertical" },
+  { sketch: horizontal, name: "Horizontal" },
+  { sketch: vertical, name: "Vertical" },
   { sketch: curves1, name: "Curves Demo" },
   { sketch: flower, name: "Flower" },
   { sketch: chaiken, name: "Chaiken" },
   { sketch: tilesOfChaiken, name: "Tiled Curves" },
   { sketch: circle, name: "Around a Circle" },
-  { sketch: arcs, name: "Arcs" }
+  { sketch: arcs, name: "Arcs" },
+  { sketch: noise, name: "Noise" },
+  { sketch: noiseField, name: "Noise Field" }
 ];
 export default sketches;

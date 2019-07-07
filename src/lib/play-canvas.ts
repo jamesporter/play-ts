@@ -210,6 +210,10 @@ export default class PlayCanvas {
     }
   }
 
+  get randomPoint(): Point2D {
+    return [Math.random(), Math.random() / this.aspectRatio];
+  }
+
   range(
     config: { from: number; to: number; steps: number; inclusive?: boolean },
     callback: (n: number) => void
@@ -222,6 +226,15 @@ export default class PlayCanvas {
       callback(i * di + from);
     }
   }
+
+  inDrawing = (point: Point2D): boolean => {
+    const {
+      dimensions: { left, right, top, bottom }
+    } = this.meta;
+    return (
+      point[0] > left && point[0] < right && point[1] > top && point[1] < bottom
+    );
+  };
 
   get info() {
     return {
