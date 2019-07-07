@@ -1,6 +1,6 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath } from "./lib/path";
+import { Path, SimplePath, Arc } from "./lib/path";
 import vectors from "./lib/vectors";
 import r from "./lib/randomness";
 
@@ -191,6 +191,28 @@ const circle = (p: PlayCanvas) => {
   });
 };
 
+const arcs = (p: PlayCanvas) => {
+  const {
+    dimensions: { bottom, right }
+  } = p.meta;
+
+  const cX = right / 2;
+  const cY = bottom / 2;
+
+  p.times(19, n => {
+    p.setFillColour(n * 2.5, 90, 50, 0.5);
+    p.fill(
+      new Arc({
+        cX,
+        cY,
+        radius: (0.3 * Math.sqrt(n + 1)) / 3,
+        startAngle: (n * Math.PI) / 10,
+        endAngle: ((n + 2) * Math.PI) / 10
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sketch3, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -200,6 +222,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: flower, name: "Flower" },
   { sketch: chaiken, name: "Chaiken" },
   { sketch: tilesOfChaiken, name: "Tiled Curves" },
-  { sketch: circle, name: "Around a Circle" }
+  { sketch: circle, name: "Around a Circle" },
+  { sketch: arcs, name: "Arcs" }
 ];
 export default sketches;

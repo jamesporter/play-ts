@@ -163,3 +163,44 @@ export class Path implements Traceable, SVGPathable {
     return "TODO";
   }
 }
+
+export class Arc implements Traceable {
+  cX: number;
+  cY: number;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+  antiClockwise: boolean;
+
+  constructor(config: {
+    cX: number;
+    cY: number;
+    radius: number;
+    startAngle: number;
+    endAngle: number;
+  }) {
+    const { cX, cY, radius, startAngle, endAngle } = config;
+    const antiClockwise = startAngle > endAngle;
+
+    this.cX = cX;
+    this.cY = cY;
+    this.radius = radius;
+    this.startAngle = startAngle;
+    this.endAngle = endAngle;
+    this.antiClockwise = antiClockwise;
+  }
+  traceIn = (ctx: CanvasRenderingContext2D) => {
+    if (Math.abs(this.startAngle - this.endAngle) > 0.0001)
+      ctx.moveTo(this.cX, this.cY);
+
+    ctx.arc(
+      this.cX,
+      this.cY,
+      this.radius,
+      this.startAngle,
+      this.endAngle,
+      this.antiClockwise
+    );
+    if (this.startAngle - this.endAngle > 0.0001) ctx.lineTo(this.cX, this.cX);
+  };
+}
