@@ -78,6 +78,12 @@ export default class PlayCanvas {
     this.ctx.stroke();
   }
 
+  fillPath(path: Path) {
+    this.ctx.beginPath();
+    path.traceIn(this.ctx);
+    this.ctx.fill();
+  }
+
   fillRect(location: Point2D, size: Vector2D) {
     this.ctx.fillRect(location[0], location[1], size[0], size[1]);
   }

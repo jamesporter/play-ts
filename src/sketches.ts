@@ -17,12 +17,14 @@ const sketch = (play: Play) => {
   pts.setFillColour(0, 0, 100);
   pts.fillRect([left, top], [right, bottom]);
 
+  pts.lineStyle = { cap: "round" };
+
   pts.withRandomOrder(
     pts.forTiling,
     { n: 20, type: "square", margin: 0.1 },
     ([i, j], [di, dj]) => {
       pts.doProportion(0.7, () => {
-        pts.setStrokeColour(i * 100, 80, 30 + j * 30);
+        pts.setStrokeColour(i * 100, 80, 30 + j * 30, 0.9);
         pts.lineWidth = 0.02 + 0.02 * (1 - i);
         pts.drawLine(
           [i + di / 4, j + dj / 4],
@@ -97,7 +99,6 @@ const flower = (play: Play) => {
   const ir = midX / 4;
   const da = Math.PI / 10;
 
-  p.setStrokeColour(40, 90, 50);
   let path = Path.startAt([midX + ir, midY]);
   for (let a = 0; a < Math.PI * 2; a += da) {
     const pt: Point2D = [
@@ -111,6 +112,10 @@ const flower = (play: Play) => {
       curveAngle: Math.random() / 8
     });
   }
+  p.setFillColour(40, 90, 50);
+  p.fillPath(path);
+  p.lineWidth = 0.005;
+  p.setStrokeColour(20, 90, 50);
   p.drawPath(path);
 };
 

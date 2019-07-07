@@ -1,7 +1,15 @@
 import { Point2D } from "../types/play";
 import v from "./vectors";
 
-export class SimplePath {
+export interface Traceable {
+  traceIn(ctx: CanvasRenderingContext2D);
+}
+
+export interface SVGPathable {
+  svgPath: string;
+}
+
+export class SimplePath implements Traceable {
   private constructor(private points: Point2D[] = []) {}
 
   static startAt(point: Point2D): SimplePath {
@@ -18,10 +26,18 @@ export class SimplePath {
     return this;
   }
 
-  chaiken(iterations: number): SimplePath {
+  chaiken(iterations: number = 1): SimplePath {
     // TODO
     return this;
   }
+
+  traceIn = (ctx: CanvasRenderingContext2D) => {
+    const from = this.points[0];
+    ctx.moveTo(...from);
+    for (let point of this.points.slice(1)) {
+      ctx.lineTo(...point);
+    }
+  };
 }
 
 type PathEdge =
@@ -42,7 +58,7 @@ type CurveConfig = {
   twist?: number;
 };
 
-export class Path {
+export class Path implements Traceable, SVGPathable {
   private currentPoint: Point2D;
   private edges: PathEdge[] = [];
 
@@ -138,7 +154,7 @@ export class Path {
     }
   };
 
-  get svgPath() {
+  get svgPath(): string {
     return "TODO";
   }
 }
