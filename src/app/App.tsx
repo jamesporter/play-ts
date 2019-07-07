@@ -2,12 +2,7 @@ import React, { useState, useEffect } from "react";
 import Canvas from "./Canvas";
 import SelectFromChoice from "./components/SelectFromChoice";
 import SelectFromOptions from "./components/SelectFromOptions";
-import {
-  sizeChoices,
-  aspectRatioChoices,
-  defaultSize,
-  defaultAspectRatio
-} from "./config";
+import { aspectRatioChoices, defaultAspectRatio } from "./config";
 import sketches from "../sketches";
 import { getNumber, setNumber } from "../lib/util";
 
@@ -35,9 +30,17 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen w-screen">
       <div className="bg-gray-400 px-8 py-4">
-        <div className="font-bold text-xl mb-2">play-ts</div>
+        <a href="https://github.com/jamesporter/play-ts">
+          <div className="font-bold text-xl mb-2">play-ts</div>
+        </a>
         <p className="text-gray-700 text-base">
-          A simple, modern TypeScript-first Algorithmic Art Tool
+          A simple, modern TypeScript-first Algorithmic Art Tool{" "}
+          <a
+            className="underline"
+            href="https://github.com/jamesporter/play-ts/blob/master/src/sketches.ts"
+          >
+            (Source code for the example sketches)
+          </a>
         </p>
       </div>
 
