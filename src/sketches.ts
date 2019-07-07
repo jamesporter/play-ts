@@ -8,11 +8,8 @@ const sketch = (pts: PlayCanvas) => {
   const {
     dimensions: { top, left, right, bottom }
   } = pts.meta;
-  pts.setFillColour(0, 0, 100);
-  pts.fillRect([left, top], [right, bottom]);
 
   pts.lineStyle = { cap: "round" };
-
   pts.withRandomOrder(
     pts.forTiling,
     { n: 20, type: "square", margin: 0.1 },
@@ -46,7 +43,7 @@ const sketch4 = (p: PlayCanvas) => {
     });
 
     p.setStrokeColour(y * 60, 90, 40);
-    p.drawPath(SimplePath.withPoints(points));
+    p.draw(SimplePath.withPoints(points));
   });
 };
 
@@ -98,17 +95,17 @@ const flower = (p: PlayCanvas) => {
     });
   }
   p.setFillColour(40, 90, 50);
-  p.fillPath(path);
+  p.fill(path);
   p.lineWidth = 0.005;
   p.setStrokeColour(20, 90, 50);
-  p.drawPath(path);
+  p.draw(path);
 };
 
 const curves1 = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
-    p.drawPath(
+    p.draw(
       Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
         polarlity: r.randomPolarity(),
         curveSize: x * 2,
@@ -146,7 +143,7 @@ const chaiken = (p: PlayCanvas) => {
     sp.chaiken(4);
     p.lineWidth = 0.005;
     p.setStrokeColour(190 + n, 90, 40, 0.75);
-    p.drawPath(sp);
+    p.draw(sp);
   });
 };
 
@@ -174,7 +171,7 @@ const tilesOfChaiken = (p: PlayCanvas) => {
       sp.chaiken(3);
       p.lineWidth = 0.005;
       p.setStrokeColour(190 + x * 100, 90, 40 + y * 10, 0.75);
-      p.drawPath(sp);
+      p.draw(sp);
     });
   });
 };
@@ -190,7 +187,7 @@ const circle = (p: PlayCanvas) => {
     const sp = SimplePath.withPoints(points)
       .close()
       .chaiken(n);
-    p.drawPath(sp);
+    p.draw(sp);
   });
 };
 

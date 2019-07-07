@@ -1,6 +1,7 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
 import { Path, Traceable } from "./path";
+import { shuffle } from "./collectionOps";
 
 export default class PlayCanvas {
   readonly aspectRatio: number;
@@ -45,10 +46,6 @@ export default class PlayCanvas {
     this.ctx.strokeStyle = hsla(h, s, l, a);
   }
 
-  pushStyle() {}
-
-  popStyle() {}
-
   // probably reimplement with other thing... want to minimise actual number of drawing ops
   drawLine(from: Point2D, to: Point2D) {
     this.ctx.beginPath();
@@ -57,35 +54,16 @@ export default class PlayCanvas {
     this.ctx.stroke();
   }
 
-  drawLines(points: Point2D[]) {
-    this.ctx.beginPath();
-    this.ctx.moveTo(...points[0]);
-    points.slice(1).forEach(p => this.ctx.lineTo(...p));
-    this.ctx.stroke();
-  }
-
-  drawPoly(points: Point2D[]) {
-    this.ctx.beginPath();
-    this.ctx.moveTo(...points[0]);
-    points.slice(1).forEach(p => this.ctx.lineTo(...p));
-    this.ctx.lineTo(...points[0]);
-    this.ctx.stroke();
-  }
-
-  drawPath(traceable: Traceable) {
+  draw(traceable: Traceable) {
     this.ctx.beginPath();
     traceable.traceIn(this.ctx);
     this.ctx.stroke();
   }
 
-  fillPath(path: Path) {
+  fill(traceable: Traceable) {
     this.ctx.beginPath();
-    path.traceIn(this.ctx);
+    traceable.traceIn(this.ctx);
     this.ctx.fill();
-  }
-
-  fillRect(location: Point2D, size: Vector2D) {
-    this.ctx.fillRect(location[0], location[1], size[0], size[1]);
   }
 
   forTiling = (
@@ -178,29 +156,11 @@ export default class PlayCanvas {
     iterFn(config, (...as: T) => {
       args.push(as);
     });
-    this.shuffle(args);
+    shuffle(args);
 
     for (let a of args) {
       cb(...a);
     }
-  }
-
-  shuffle<T>(items: T[]): T[] {
-    let currentIndex = items.length;
-    let temporaryValue: T;
-    let randomIndex = 0;
-
-    while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-
-      // And swap it with the current element.
-      temporaryValue = items[currentIndex];
-      items[currentIndex] = items[randomIndex];
-      items[randomIndex] = temporaryValue;
-    }
-
-    return items;
   }
 
   doProportion(p: number, callback: () => void) {
