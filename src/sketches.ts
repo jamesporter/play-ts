@@ -3,14 +3,7 @@ import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath } from "./lib/path";
 import vectors from "./lib/vectors";
 
-const sketch = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const pts = new PlayCanvas(c, { width, height });
-
+const sketch = (pts: PlayCanvas) => {
   const {
     dimensions: { top, left, right, bottom }
   } = pts.meta;
@@ -38,28 +31,14 @@ const sketch = (play: Play) => {
   );
 };
 
-const sketch2 = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const pts = new PlayCanvas(c, { width, height });
-
+const sketch2 = (pts: PlayCanvas) => {
   pts.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     pts.setStrokeColour(x * 360, 90, 40);
     pts.drawLine([x, y], [x + dX, y + dY]);
   });
 };
 
-const sketch4 = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
-
+const sketch4 = (p: PlayCanvas) => {
   p.forVertical({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     const points = p.build(p.range, { from: x, to: x + dX, steps: 20 }, vX => {
       return vectors.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
@@ -70,42 +49,29 @@ const sketch4 = (play: Play) => {
   });
 };
 
-const sketch3 = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const pts = new PlayCanvas(c, { width, height });
-
-  pts.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
-    pts.lineStyle = { cap: "round" };
-    pts.proportionately([
+const sketch3 = (p: PlayCanvas) => {
+  p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
+    p.lineStyle = { cap: "round" };
+    p.proportionately([
       [
         1,
         () => {
-          pts.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
-          pts.drawLine([x, y], [x + dX, y + dY]);
+          p.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
+          p.drawLine([x, y], [x + dX, y + dY]);
         }
       ],
       [
         2,
         () => {
-          pts.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
-          pts.drawLine([x + dX, y], [x, y + dY]);
+          p.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
+          p.drawLine([x + dX, y], [x, y + dY]);
         }
       ]
     ]);
   });
 };
 
-const flower = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
+const flower = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
 
   const {
@@ -137,14 +103,7 @@ const flower = (play: Play) => {
   p.drawPath(path);
 };
 
-const curves1 = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
-
+const curves1 = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
@@ -159,13 +118,7 @@ const curves1 = (play: Play) => {
   });
 };
 
-const chaiken = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
+const chaiken = (p: PlayCanvas) => {
   const {
     dimensions: { right, bottom }
   } = p.meta;
@@ -196,13 +149,7 @@ const chaiken = (play: Play) => {
   });
 };
 
-const tilesOfChaiken = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
+const tilesOfChaiken = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
 
   p.forTiling({ n: 6, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
@@ -231,13 +178,7 @@ const tilesOfChaiken = (play: Play) => {
   });
 };
 
-const circle = (play: Play) => {
-  const {
-    context: c,
-    meta: { width, height }
-  } = play;
-
-  const p = new PlayCanvas(c, { width, height });
+const circle = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
 
   p.times(10, n => {
@@ -252,7 +193,7 @@ const circle = (play: Play) => {
   });
 };
 
-const sketches: { name: string; sketch: (play: Play) => void }[] = [
+const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sketch3, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
   { sketch: sketch2, name: "Rainbow" },

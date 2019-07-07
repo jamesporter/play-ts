@@ -1,6 +1,7 @@
 import React, { useRef, useLayoutEffect } from "react";
 import useDimensions from "react-use-dimensions";
 import { Sketch } from "../types/play";
+import PlayCanvas from "../lib/play-canvas";
 
 type CanvasProps = {
   sketch: Sketch;
@@ -38,13 +39,11 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
 
     if (ctx) {
       ctx.clearRect(0, 0, w, h);
-      sketch({
-        context: ctx,
-        meta: {
-          width: w || 100 * aspectRatio,
-          height: h || 100
-        }
+      const pts = new PlayCanvas(ctx, {
+        width: w || 100 * aspectRatio,
+        height: h || 100
       });
+      sketch(pts);
     }
   });
 

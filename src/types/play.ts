@@ -1,3 +1,5 @@
+import PlayCanvas from "../lib/play-canvas";
+
 export type Play = {
   context: CanvasRenderingContext2D;
   meta: {
@@ -7,7 +9,7 @@ export type Play = {
 };
 
 export type Sketch = {
-  (play: Play): void;
+  (play: PlayCanvas): void;
 };
 
 export type Size = { width: number; height: number };
