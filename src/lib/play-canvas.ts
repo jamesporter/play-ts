@@ -1,6 +1,6 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
-import { Path } from "./path";
+import { Path, Traceable } from "./path";
 
 export default class PlayCanvas {
   readonly aspectRatio: number;
@@ -72,9 +72,9 @@ export default class PlayCanvas {
     this.ctx.stroke();
   }
 
-  drawPath(path: Path) {
+  drawPath(traceable: Traceable) {
     this.ctx.beginPath();
-    path.traceIn(this.ctx);
+    traceable.traceIn(this.ctx);
     this.ctx.stroke();
   }
 
@@ -129,6 +129,46 @@ export default class PlayCanvas {
     }
   };
 
+  forVertical = (
+    config: {
+      n: number;
+      margin?: number;
+    },
+    callback: (point: Point2D, delta: Vector2D) => void
+  ) => {
+    const { n, margin = 0 } = config;
+
+    const sX = margin;
+    const eY = 1 / this.aspectRatio - margin;
+    const sY = margin;
+    const dX = 1 - 2 * margin;
+    const dY = (eY - sY) / n;
+
+    for (let i = 0; i < n; i++) {
+      callback([sX, sY + i * dY], [dX, dY]);
+    }
+  };
+
+  /*
+    Build something using other iteration utlities rather than drawing within callback
+
+    I tried a  curried version with first argument so could compose with random order etc, but TypeScript wasn't figuring out types properly at use site. Would probably require explicit annotation so don't want that.
+  */
+  build = <C, T extends any[], U>(
+    iterFn: (config: C, callback: (...args: T) => void) => void,
+    config: C,
+    cb: (...args: T) => U
+  ): U[] => {
+    const res: U[] = [];
+    iterFn(config, (...as: T) => {
+      res.push(cb(...as));
+    });
+    return res;
+  };
+
+  /*
+    Take existing iteration function and apply in random order
+  */
   withRandomOrder<C, T extends any[]>(
     iterFn: (config: C, callback: (...args: T) => void) => void,
     config: C,
@@ -169,6 +209,32 @@ export default class PlayCanvas {
     }
   }
 
+  times(n: number, callback: (n: number) => void) {
+    for (let i = 0; i < n; i++) {
+      callback(i);
+    }
+  }
+
+  aroundCircle = (
+    config: {
+      cX?: number;
+      cY?: number;
+      radius?: number;
+      n: number;
+    },
+    callback: (point: Point2D) => void
+  ) => {
+    const { n, cX = 0.5, cY = 0.5 / this.aspectRatio, radius = 0.25 } = config;
+    const da = (Math.PI * 2) / n;
+    for (let a = 0; a < Math.PI * 2; a += da) {
+      const rr = 2 * Math.random() + 1;
+      callback([
+        cX + radius * Math.cos(a + da),
+        cY + radius * Math.sin(a + da)
+      ]);
+    }
+  };
+
   proportionately(cases: [number, () => void][]) {
     const total = cases.map(c => c[0]).reduce((a, b) => a + b, 0);
     if (total <= 0) throw new Error("Must be positive total");
@@ -181,6 +247,19 @@ export default class PlayCanvas {
       } else {
         r -= cases[i][0];
       }
+    }
+  }
+
+  range(
+    config: { from: number; to: number; steps: number; inclusive?: boolean },
+    callback: (n: number) => void
+  ) {
+    const { from = 0, to = 1, steps, inclusive = true } = config;
+
+    const di = (to - from) / steps;
+    const max = inclusive ? steps : steps - 1;
+    for (let i = 0; i <= max; i++) {
+      callback(i * di + from);
     }
   }
 

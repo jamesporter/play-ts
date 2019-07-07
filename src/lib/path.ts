@@ -1,5 +1,6 @@
 import { Point2D } from "../types/play";
 import v from "./vectors";
+import { tripleWise } from "./collectionOps";
 
 export interface Traceable {
   traceIn(ctx: CanvasRenderingContext2D);
@@ -16,6 +17,10 @@ export class SimplePath implements Traceable {
     return new SimplePath([point]);
   }
 
+  static withPoints(points: Point2D[]): SimplePath {
+    return new SimplePath(points);
+  }
+
   addPoint(point: Point2D): SimplePath {
     this.points.push(point);
     return this;
@@ -27,7 +32,17 @@ export class SimplePath implements Traceable {
   }
 
   chaiken(iterations: number = 1): SimplePath {
-    // TODO
+    for (let i = 0; i < iterations; i++) {
+      this.points = this.points
+        .slice(0, 1)
+        .concat(
+          tripleWise(this.points).flatMap(([a, b, c]) => [
+            v.pointAlong(b, a, 0.25),
+            v.pointAlong(b, c, 0.25)
+          ])
+        )
+        .concat(this.points.slice(this.points.length - 1));
+    }
     return this;
   }
 
@@ -94,15 +109,6 @@ export class Path implements Traceable, SVGPathable {
     const m = v.add(this.currentPoint, v.scale(u, 0.5));
     const perp = v.normalise(v.rotate(u, -Math.PI / 2));
     const rotatedPerp = v.rotate(perp, curveAngle);
-
-    console.log({
-      u,
-      d,
-      m,
-      perp,
-      rotatedPerp
-    });
-
     const controlMid = v.add(
       m,
       v.scale(rotatedPerp, curveSize * polarlity * d * 0.5)
@@ -125,7 +131,6 @@ export class Path implements Traceable, SVGPathable {
       to: point,
       from: this.currentPoint
     });
-    console.log(this.edges[this.edges.length - 1]);
     this.currentPoint = point;
     return this;
   };

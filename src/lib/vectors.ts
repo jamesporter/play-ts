@@ -34,6 +34,25 @@ export const polarToCartesian = (
   angle: number
 ): Point2D => [x + radius * Math.cos(angle), y + radius * Math.sin(angle)];
 
+export const pointAlong = (
+  a: Point2D,
+  b: Point2D,
+  proportion = 0.5
+): Point2D => {
+  return add(a, scale(subtract(b, a), proportion));
+};
+
+export const perturb = (
+  [x, y]: Point2D,
+  config: { magnitude?: number } = {}
+): Point2D => {
+  const { magnitude = 0.1 } = config;
+  return [
+    x + magnitude * (Math.random() - 0.5),
+    y + magnitude * (Math.random() - 0.5)
+  ];
+};
+
 export default {
   add,
   subtract,
@@ -41,5 +60,7 @@ export default {
   rotate,
   normalise,
   scale,
-  polarToCartesian
+  polarToCartesian,
+  pointAlong,
+  perturb
 };
