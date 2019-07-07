@@ -8,4 +8,8 @@ export const uniformRandomInt = (config: {
   return from + Math.floor(Math.random() * d);
 };
 
-export default { uniformRandomInt };
+export const randomPolarity = (): 1 | -1 => {
+  return Math.random() > 0.5 ? 1 : -1;
+};
+
+export default { uniformRandomInt, randomPolarity };

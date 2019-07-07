@@ -2,6 +2,7 @@ import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath } from "./lib/path";
 import vectors from "./lib/vectors";
+import r from "./lib/randomness";
 
 const sketch = (pts: PlayCanvas) => {
   const {
@@ -22,7 +23,7 @@ const sketch = (pts: PlayCanvas) => {
         pts.drawLine(
           [i + di / 4, j + dj / 4],
           [
-            i + (di * 3 * j * pts.randomPolarity()) / 4,
+            i + (di * 3 * j * r.randomPolarity()) / 4,
             j + (dj * 5 * (1 + Math.random())) / 4
           ]
         );
@@ -109,7 +110,7 @@ const curves1 = (p: PlayCanvas) => {
     p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
     p.drawPath(
       Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
-        polarlity: p.randomPolarity(),
+        polarlity: r.randomPolarity(),
         curveSize: x * 2,
         curveAngle: x,
         bulbousness: y

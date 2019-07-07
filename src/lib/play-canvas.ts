@@ -263,10 +263,6 @@ export default class PlayCanvas {
     }
   }
 
-  randomPolarity(): 1 | -1 {
-    return Math.random() > 0.5 ? 1 : -1;
-  }
-
   get info() {
     return {
       stroke: this.ctx.strokeStyle,
