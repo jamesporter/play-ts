@@ -165,12 +165,12 @@ export class Path implements Traceable, SVGPathable {
 }
 
 export class Arc implements Traceable {
-  cX: number;
-  cY: number;
-  radius: number;
-  startAngle: number;
-  endAngle: number;
-  antiClockwise: boolean;
+  readonly cX: number;
+  readonly cY: number;
+  readonly radius: number;
+  readonly startAngle: number;
+  readonly endAngle: number;
+  readonly antiClockwise: boolean;
 
   constructor(config: {
     cX: number;
@@ -202,5 +202,97 @@ export class Arc implements Traceable {
       this.antiClockwise
     );
     if (this.startAngle - this.endAngle > 0.0001) ctx.lineTo(this.cX, this.cX);
+  };
+}
+
+export class Rect implements Traceable {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+
+  constructor(config: { x: number; y: number; w: number; h: number }) {
+    const { x, y, w, h } = config;
+
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+  }
+
+  traceIn = (ctx: CanvasRenderingContext2D) => {
+    ctx.rect(this.x, this.y, this.w, this.h);
+  };
+
+  split = (config: {
+    orientation: "vertical" | "horizontal";
+    split?: number | number[];
+  }): Rect[] => {
+    let { orientation, split } = config;
+    split = split || 0.5;
+
+    if (orientation === "horizontal") {
+      if (typeof split === "number") {
+        return [
+          new Rect({ x: this.x, y: this.y, w: this.w / 2, h: this.h }),
+          new Rect({
+            x: this.x + this.w / 2,
+            y: this.y,
+            w: this.w / 2,
+            h: this.h
+          })
+        ];
+      } else {
+        const total = split.reduce((a, b) => a + b, 0);
+        const proportions = split.map(s => s / total);
+        let xDxs: [number, number][] = [];
+        let c = 0;
+        proportions.forEach(p => {
+          xDxs.push([c, p * this.w]);
+          c += p * this.w;
+        });
+
+        return xDxs.map(
+          ([x, dX], i) =>
+            new Rect({
+              x: this.x + x,
+              y: this.y,
+              w: dX,
+              h: this.h
+            })
+        );
+      }
+    } else {
+      if (typeof split === "number") {
+        return [
+          new Rect({ x: this.x, y: this.y, w: this.w, h: this.h / 2 }),
+          new Rect({
+            x: this.x,
+            y: this.y + this.h / 2,
+            w: this.w,
+            h: this.h / 2
+          })
+        ];
+      } else {
+        const total = split.reduce((a, b) => a + b, 0);
+        const proportions = split.map(s => s / total);
+        let yDys: [number, number][] = [];
+        let c = 0;
+        proportions.forEach(p => {
+          yDys.push([c, p * this.h]);
+          c += p * this.h;
+        });
+
+        return yDys.map(
+          ([y, dY], i) =>
+            new Rect({
+              x: this.x,
+              y: this.y + y,
+              w: this.w,
+              h: dY
+            })
+        );
+      }
+    }
   };
 }

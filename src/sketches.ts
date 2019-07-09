@@ -1,8 +1,8 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc } from "./lib/path";
+import { Path, SimplePath, Arc, Rect } from "./lib/path";
 import vectors, { add, perturb, pointAlong } from "./lib/vectors";
-import r from "./lib/randomness";
+import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
 
 const sketch = (pts: PlayCanvas) => {
@@ -276,6 +276,80 @@ const noiseField = (p: PlayCanvas) => {
   });
 };
 
+const rectangles = (p: PlayCanvas) => {
+  p.lineWidth = 0.005;
+
+  p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(214 * x, 100, 35 + 10 * y, 0.7);
+    p.fill(
+      new Rect({
+        x: x + dX / 8,
+        y: y + dY / 8,
+        w: dX * Math.random() * 0.75,
+        h: dY * Math.random() * 0.75
+      })
+    );
+  });
+};
+
+const rectanglesDivided = (p: PlayCanvas) => {
+  p.lineWidth = 0.005;
+  const {
+    dimensions: { left, right, top, bottom }
+  } = p.meta;
+
+  new Rect({ x: 0.1, y: 0.1, w: bottom - 0.2, h: right - 0.2 })
+    .split({ orientation: "vertical", split: [1, 1.5, 2, 2.5] })
+    .forEach((r, i) => {
+      p.setFillColour(i * 10, 80, 40);
+      p.fill(r);
+      p.draw(r);
+    });
+};
+
+const mondrian = (p: PlayCanvas) => {
+  const {
+    dimensions: { right, bottom }
+  } = p.meta;
+
+  let rs = [new Rect({ x: 0.1, y: 0.1, w: right - 0.2, h: bottom - 0.2 })];
+  p.times(4, () => {
+    rs = rs.flatMap(r => {
+      if (r.w > 0.1 && r.h > 0.1) {
+        return p.proportionately([
+          [0.6, () => [r]],
+          [
+            1,
+            () =>
+              r.split({
+                orientation: "horizontal",
+                split: samples(3, [1, 2, 2.5, 3])
+              })
+          ],
+          [
+            1,
+            () =>
+              r.split({
+                orientation: "vertical",
+                split: samples(3, [1, 1.2, 1.5, 2])
+              })
+          ]
+        ]);
+      } else {
+        return [r];
+      }
+    });
+  });
+
+  rs.map(r => {
+    p.doProportion(0.3, () => {
+      p.setFillColour(sample([10, 60, 200]), 80, 50);
+      p.fill(r);
+    });
+    p.draw(r);
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -288,6 +362,9 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: circle, name: "Around a Circle" },
   { sketch: arcs, name: "Arcs" },
   { sketch: noise, name: "Noise" },
-  { sketch: noiseField, name: "Noise Field" }
+  { sketch: noiseField, name: "Noise Field" },
+  { sketch: rectangles, name: "Rectangles" },
+  { sketch: rectanglesDivided, name: "Rectangles Divided" },
+  { sketch: mondrian, name: "Mondrianish" }
 ];
 export default sketches;

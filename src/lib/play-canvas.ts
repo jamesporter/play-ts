@@ -195,19 +195,20 @@ export default class PlayCanvas {
     }
   };
 
-  proportionately(cases: [number, () => void][]) {
+  proportionately<T>(cases: [number, () => T][]): T {
     const total = cases.map(c => c[0]).reduce((a, b) => a + b, 0);
     if (total <= 0) throw new Error("Must be positive total");
     let r = Math.random() * total;
 
     for (let i = 0; i < cases.length; i++) {
       if (cases[i][0] > r) {
-        cases[i][1]();
-        return;
+        return cases[i][1]();
       } else {
         r -= cases[i][0];
       }
     }
+    //fallback *should never happen!*
+    return cases[0][1]();
   }
 
   get randomPoint(): Point2D {
