@@ -4,12 +4,14 @@ import SelectFromChoice from "./components/SelectFromChoice";
 import SelectFromOptions from "./components/SelectFromOptions";
 import { aspectRatioChoices, defaultAspectRatio } from "./config";
 import sketches from "../sketches";
-import { getNumber, setNumber } from "../lib/util";
+import { getNumber, setNumber, getBoolean, setBoolean } from "../lib/util";
 
 const INDEX_KEY = "play-ts.index";
+const PLAYING_KEY = "play-ts.is_playing";
 
 export default function App() {
-  const [playing, setPlaying] = useState(true);
+  const wasPlaying = getBoolean(PLAYING_KEY);
+  const [playing, setPlaying] = useState(wasPlaying);
   const idx = getNumber(INDEX_KEY);
   const [sketchNo, setSketchNo] = useState(idx || 0);
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
@@ -75,7 +77,11 @@ export default function App() {
           className={`${
             playing ? "bg-teal-500" : "bg-gray-500"
           } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded`}
-          onClick={() => setPlaying(!playing)}
+          onClick={() => {
+            const isNowPlaying = !playing;
+            setBoolean(PLAYING_KEY, isNowPlaying);
+            setPlaying(isNowPlaying);
+          }}
         >
           {playing ? "Pause" : "Play"}
         </button>

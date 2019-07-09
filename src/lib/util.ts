@@ -14,3 +14,23 @@ export const getNumber = (key: string): number | null => {
 export const setNumber = (key: string, n: number) => {
   localStorage.setItem(key, JSON.stringify(n));
 };
+
+export const getBoolean = (
+  key: string,
+  defaultValue: boolean = false
+): boolean => {
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      const b = JSON.parse(raw);
+      if (typeof b === "boolean") {
+        return b;
+      }
+    } catch (ex) {}
+  }
+  return defaultValue;
+};
+
+export const setBoolean = (key: string, b: boolean) => {
+  localStorage.setItem(key, JSON.stringify(b));
+};
