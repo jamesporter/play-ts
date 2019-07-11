@@ -11,26 +11,26 @@ export default function App() {
         <div className="bg-gray-400 px-8 py-4">
           <p className="text-gray-700 text-base">
             <Link to="/">
-              <span className="font-bold text-xl mb-2 mr-4 text-blue-600">
+              <span className="font-bold text-xl mb-2 mr-4 text-blue-600 hover:text-blue-800">
                 play-ts
               </span>
             </Link>
             A simple, modern TypeScript-first Algorithmic Art Tool{" "}
             <a
               href="https://github.com/jamesporter/play-ts"
-              className="underline  ml-2"
+              className="underline  ml-2 text-blue-600 hover:text-blue-800"
             >
               Project Source and Docs
             </a>
             <a
-              className="underline ml-2"
+              className="underline ml-2 text-blue-600 hover:text-blue-800"
               href="https://github.com/jamesporter/play-ts/blob/master/src/sketches.ts"
             >
               (Source Code for example sketches)
             </a>
           </p>
         </div>
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 bg-gray-200">
           <Route path="/" exact component={Main} />
           <Route path="/view/:id" component={ViewSingle} />
           <Route path="/export/:id" component={Export} />

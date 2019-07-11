@@ -49,7 +49,7 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
 
   return (
     <div
-      className="flex-1 self-stretch flex items-center justify-center bg-gray-100"
+      className="flex-1 self-stretch flex items-center justify-center"
       ref={ref}
     >
       {w && h && (

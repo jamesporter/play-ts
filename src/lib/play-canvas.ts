@@ -7,7 +7,10 @@ export default class PlayCanvas {
   readonly aspectRatio: number;
   readonly originalScale: number;
 
-  constructor(private ctx: CanvasRenderingContext2D, { width, height }: Size) {
+  constructor(
+    private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+    { width, height }: Size
+  ) {
     ctx.resetTransform();
     this.aspectRatio = width / height;
     // i.e. size 1 = entire width

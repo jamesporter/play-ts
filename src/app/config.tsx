@@ -2,7 +2,9 @@ export const sizeChoices = [
   { label: "S", value: 1200 },
   { label: "M", value: 1920 },
   { label: "L", value: 3200 },
-  { label: "XL", value: 4096 }
+  { label: "XL", value: 4096 },
+  { label: "XXL", value: 8192 },
+  { label: "XXXL", value: 16384 }
 ];
 
 export const defaultSize = sizeChoices[1].value;

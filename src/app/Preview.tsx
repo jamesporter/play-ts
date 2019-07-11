@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 type CanvasProps = {
   sketch: Sketch;
   size?: number;
-  number: string;
   id: number;
   name: string;
 };
