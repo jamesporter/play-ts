@@ -249,9 +249,10 @@ const noiseField = (p: PlayCanvas) => {
   const delta = 0.01;
   const s = 8;
   p.lineWidth = 0.0025;
-  p.setStrokeColour(195, 90, 30, 0.7);
+  p.lineStyle = { cap: "round" };
 
-  p.times(200, () => {
+  p.times(250, n => {
+    p.setStrokeColour(195 + n / 12.5, 90, 30, 0.7);
     let pt = p.randomPoint;
     const sp = SimplePath.startAt(pt);
     while (true) {
@@ -264,7 +265,7 @@ const noiseField = (p: PlayCanvas) => {
         break;
       }
     }
-    p.draw(sp);
+    p.draw(sp.chaiken(2));
   });
 };
 
