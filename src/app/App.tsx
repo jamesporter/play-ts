@@ -30,7 +30,7 @@ export default function App() {
             </a>
           </p>
         </div>
-        <div className="flex flex-col flex-1 bg-gray-200">
+        <div className="flex flex-col flex-1 bg-gray-200 overflow-scroll">
           <Route path="/" exact component={Main} />
           <Route path="/view/:id" component={ViewSingle} />
           <Route path="/export/:id" component={Export} />
