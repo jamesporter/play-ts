@@ -395,6 +395,22 @@ const circleText = (p: PlayCanvas) => {
   });
 };
 
+const scriptLike = (p: PlayCanvas) => {
+  const { bottom, aspectRatio } = p.meta;
+
+  p.range({ from: 0.1, to: bottom - 0.1, steps: 5 }, m => {
+    let points: Point2D[] = [];
+    p.setStrokeColour(215, 40, 30 - 30 * m);
+    p.range({ from: 0.1, to: 0.9, steps: 60 }, n => {
+      points.push([
+        n + perlin2(n * 45 + m * 67, 20) / 12,
+        m + perlin2(n * 100 + m * 100, 0.1) / (6 * aspectRatio)
+      ]);
+    });
+    p.draw(SimplePath.withPoints(points).chaiken(4));
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -412,6 +428,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: rectanglesDivided, name: "Rectangles Divided" },
   { sketch: mondrian, name: "Mondrianish" },
   { sketch: helloWorld, name: "Hello World" },
-  { sketch: circleText, name: "Circle Labels" }
+  { sketch: circleText, name: "Circle Labels" },
+  { sketch: scriptLike, name: "Script-ish" }
 ];
 export default sketches;
