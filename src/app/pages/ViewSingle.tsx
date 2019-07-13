@@ -61,6 +61,7 @@ export default function ViewSingle({ match }: { match: any }) {
           value={aspectRatio}
           choices={aspectRatioChoices}
           onSelect={setAspectRatio}
+          tailwindContainerClasses="hidden md:flex"
         />
 
         <Flex />

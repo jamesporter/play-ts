@@ -15,7 +15,9 @@ export default function App() {
                 play-ts
               </span>
             </Link>
-            A simple, modern TypeScript-first Algorithmic Art Tool{" "}
+            <span className="hidden md:inline">
+              A simple, modern TypeScript-first Algorithmic Art Tool
+            </span>
             <a
               href="https://github.com/jamesporter/play-ts"
               className="underline  ml-2 text-blue-600 hover:text-blue-800"
