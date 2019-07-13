@@ -378,6 +378,23 @@ const helloWorld = (p: PlayCanvas) => {
   );
 };
 
+const circleText = (p: PlayCanvas) => {
+  p.aroundCircle({ radius: 0.25, n: 12 }, ([x, y], i) => {
+    p.times(5, n => {
+      p.setFillColour(i * 5 + n, 75, 35, 0.2 * n);
+      p.text(
+        {
+          at: perturb([x, y]),
+          kind: "fill",
+          size: 0.05,
+          align: "left"
+        },
+        (i + 1).toString()
+      );
+    });
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -394,6 +411,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: rectangles, name: "Rectangles" },
   { sketch: rectanglesDivided, name: "Rectangles Divided" },
   { sketch: mondrian, name: "Mondrianish" },
-  { sketch: helloWorld, name: "Hello World" }
+  { sketch: helloWorld, name: "Hello World" },
+  { sketch: circleText, name: "Circle Labels" }
 ];
 export default sketches;

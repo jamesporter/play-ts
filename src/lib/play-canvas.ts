@@ -25,7 +25,8 @@ export default class PlayCanvas {
       bottom: 1 / this.aspectRatio,
       right: 1,
       left: 0,
-      aspectRatio: this.aspectRatio
+      aspectRatio: this.aspectRatio,
+      center: [0.5, 0.5 / this.aspectRatio]
     };
   }
 
@@ -186,16 +187,19 @@ export default class PlayCanvas {
       radius?: number;
       n: number;
     },
-    callback: (point: Point2D) => void
+    callback: (point: Point2D, i: number) => void
   ) => {
     const { n, cX = 0.5, cY = 0.5 / this.aspectRatio, radius = 0.25 } = config;
     const da = (Math.PI * 2) / n;
-    for (let a = 0; a < Math.PI * 2; a += da) {
+
+    let a = -Math.PI * 0.5;
+    for (let i = 0; i < n; i++) {
       const rr = 2 * Math.random() + 1;
-      callback([
-        cX + radius * Math.cos(a + da),
-        cY + radius * Math.sin(a + da)
-      ]);
+      callback(
+        [cX + radius * Math.cos(a + da), cY + radius * Math.sin(a + da)],
+        i
+      );
+      a += da;
     }
   };
 
