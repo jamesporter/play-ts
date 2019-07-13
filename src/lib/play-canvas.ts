@@ -26,7 +26,7 @@ export default class PlayCanvas {
       right: 1,
       left: 0,
       aspectRatio: this.aspectRatio,
-      center: [0.5, 0.5 / this.aspectRatio]
+      center: [0.5, 0.5 / this.aspectRatio] as [number, number]
     };
   }
 

@@ -1,7 +1,7 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc, Rect, Text } from "./lib/path";
-import vectors, { add, perturb, pointAlong } from "./lib/vectors";
+import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
 import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
 
@@ -412,6 +412,25 @@ const scriptLike = (p: PlayCanvas) => {
   });
 };
 
+const doodles = (p: PlayCanvas) => {
+  p.forTiling({ n: 7, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    const center = add([x, y], scale([dX, dY], 0.5));
+    const [cX, cY] = center;
+    let path = Path.startAt(center);
+    p.setStrokeColour(100 * x + y * 33, 60 + 45 * y, 40);
+    p.lineWidth = 0.005;
+    p.withRandomOrder(
+      p.aroundCircle,
+      { cX, cY, radius: dX / 2.8, n: 7 },
+      (pt, i) => {
+        path.addCurveTo(pt);
+      }
+    );
+    path.addCurveTo(center);
+    p.draw(path);
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -430,6 +449,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: mondrian, name: "Mondrianish" },
   { sketch: helloWorld, name: "Hello World" },
   { sketch: circleText, name: "Circle Labels" },
-  { sketch: scriptLike, name: "Script-ish" }
+  { sketch: scriptLike, name: "Script-ish" },
+  { sketch: doodles, name: "Doodles" }
 ];
 export default sketches;
