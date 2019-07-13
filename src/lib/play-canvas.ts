@@ -1,16 +1,13 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
-import { Path, Traceable } from "./path";
+import { Traceable, TextConfig, Text } from "./path";
 import { shuffle } from "./collectionOps";
 
 export default class PlayCanvas {
   readonly aspectRatio: number;
   readonly originalScale: number;
 
-  constructor(
-    private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
-    { width, height }: Size
-  ) {
+  constructor(private ctx: CanvasRenderingContext2D, { width, height }: Size) {
     ctx.resetTransform();
     this.aspectRatio = width / height;
     // i.e. size 1 = entire width
@@ -24,12 +21,11 @@ export default class PlayCanvas {
 
   get meta() {
     return {
-      dimensions: {
-        top: 0,
-        bottom: 1 / this.aspectRatio,
-        right: 1,
-        left: 0
-      }
+      top: 0,
+      bottom: 1 / this.aspectRatio,
+      right: 1,
+      left: 0,
+      aspectRatio: this.aspectRatio
     };
   }
 
@@ -67,6 +63,11 @@ export default class PlayCanvas {
     this.ctx.beginPath();
     traceable.traceIn(this.ctx);
     this.ctx.fill();
+  }
+
+  // pretty inconsistent, might revise above??
+  text(config: TextConfig, text: string) {
+    new Text(config, text).textIn(this.ctx);
   }
 
   forTiling = (
@@ -232,9 +233,7 @@ export default class PlayCanvas {
   }
 
   inDrawing = (point: Point2D): boolean => {
-    const {
-      dimensions: { left, right, top, bottom }
-    } = this.meta;
+    const { left, right, top, bottom } = this.meta;
     return (
       point[0] > left && point[0] < right && point[1] > top && point[1] < bottom
     );

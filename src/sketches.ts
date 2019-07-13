@@ -1,14 +1,12 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc, Rect } from "./lib/path";
+import { Path, SimplePath, Arc, Rect, Text } from "./lib/path";
 import vectors, { add, perturb, pointAlong } from "./lib/vectors";
 import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
 
 const sketch = (pts: PlayCanvas) => {
-  const {
-    dimensions: { top, left, right, bottom }
-  } = pts.meta;
+  const { top, left, right, bottom } = pts.meta;
 
   pts.lineStyle = { cap: "round" };
   pts.withRandomOrder(
@@ -73,9 +71,7 @@ const tiling = (p: PlayCanvas) => {
 const flower = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
 
-  const {
-    dimensions: { right, bottom }
-  } = p.meta;
+  const { right, bottom } = p.meta;
 
   const midX = right / 2;
   const midY = bottom / 2;
@@ -141,9 +137,7 @@ const curves1 = (p: PlayCanvas) => {
 };
 
 const chaiken = (p: PlayCanvas) => {
-  const {
-    dimensions: { right, bottom }
-  } = p.meta;
+  const { right, bottom } = p.meta;
 
   p.lineStyle = { cap: "round" };
 
@@ -216,9 +210,7 @@ const circle = (p: PlayCanvas) => {
 };
 
 const arcs = (p: PlayCanvas) => {
-  const {
-    dimensions: { bottom, right }
-  } = p.meta;
+  const { bottom, right } = p.meta;
 
   const cX = right / 2;
   const cY = bottom / 2;
@@ -294,9 +286,7 @@ const rectangles = (p: PlayCanvas) => {
 
 const rectanglesDivided = (p: PlayCanvas) => {
   p.lineWidth = 0.005;
-  const {
-    dimensions: { left, right, top, bottom }
-  } = p.meta;
+  const { right, bottom } = p.meta;
 
   new Rect({ x: 0.1, y: 0.1, w: bottom - 0.2, h: right - 0.2 })
     .split({ orientation: "vertical", split: [1, 1.5, 2, 2.5] })
@@ -308,9 +298,7 @@ const rectanglesDivided = (p: PlayCanvas) => {
 };
 
 const mondrian = (p: PlayCanvas) => {
-  const {
-    dimensions: { right, bottom }
-  } = p.meta;
+  const { right, bottom } = p.meta;
 
   let rs = [new Rect({ x: 0.1, y: 0.1, w: right - 0.2, h: bottom - 0.2 })];
   p.times(4, () => {
@@ -350,6 +338,46 @@ const mondrian = (p: PlayCanvas) => {
   });
 };
 
+const helloWorld = (p: PlayCanvas) => {
+  const { bottom, aspectRatio } = p.meta;
+  p.range(
+    {
+      from: 0.1,
+      to: bottom - 0.1,
+      steps: 10
+    },
+    n => {
+      p.setStrokeColour(n * aspectRatio * 50, 20, 20, 0.75);
+      for (let align of ["right", "center", "left"] as const) {
+        p.text(
+          {
+            at: [n * aspectRatio, n],
+            size: 0.2,
+            sizing: "fixed",
+            kind: "stroke",
+            align,
+            weight: "600"
+          },
+          "Hello"
+        );
+      }
+      p.setFillColour(n * aspectRatio * 50, 80, 50, 0.9);
+
+      p.text(
+        {
+          at: [n * aspectRatio, n],
+          size: 0.2,
+          sizing: "fixed",
+          kind: "fill",
+          align: "center",
+          weight: "600"
+        },
+        "Hello"
+      );
+    }
+  );
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -365,6 +393,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: noiseField, name: "Noise Field" },
   { sketch: rectangles, name: "Rectangles" },
   { sketch: rectanglesDivided, name: "Rectangles Divided" },
-  { sketch: mondrian, name: "Mondrianish" }
+  { sketch: mondrian, name: "Mondrianish" },
+  { sketch: helloWorld, name: "Hello World" }
 ];
 export default sketches;

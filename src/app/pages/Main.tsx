@@ -6,7 +6,15 @@ export function Main() {
   return (
     <div className="flex flex-row flex-wrap justify-center container m-auto">
       {sketches.map((s, id) => {
-        return <Preview sketch={s.sketch} name={s.name} size={240} id={id} />;
+        return (
+          <Preview
+            sketch={s.sketch}
+            name={s.name}
+            size={240}
+            id={id}
+            key={id}
+          />
+        );
       })}
     </div>
   );
