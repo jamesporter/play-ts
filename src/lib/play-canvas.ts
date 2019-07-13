@@ -75,19 +75,20 @@ export default class PlayCanvas {
     config: { n: number; type?: "square" | "proportionate"; margin?: number },
     callback: (point: Point2D, delta: Vector2D) => void
   ) => {
-    // TODO this isn't done yet... need to take margin properly into account, probably add more
-    // to allow for square tiling etc
     const { n, type = "proportionate", margin = 0 } = config;
+    const nY = type === "square" ? Math.floor(n * (1 / this.aspectRatio)) : n;
     const deltaX = (1 - margin * 2) / n;
-    const deltaY =
-      (1 - margin * 2) / (n * (type === "square" ? 1 : this.aspectRatio));
-    for (let i = margin; i < 1 - 1.0001 * margin; i += deltaX) {
-      for (
-        let j = margin;
-        j < 1 / this.aspectRatio - 1.0001 * margin;
-        j += deltaY
-      ) {
-        callback([i, j], [deltaX, deltaY]);
+
+    const hY =
+      type === "square" ? deltaX * nY : 1 / this.aspectRatio - 2 * margin;
+    const deltaY = hY / nY;
+
+    const sX = margin;
+    const sY = (1 / this.aspectRatio - hY) / 2;
+
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < nY; j++) {
+        callback([sX + i * deltaX, sY + j * deltaY], [deltaX, deltaY]);
       }
     }
   };

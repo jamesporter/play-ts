@@ -288,7 +288,7 @@ const rectanglesDivided = (p: PlayCanvas) => {
   p.lineWidth = 0.005;
   const { right, bottom } = p.meta;
 
-  new Rect({ x: 0.1, y: 0.1, w: bottom - 0.2, h: right - 0.2 })
+  new Rect({ x: 0.1, y: 0.1, w: right - 0.2, h: bottom - 0.2 })
     .split({ orientation: "vertical", split: [1, 1.5, 2, 2.5] })
     .forEach((r, i) => {
       p.setFillColour(i * 10, 80, 40);
