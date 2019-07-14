@@ -3,6 +3,10 @@ import { hsla } from "./colours";
 import { Traceable, TextConfig, Text, Rect } from "./path";
 import { shuffle } from "./collectionOps";
 
+export interface Gradientable {
+  gradient(ctx: CanvasRenderingContext2D): CanvasGradient;
+}
+
 export default class PlayCanvas {
   readonly aspectRatio: number;
   readonly originalScale: number;
@@ -50,6 +54,14 @@ export default class PlayCanvas {
 
   setFillColour(h: number, s: number, l: number, a: number = 1) {
     this.ctx.fillStyle = hsla(h, s, l, a);
+  }
+
+  setStrokeGradient(gradient: Gradientable) {
+    this.ctx.strokeStyle = gradient.gradient(this.ctx);
+  }
+
+  setFillGradient(gradient: Gradientable) {
+    this.ctx.fillStyle = gradient.gradient(this.ctx);
   }
 
   // probably reimplement with other thing... want to minimise actual number of drawing ops

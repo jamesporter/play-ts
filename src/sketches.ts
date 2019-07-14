@@ -4,6 +4,7 @@ import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
 import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
 import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
+import { LinearGradient } from "./lib/gradient";
 
 const sketch = (pts: PlayCanvas) => {
   const { top, left, right, bottom } = pts.meta;
@@ -490,6 +491,22 @@ const ellipses = (p: PlayCanvas) => {
   );
 };
 
+const gradients1 = (p: PlayCanvas) => {
+  const { right, bottom } = p.meta;
+  p.setFillGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [right, bottom],
+      colours: [
+        [0, { h: 210, s: 80, l: 60 }],
+        [0.5, { h: 250, s: 80, l: 60 }],
+        [1.0, { h: 280, s: 80, l: 60 }]
+      ]
+    })
+  );
+  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -512,6 +529,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: doodles, name: "Doodles" },
   { sketch: circles, name: "Circles" },
   { sketch: circles2, name: "Bubbles" },
-  { sketch: ellipses, name: "Ellipses Demo" }
+  { sketch: ellipses, name: "Ellipses Demo" },
+  { sketch: gradients1, name: "Gradient Demo 1" }
 ];
 export default sketches;
