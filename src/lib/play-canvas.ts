@@ -271,4 +271,32 @@ export default class PlayCanvas {
       fill: this.ctx.fillStyle
     };
   }
+
+  // Randomness
+
+  uniformRandomInt = (config: {
+    from?: number;
+    to: number;
+    inclusive?: boolean;
+  }) => {
+    const { to, from = 0, inclusive = true } = config;
+    const d = to - from + (inclusive ? 1 : 0);
+    return from + Math.floor(Math.random() * d);
+  };
+
+  randomPolarity = (): 1 | -1 => {
+    return Math.random() > 0.5 ? 1 : -1;
+  };
+
+  sample = <T>(from: T[]): T => {
+    return from[Math.floor(Math.random() * from.length)];
+  };
+
+  samples = <T>(n: number, from: T[]): T[] => {
+    let res: T[] = [];
+    for (let i = 0; i < n; i++) {
+      res.push(this.sample(from));
+    }
+    return res;
+  };
 }

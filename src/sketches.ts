@@ -2,7 +2,6 @@ import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
 import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
-import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 
@@ -20,7 +19,7 @@ const sketch = (pts: PlayCanvas) => {
         pts.drawLine(
           [i + di / 4, j + dj / 4],
           [
-            i + (di * 3 * j * r.randomPolarity()) / 4,
+            i + (di * 3 * j * pts.randomPolarity()) / 4,
             j + (dj * 5 * (1 + Math.random())) / 4
           ]
         );
@@ -128,7 +127,7 @@ const curves1 = (p: PlayCanvas) => {
     p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
     p.draw(
       Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
-        polarlity: r.randomPolarity(),
+        polarlity: p.randomPolarity(),
         curveSize: x * 2,
         curveAngle: x,
         bulbousness: y
@@ -313,7 +312,7 @@ const mondrian = (p: PlayCanvas) => {
             () =>
               r.split({
                 orientation: "horizontal",
-                split: samples(3, [1, 2, 2.5, 3])
+                split: p.samples(3, [1, 2, 2.5, 3])
               })
           ],
           [
@@ -321,7 +320,7 @@ const mondrian = (p: PlayCanvas) => {
             () =>
               r.split({
                 orientation: "vertical",
-                split: samples(3, [1, 1.2, 1.5, 2])
+                split: p.samples(3, [1, 1.2, 1.5, 2])
               })
           ]
         ]);
@@ -333,7 +332,7 @@ const mondrian = (p: PlayCanvas) => {
 
   rs.map(r => {
     p.doProportion(0.3, () => {
-      p.setFillColour(sample([10, 60, 200]), 80, 50);
+      p.setFillColour(p.sample([10, 60, 200]), 80, 50);
       p.fill(r);
     });
     p.draw(r);
@@ -452,7 +451,7 @@ const circles2 = (p: PlayCanvas) => {
       p.setFillColour(150 + pt[0] * 50, 80, 50, 0.9);
       p.setStrokeColour(150, 40, 20);
       p.lineWidth = 0.005;
-      const r = Math.sqrt(1.2 * pt[0] * pt[1]) * sample([0.7, 1.1, 1.3]);
+      const r = Math.sqrt(1.2 * pt[0] * pt[1]) * p.sample([0.7, 1.1, 1.3]);
       const e = new Ellipse({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
