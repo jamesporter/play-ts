@@ -52,7 +52,13 @@ export default class PlayCanvas {
   background(h: number, s: number, l: number, a: number = 1) {
     this.ctx.fillStyle = hsla(h, s, l, a);
     const { right, bottom } = this.meta;
-    this.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+    this.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
+  }
+
+  backgroundGradient(gradient: Gradientable) {
+    this.ctx.fillStyle = gradient.gradient(this.ctx);
+    const { right, bottom } = this.meta;
+    this.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
   }
 
   setStrokeColour(h: number, s: number, l: number, a: number = 1) {
@@ -253,13 +259,13 @@ export default class PlayCanvas {
   }
 
   range(
-    config: { from: number; to: number; steps: number; inclusive?: boolean },
+    config: { from: number; to: number; n: number; inclusive?: boolean },
     callback: (n: number) => void
   ) {
-    const { from = 0, to = 1, steps, inclusive = true } = config;
+    const { from = 0, to = 1, n, inclusive = true } = config;
 
-    const di = (to - from) / steps;
-    const max = inclusive ? steps : steps - 1;
+    const di = (to - from) / n;
+    const max = inclusive ? n : n - 1;
     for (let i = 0; i <= max; i++) {
       callback(i * di + from);
     }

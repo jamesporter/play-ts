@@ -202,22 +202,20 @@ export class Arc implements Traceable {
 }
 
 export class Rect implements Traceable {
-  readonly x: number;
-  readonly y: number;
+  readonly at: Point2D;
   readonly w: number;
   readonly h: number;
 
-  constructor(config: { x: number; y: number; w: number; h: number }) {
-    const { x, y, w, h } = config;
+  constructor(config: { at: Point2D; w: number; h: number }) {
+    const { at, w, h } = config;
 
-    this.x = x;
-    this.y = y;
+    this.at = at;
     this.w = w;
     this.h = h;
   }
 
   traceIn = (ctx: CanvasRenderingContext2D) => {
-    ctx.rect(this.x, this.y, this.w, this.h);
+    ctx.rect(this.at[0], this.at[1], this.w, this.h);
   };
 
   split = (config: {
@@ -230,10 +228,9 @@ export class Rect implements Traceable {
     if (orientation === "horizontal") {
       if (typeof split === "number") {
         return [
-          new Rect({ x: this.x, y: this.y, w: this.w / 2, h: this.h }),
+          new Rect({ at: this.at, w: this.w / 2, h: this.h }),
           new Rect({
-            x: this.x + this.w / 2,
-            y: this.y,
+            at: [this.at[0] + this.w / 2, this.at[1]],
             w: this.w / 2,
             h: this.h
           })
@@ -251,8 +248,7 @@ export class Rect implements Traceable {
         return xDxs.map(
           ([x, dX], i) =>
             new Rect({
-              x: this.x + x,
-              y: this.y,
+              at: [this.at[0] + x, this.at[1]],
               w: dX,
               h: this.h
             })
@@ -261,10 +257,9 @@ export class Rect implements Traceable {
     } else {
       if (typeof split === "number") {
         return [
-          new Rect({ x: this.x, y: this.y, w: this.w, h: this.h / 2 }),
+          new Rect({ at: this.at, w: this.w, h: this.h / 2 }),
           new Rect({
-            x: this.x,
-            y: this.y + this.h / 2,
+            at: [this.at[0], this.at[1] + this.h / 2],
             w: this.w,
             h: this.h / 2
           })
@@ -282,8 +277,7 @@ export class Rect implements Traceable {
         return yDys.map(
           ([y, dY], i) =>
             new Rect({
-              x: this.x,
-              y: this.y + y,
+              at: [this.at[0], this.at[1] + y],
               w: this.w,
               h: dY
             })

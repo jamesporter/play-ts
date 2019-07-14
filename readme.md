@@ -72,8 +72,7 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [x] More path classes rect, including subdivision operation on rect
 - [x] More path classes ellipse
 - [x] Ability to set background
-- [ ] Add JSON 'canvas' for easy testing
-- [ ] Revise/clean up core play-canvas api, drop some references to canvas as only going to support that now(!) etc
+- [x] Revise/clean up core play-canvas api, drop some references to canvas as only going to support that now(!) etc
 - [ ] Publish something to code sandbox that people can try without having to download/install stuff
 - [ ] Documentation both in repo and on demo site
 - [ ] Figure out nice way to package/publish
@@ -84,3 +83,4 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [ ] better export e.g. common paper/dpi sizes, move existing related stuff to utility
 - [ ] 'Play'/time... be able to do dynamic redrawing i.e. requestAnimationFrame, redraw etc
 - [ ] Interactions(!)
+- [ ] Maybe add JSON 'canvas' for easy testing

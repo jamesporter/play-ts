@@ -5,22 +5,20 @@ import vectors, { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 
-const sketch = (pts: PlayCanvas) => {
-  const { top, left, right, bottom } = pts.meta;
-
-  pts.lineStyle = { cap: "round" };
-  pts.withRandomOrder(
-    pts.forTiling,
+const sketch = (p: PlayCanvas) => {
+  p.lineStyle = { cap: "round" };
+  p.withRandomOrder(
+    p.forTiling,
     { n: 20, type: "square", margin: 0.1 },
     ([i, j], [di, dj]) => {
-      pts.doProportion(0.6, () => {
-        pts.setStrokeColour(i * 100, 80, 30 + j * 30, 0.9);
-        pts.lineWidth = 0.02 + 0.02 * (1 - i);
-        pts.drawLine(
+      p.doProportion(0.6, () => {
+        p.setStrokeColour(i * 100, 80, 30 + j * 30, 0.9);
+        p.lineWidth = 0.02 + 0.02 * (1 - i);
+        p.drawLine(
           [i + di / 4, j + dj / 4],
           [
-            i + (di * 3 * j * pts.randomPolarity()) / 4,
-            j + (dj * 5 * (1 + pts.random())) / 4
+            i + (di * 3 * j * p.randomPolarity()) / 4,
+            j + (dj * 5 * (1 + p.random())) / 4
           ]
         );
       });
@@ -28,19 +26,33 @@ const sketch = (pts: PlayCanvas) => {
   );
 };
 
-const horizontal = (pts: PlayCanvas) => {
-  pts.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
-    pts.setStrokeColour(x * 360, 90, 40);
-    pts.drawLine([x, y], [x + dX, y + dY]);
+const horizontal = (p: PlayCanvas) => {
+  p.backgroundGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [1, 0],
+      colours: [[0, { h: 0, s: 0, l: 95 }], [1, { h: 0, s: 0, l: 85 }]]
+    })
+  );
+  p.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setStrokeColour(x * 360, 90, 40);
+    p.drawLine([x, y], [x + dX, y + dY]);
   });
 };
 
 const vertical = (p: PlayCanvas) => {
+  p.backgroundGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [0, 1],
+      colours: [[0, { h: 50, s: 40, l: 95 }], [1, { h: 30, s: 40, l: 90 }]]
+    })
+  );
   p.forVertical({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
-    const points = p.build(p.range, { from: x, to: x + dX, steps: 20 }, vX => {
+    const points = p.build(p.range, { from: x, to: x + dX, n: 20 }, vX => {
       return p.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
     });
-
+    p.lineWidth = 0.01 / p.meta.aspectRatio;
     p.setStrokeColour(y * 60, 90, 40);
     p.draw(SimplePath.withPoints(points));
   });
@@ -69,13 +81,26 @@ const tiling = (p: PlayCanvas) => {
 };
 
 const flower = (p: PlayCanvas) => {
+  const horizonOffset = p.random() * 0.25;
+  p.backgroundGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [0, p.meta.bottom],
+      colours: [
+        [0, { h: 215, s: 90, l: 90 }],
+        [0.59 + horizonOffset, { h: 215, s: 100, l: 70 }],
+        [0.61 + horizonOffset, { h: 150, s: 90, l: 30 }],
+        [1, { h: 140, s: 90, l: 40 }]
+      ]
+    })
+  );
   p.lineStyle = { cap: "round" };
 
   const { right, bottom } = p.meta;
 
   const midX = right / 2;
   const midY = bottom / 2;
-  const ir = p.random() * 0.025 + midX / 4;
+  const ir = p.random() * 0.025 + midX / 5;
   const da = Math.PI / 10;
 
   const start = p.perturb([midX, bottom * 0.95]);
@@ -105,7 +130,19 @@ const flower = (p: PlayCanvas) => {
       curveAngle: p.random() / 6
     });
   }
-  p.setFillColour(10 + p.random() * 320, 90, 50, 0.95);
+  const baseHue = p.random() * 290;
+  p.setFillGradient(
+    new RadialGradient({
+      start: [midX, midY],
+      end: [midX, midY],
+      rStart: 0,
+      rEnd: 2,
+      colours: [
+        [0, { h: 10 + baseHue, s: 90, l: 50, a: 0.95 }],
+        [0.3, { h: 70 + baseHue, s: 90, l: 40, a: 0.95 }]
+      ]
+    })
+  );
   p.fill(path);
   p.lineWidth = 0.005;
 
@@ -122,9 +159,16 @@ const flower = (p: PlayCanvas) => {
 };
 
 const curves1 = (p: PlayCanvas) => {
+  p.backgroundGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [0, 1],
+      colours: [[0, { h: 215, s: 20, l: 90 }], [1, { h: 140, s: 20, l: 90 }]]
+    })
+  );
   p.lineStyle = { cap: "round" };
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
-    p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
+    p.setStrokeColour(20 + x * 40, 90 - 20 * y, 50);
     p.draw(
       Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
         polarlity: p.randomPolarity(),
@@ -274,8 +318,7 @@ const rectangles = (p: PlayCanvas) => {
     p.setFillColour(214 * x, 100, 35 + 10 * y, 0.7);
     p.fill(
       new Rect({
-        x: x + dX / 8,
-        y: y + dY / 8,
+        at: [x + dX / 8, y + dY / 8],
         w: dX * p.random() * 0.75,
         h: dY * p.random() * 0.75
       })
@@ -287,7 +330,7 @@ const rectanglesDivided = (p: PlayCanvas) => {
   p.lineWidth = 0.005;
   const { right, bottom } = p.meta;
 
-  new Rect({ x: 0.1, y: 0.1, w: right - 0.2, h: bottom - 0.2 })
+  new Rect({ at: [0.1, 0.1], w: right - 0.2, h: bottom - 0.2 })
     .split({ orientation: "vertical", split: [1, 1.5, 2, 2.5] })
     .forEach((r, i) => {
       p.setFillColour(i * 10, 80, 40);
@@ -299,7 +342,7 @@ const rectanglesDivided = (p: PlayCanvas) => {
 const mondrian = (p: PlayCanvas) => {
   const { right, bottom } = p.meta;
 
-  let rs = [new Rect({ x: 0.1, y: 0.1, w: right - 0.2, h: bottom - 0.2 })];
+  let rs = [new Rect({ at: [0.1, 0.1], w: right - 0.2, h: bottom - 0.2 })];
   p.times(4, () => {
     rs = rs.flatMap(r => {
       if (r.w > 0.1 && r.h > 0.1) {
@@ -343,7 +386,7 @@ const helloWorld = (p: PlayCanvas) => {
     {
       from: 0.1,
       to: bottom - 0.1,
-      steps: 10
+      n: 10
     },
     n => {
       p.setStrokeColour(n * aspectRatio * 50, 20, 20, 0.75);
@@ -394,10 +437,10 @@ const circleText = (p: PlayCanvas) => {
 const scriptLike = (p: PlayCanvas) => {
   const { bottom, aspectRatio } = p.meta;
 
-  p.range({ from: 0.1, to: bottom - 0.1, steps: 5 }, m => {
+  p.range({ from: 0.1, to: bottom - 0.1, n: 5 }, m => {
     let points: Point2D[] = [];
     p.setStrokeColour(215, 40, 30 - 30 * m);
-    p.range({ from: 0.1, to: 0.9, steps: 60 }, n => {
+    p.range({ from: 0.1, to: 0.9, n: 60 }, n => {
       points.push([
         n + perlin2(n * 45 + m * 67, 20) / 12,
         m + perlin2(n * 100 + m * 100, 0.1) / (6 * aspectRatio)
@@ -501,7 +544,7 @@ const gradients1 = (p: PlayCanvas) => {
       ]
     })
   );
-  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+  p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
 };
 
 const gradients2 = (p: PlayCanvas) => {
@@ -520,7 +563,7 @@ const gradients2 = (p: PlayCanvas) => {
       ]
     })
   );
-  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+  p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
 };
 
 const gradients3 = (p: PlayCanvas) => {
@@ -537,7 +580,7 @@ const gradients3 = (p: PlayCanvas) => {
       ]
     })
   );
-  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+  p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
 
   p.setFillGradient(
     new RadialGradient({
@@ -554,7 +597,59 @@ const gradients3 = (p: PlayCanvas) => {
       ]
     })
   );
-  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+  p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
+};
+
+const gradients4 = (p: PlayCanvas) => {
+  const { right, bottom } = p.meta;
+  const corners: Point2D[] = [[0, 0], [right, 0], [right, bottom], [0, bottom]];
+  const hues = [10, 215, 50, 190];
+
+  p.background(0, 0, 5);
+  for (let i = 0; i < 4; i++) {
+    const from = corners[i];
+    const to = corners[(i + 2) % 4];
+
+    p.setFillGradient(
+      new LinearGradient({
+        from,
+        to,
+        colours: [
+          [0, { h: hues[i], s: 90, l: 90, a: 0.01 }],
+          [0.4, { h: hues[i], s: 90, l: 90, a: 0.1 }],
+          [0.5, { h: hues[i], s: 90, l: 90, a: 0.9 }],
+          [0.5, { h: hues[i], s: 90, l: 90, a: 0.1 }],
+          [1, { h: hues[i], s: 90, l: 90, a: 0.01 }]
+        ]
+      })
+    );
+    p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
+  }
+};
+
+const gradients5 = (p: PlayCanvas) => {
+  const { right, bottom } = p.meta;
+  const corners: Point2D[] = [[0, 0], [right, 0], [right, bottom], [0, bottom]];
+  const hues = [10, 215, 50, 190];
+
+  p.background(0, 0, 5);
+  p.forHorizontal({ n: 30 }, (from, [dX, _]) => {
+    const to = add(from, [dX * p.poisson(3), 0]);
+    const l = 60;
+    p.setFillGradient(
+      new LinearGradient({
+        from,
+        to,
+        colours: [
+          [0, { h: 40, s: 90, l, a: 0.0 }],
+          [0, { h: 40, s: 90, l, a: 0.7 }],
+          [1, { h: 0, s: 80, l, a: 0.01 }],
+          [1, { h: 0, s: 90, l, a: 0.0 }]
+        ]
+      })
+    );
+    p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
+  });
 };
 
 const randomness1 = (p: PlayCanvas) => {
@@ -581,8 +676,7 @@ const randomness1 = (p: PlayCanvas) => {
       const v = p.gaussian();
       p.fill(
         new Rect({
-          x,
-          y: y + dY / 2,
+          at: [x, y + dY / 2],
           w: dX,
           h: (dY * v) / 5
         })
@@ -633,6 +727,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: gradients1, name: "Gradient Demo 1" },
   { sketch: gradients2, name: "Gradient Demo 2" },
   { sketch: gradients3, name: "Gradient Demo 3" },
+  { sketch: gradients4, name: "Gradient Demo 4" },
+  { sketch: gradients5, name: "Gradient Demo 5" },
   { sketch: randomness1, name: "Gaussian" },
   { sketch: randomness2, name: "Poisson" }
 ];
