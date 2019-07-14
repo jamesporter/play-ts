@@ -1,6 +1,6 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc, Rect, Text } from "./lib/path";
+import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
 import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
 import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
@@ -431,6 +431,20 @@ const doodles = (p: PlayCanvas) => {
   });
 };
 
+const ellipses = (p: PlayCanvas) => {
+  p.forTiling({ n: 10, type: "square", margin: 0.1 }, (pt, delta) => {
+    p.setFillColour(pt[0] * 100, 80, 50);
+    p.fill(
+      new Ellipse({
+        at: add(pt, scale(delta, 0.5)),
+        align: "center",
+        width: delta[1] * (pt[0] + 0.2),
+        height: delta[1] * (pt[1] + 0.2)
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -450,6 +464,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: helloWorld, name: "Hello World" },
   { sketch: circleText, name: "Circle Labels" },
   { sketch: scriptLike, name: "Script-ish" },
-  { sketch: doodles, name: "Doodles" }
+  { sketch: doodles, name: "Doodles" },
+  { sketch: ellipses, name: "Ellipses" }
 ];
 export default sketches;

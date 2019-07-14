@@ -293,6 +293,43 @@ export class Rect implements Traceable {
   };
 }
 
+export class Ellipse implements Traceable {
+  constructor(
+    private config: {
+      at: Point2D;
+      width: number;
+      height: number;
+      align: "center" | "topLeft";
+    }
+  ) {}
+
+  traceIn = (ctx: CanvasRenderingContext2D) => {
+    const { at, width: w, height, align } = this.config;
+    const width = (w * 4) / 3;
+    const [cX, cY] =
+      align === "center" ? at : [at[0] + width / 2, at[1] + height / 2];
+
+    ctx.moveTo(cX, cY - height / 2);
+    ctx.bezierCurveTo(
+      cX + width / 2,
+      cY - height / 2,
+      cX + width / 2,
+      cY + height / 2,
+      cX,
+      cY + height / 2
+    );
+
+    ctx.bezierCurveTo(
+      cX - width / 2,
+      cY + height / 2,
+      cX - width / 2,
+      cY - height / 2,
+      cX,
+      cY - height / 2
+    );
+  };
+}
+
 export type TextSizing = "fixed" | "fitted";
 export type TextHorizontalAlign = CanvasRenderingContext2D["textAlign"];
 export type FontStyle = "normal" | "italic" | "oblique";
