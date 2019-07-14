@@ -307,12 +307,12 @@ export class Ellipse implements Traceable {
       at: Point2D;
       width: number;
       height: number;
-      align: "center" | "topLeft";
+      align?: "center" | "topLeft";
     }
   ) {}
 
   traceIn = (ctx: CanvasRenderingContext2D) => {
-    const { at, width, height, align } = this.config;
+    const { at, width, height, align = "center" } = this.config;
     const [cX, cY] =
       align === "center" ? at : [at[0] + width / 2, at[1] + height / 2];
 

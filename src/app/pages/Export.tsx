@@ -8,27 +8,34 @@ import {
 import SelectFromChoice from "../components/SelectFromChoice";
 import sketches from "../../sketches";
 import PlayCanvas from "../../lib/play-canvas";
+import { getNumber } from "../../lib/util";
+import { SEED_KEY } from "./ViewSingle";
 
 export function Export({ match }: { match: any }) {
+  const seed = getNumber(SEED_KEY) || 1;
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   const [size, setSize] = useState(defaultSize);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
   const sketchNo = match.params.id;
   const sketch = sketches[sketchNo];
 
-  const generate = () => {
-    const w = size;
-    const h = Math.floor(size / aspectRatio);
+  const w = size;
+  const h = Math.floor(size / aspectRatio);
 
+  const generate = () => {
     const ctx =
       previewRef.current &&
       (previewRef.current.getContext("2d") as CanvasRenderingContext2D);
     if (ctx) {
       ctx.clearRect(0, 0, w, h);
-      const pts = new PlayCanvas(ctx, {
-        width: w,
-        height: h
-      });
+      const pts = new PlayCanvas(
+        ctx,
+        {
+          width: w,
+          height: h
+        },
+        seed
+      );
       sketch.sketch(pts);
     }
   };
@@ -52,8 +59,10 @@ export function Export({ match }: { match: any }) {
         onClick={generate}
         className="bg-teal-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-3 rounded mt-4"
       >
-        Generate {size}x{Math.floor(size / aspectRatio)}
+        Generate {w}x{h}
       </button>
+
+      <p>Size: {Math.floor((w * h) / 1000000)} MP</p>
 
       <canvas
         width={size}

@@ -42,17 +42,6 @@ export const pointAlong = (
   return add(a, scale(subtract(b, a), proportion));
 };
 
-export const perturb = (
-  [x, y]: Point2D,
-  config: { magnitude?: number } = {}
-): Point2D => {
-  const { magnitude = 0.1 } = config;
-  return [
-    x + magnitude * (Math.random() - 0.5),
-    y + magnitude * (Math.random() - 0.5)
-  ];
-};
-
 export const dot = ([x1, y1]: Point2D, [x2, y2]: Point2D): number =>
   x1 * x2 + y1 * y2;
 
@@ -65,6 +54,5 @@ export default {
   scale,
   polarToCartesian,
   pointAlong,
-  perturb,
   dot
 };

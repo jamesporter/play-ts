@@ -6,9 +6,10 @@ import PlayCanvas from "../lib/play-canvas";
 type CanvasProps = {
   sketch: Sketch;
   aspectRatio: number;
+  seed: number;
 };
 
-export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
+export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
   const canvasRef = useRef(null);
   // seems to be way more performant to re-use context
@@ -39,10 +40,14 @@ export default function Canvas({ aspectRatio, sketch }: CanvasProps) {
 
     if (ctx) {
       ctx.clearRect(0, 0, w, h);
-      const pts = new PlayCanvas(ctx, {
-        width: w || 100 * aspectRatio,
-        height: h || 100
-      });
+      const pts = new PlayCanvas(
+        ctx,
+        {
+          width: w || 100 * aspectRatio,
+          height: h || 100
+        },
+        seed
+      );
       sketch(pts);
     }
   });

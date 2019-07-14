@@ -27,10 +27,14 @@ export default function Preview({ size = 200, sketch, id, name }: CanvasProps) {
 
     if (ctx) {
       ctx.clearRect(0, 0, size, size);
-      const pts = new PlayCanvas(ctx, {
-        width: size,
-        height: size
-      });
+      const pts = new PlayCanvas(
+        ctx,
+        {
+          width: size,
+          height: size
+        },
+        1
+      );
       sketch(pts);
     }
   });

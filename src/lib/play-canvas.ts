@@ -1,7 +1,7 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
 import { Traceable, TextConfig, Text, Rect } from "./path";
-import { shuffle } from "./collectionOps";
+import Prando from "prando";
 
 export interface Gradientable {
   gradient(ctx: CanvasRenderingContext2D): CanvasGradient;
@@ -10,8 +10,13 @@ export interface Gradientable {
 export default class PlayCanvas {
   readonly aspectRatio: number;
   readonly originalScale: number;
+  readonly rng: Prando;
 
-  constructor(private ctx: CanvasRenderingContext2D, { width, height }: Size) {
+  constructor(
+    private ctx: CanvasRenderingContext2D,
+    { width, height }: Size,
+    rngSeed?: string | number
+  ) {
     ctx.resetTransform();
     this.aspectRatio = width / height;
     // i.e. size 1 = entire width
@@ -21,6 +26,8 @@ export default class PlayCanvas {
     ctx.lineWidth = 0.01;
     ctx.strokeStyle = "black";
     ctx.fillStyle = "gray";
+
+    this.rng = new Prando(rngSeed);
   }
 
   get meta() {
@@ -183,7 +190,7 @@ export default class PlayCanvas {
     iterFn(config, (...as: T) => {
       args.push(as);
     });
-    shuffle(args);
+    this.shuffle(args);
 
     for (let a of args) {
       cb(...a);
@@ -191,7 +198,7 @@ export default class PlayCanvas {
   }
 
   doProportion(p: number, callback: () => void) {
-    if (Math.random() < p) {
+    if (this.rng.next() < p) {
       callback();
     }
   }
@@ -216,7 +223,7 @@ export default class PlayCanvas {
 
     let a = -Math.PI * 0.5;
     for (let i = 0; i < n; i++) {
-      const rr = 2 * Math.random() + 1;
+      const rr = 2 * this.rng.next() + 1;
       callback(
         [cX + radius * Math.cos(a + da), cY + radius * Math.sin(a + da)],
         i
@@ -228,7 +235,7 @@ export default class PlayCanvas {
   proportionately<T>(cases: [number, () => T][]): T {
     const total = cases.map(c => c[0]).reduce((a, b) => a + b, 0);
     if (total <= 0) throw new Error("Must be positive total");
-    let r = Math.random() * total;
+    let r = this.rng.next() * total;
 
     for (let i = 0; i < cases.length; i++) {
       if (cases[i][0] > r) {
@@ -242,7 +249,7 @@ export default class PlayCanvas {
   }
 
   get randomPoint(): Point2D {
-    return [Math.random(), Math.random() / this.aspectRatio];
+    return [this.rng.next(), this.rng.next() / this.aspectRatio];
   }
 
   range(
@@ -271,4 +278,81 @@ export default class PlayCanvas {
       fill: this.ctx.fillStyle
     };
   }
+
+  // Randomness
+
+  random = (): number => {
+    return this.rng.next();
+  };
+
+  uniformRandomInt = (config: {
+    from?: number;
+    to: number;
+    inclusive?: boolean;
+  }) => {
+    const { to, from = 0, inclusive = true } = config;
+    const d = to - from + (inclusive ? 1 : 0);
+    return from + Math.floor(this.rng.next() * d);
+  };
+
+  randomPolarity = (): 1 | -1 => {
+    return this.rng.next() > 0.5 ? 1 : -1;
+  };
+
+  sample = <T>(from: T[]): T => {
+    return from[Math.floor(this.rng.next() * from.length)];
+  };
+
+  samples = <T>(n: number, from: T[]): T[] => {
+    let res: T[] = [];
+    for (let i = 0; i < n; i++) {
+      res.push(this.sample(from));
+    }
+    return res;
+  };
+
+  shuffle = <T>(items: T[]): T[] => {
+    let currentIndex = items.length;
+    let temporaryValue: T;
+    let randomIndex = 0;
+
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(this.rng.next() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = items[currentIndex];
+      items[currentIndex] = items[randomIndex];
+      items[randomIndex] = temporaryValue;
+    }
+
+    return items;
+  };
+
+  perturb = ([x, y]: Point2D, config: { magnitude?: number } = {}): Point2D => {
+    const { magnitude = 0.1 } = config;
+    return [
+      x + magnitude * (this.rng.next() - 0.5),
+      y + magnitude * (this.rng.next() - 0.5)
+    ];
+  };
+
+  gaussian = (config?: { mean?: number; sd?: number }): number => {
+    const { mean = 0, sd = 1 } = config || {};
+    const a = this.rng.next();
+    const b = this.rng.next();
+    const n = Math.sqrt(-2.0 * Math.log(a)) * Math.cos(2.0 * Math.PI * b);
+    return mean + n * sd;
+  };
+
+  poisson = (lambda: number): number => {
+    const limit = Math.exp(-lambda);
+    let prod = this.rng.next();
+    let n = 0;
+    while (prod >= limit) {
+      n++;
+      prod *= this.rng.next();
+    }
+    return n;
+  };
 }

@@ -1,8 +1,7 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
-import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
-import r, { samples, sample } from "./lib/randomness";
+import vectors, { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 
@@ -20,8 +19,8 @@ const sketch = (pts: PlayCanvas) => {
         pts.drawLine(
           [i + di / 4, j + dj / 4],
           [
-            i + (di * 3 * j * r.randomPolarity()) / 4,
-            j + (dj * 5 * (1 + Math.random())) / 4
+            i + (di * 3 * j * pts.randomPolarity()) / 4,
+            j + (dj * 5 * (1 + pts.random())) / 4
           ]
         );
       });
@@ -39,7 +38,7 @@ const horizontal = (pts: PlayCanvas) => {
 const vertical = (p: PlayCanvas) => {
   p.forVertical({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     const points = p.build(p.range, { from: x, to: x + dX, steps: 20 }, vX => {
-      return vectors.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
+      return p.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
     });
 
     p.setStrokeColour(y * 60, 90, 40);
@@ -76,12 +75,12 @@ const flower = (p: PlayCanvas) => {
 
   const midX = right / 2;
   const midY = bottom / 2;
-  const ir = Math.random() * 0.025 + midX / 4;
+  const ir = p.random() * 0.025 + midX / 4;
   const da = Math.PI / 10;
 
-  const start = perturb([midX, bottom * 0.95]);
+  const start = p.perturb([midX, bottom * 0.95]);
   const end: Point2D = [midX, midY];
-  const second = perturb(pointAlong(start, end, 0.4));
+  const second = p.perturb(pointAlong(start, end, 0.4));
 
   p.setStrokeColour(140, 50, 25);
   p.lineWidth = 0.02;
@@ -103,10 +102,10 @@ const flower = (p: PlayCanvas) => {
     path.addCurveTo(pt, {
       curveSize: 12,
       bulbousness: 2,
-      curveAngle: Math.random() / 6
+      curveAngle: p.random() / 6
     });
   }
-  p.setFillColour(10 + Math.random() * 320, 90, 50, 0.95);
+  p.setFillColour(10 + p.random() * 320, 90, 50, 0.95);
   p.fill(path);
   p.lineWidth = 0.005;
 
@@ -128,7 +127,7 @@ const curves1 = (p: PlayCanvas) => {
     p.setStrokeColour(20 + x * 50, 90 - 20 * y, 50);
     p.draw(
       Path.startAt([x, y + dY]).addCurveTo([x + dX, y + dY], {
-        polarlity: r.randomPolarity(),
+        polarlity: p.randomPolarity(),
         curveSize: x * 2,
         curveAngle: x,
         bulbousness: y
@@ -150,7 +149,7 @@ const chaiken = (p: PlayCanvas) => {
   p.times(30, n => {
     let points: Point2D[] = [];
     for (let a = 0; a < Math.PI * 2; a += da) {
-      const rr = 2 * Math.random() + 1;
+      const rr = 2 * p.random() + 1;
       points.push([
         midX + ir * rr * Math.cos(a + da),
         midY + ir * rr * Math.sin(a + da)
@@ -178,7 +177,7 @@ const tilesOfChaiken = (p: PlayCanvas) => {
     p.times(3, n => {
       let points: Point2D[] = [];
       for (let a = 0; a < Math.PI * 2; a += da) {
-        const rr = 2 * Math.random() + 1;
+        const rr = 2 * p.random() + 1;
         points.push([
           midX + ir * rr * Math.cos(a + da),
           midY + ir * rr * Math.sin(a + da)
@@ -200,9 +199,7 @@ const circle = (p: PlayCanvas) => {
 
   p.times(10, n => {
     p.setStrokeColour(0, 0, n + 10, (0.75 * (n + 1)) / 10);
-    const points = p.build(p.aroundCircle, { n: 20 }, pt =>
-      vectors.perturb(pt)
-    );
+    const points = p.build(p.aroundCircle, { n: 20 }, pt => p.perturb(pt));
     const sp = SimplePath.withPoints(points)
       .close()
       .chaiken(n);
@@ -279,8 +276,8 @@ const rectangles = (p: PlayCanvas) => {
       new Rect({
         x: x + dX / 8,
         y: y + dY / 8,
-        w: dX * Math.random() * 0.75,
-        h: dY * Math.random() * 0.75
+        w: dX * p.random() * 0.75,
+        h: dY * p.random() * 0.75
       })
     );
   });
@@ -313,7 +310,7 @@ const mondrian = (p: PlayCanvas) => {
             () =>
               r.split({
                 orientation: "horizontal",
-                split: samples(3, [1, 2, 2.5, 3])
+                split: p.samples(3, [1, 2, 2.5, 3])
               })
           ],
           [
@@ -321,7 +318,7 @@ const mondrian = (p: PlayCanvas) => {
             () =>
               r.split({
                 orientation: "vertical",
-                split: samples(3, [1, 1.2, 1.5, 2])
+                split: p.samples(3, [1, 1.2, 1.5, 2])
               })
           ]
         ]);
@@ -333,7 +330,7 @@ const mondrian = (p: PlayCanvas) => {
 
   rs.map(r => {
     p.doProportion(0.3, () => {
-      p.setFillColour(sample([10, 60, 200]), 80, 50);
+      p.setFillColour(p.sample([10, 60, 200]), 80, 50);
       p.fill(r);
     });
     p.draw(r);
@@ -384,7 +381,7 @@ const circleText = (p: PlayCanvas) => {
       p.setFillColour(i * 5 + n, 75, 35, 0.2 * n);
       p.fillText(
         {
-          at: perturb([x, y]),
+          at: p.perturb([x, y]),
           size: 0.05,
           align: "left"
         },
@@ -452,7 +449,7 @@ const circles2 = (p: PlayCanvas) => {
       p.setFillColour(150 + pt[0] * 50, 80, 50, 0.9);
       p.setStrokeColour(150, 40, 20);
       p.lineWidth = 0.005;
-      const r = Math.sqrt(1.2 * pt[0] * pt[1]) * sample([0.7, 1.1, 1.3]);
+      const r = Math.sqrt(1.2 * pt[0] * pt[1]) * p.sample([0.7, 1.1, 1.3]);
       const e = new Ellipse({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
@@ -560,6 +557,56 @@ const gradients3 = (p: PlayCanvas) => {
   p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
 };
 
+const randomness1 = (p: PlayCanvas) => {
+  const { bottom } = p.meta;
+  p.forHorizontal(
+    {
+      n: 100,
+      margin: 0.1
+    },
+    ([x, y], [dX, dY]) => {
+      p.setFillGradient(
+        new LinearGradient({
+          from: [0, 0],
+          to: [0, bottom],
+          colours: [
+            [0, { h: 245, s: 80, l: 40 }],
+            [0.45, { h: 180, s: 80, l: 40 }],
+            [0.55, { h: 40, s: 80, l: 40 }],
+            [1, { h: 0, s: 80, l: 40 }]
+          ]
+        })
+      );
+
+      const v = p.gaussian();
+      p.fill(
+        new Rect({
+          x,
+          y: y + dY / 2,
+          w: dX,
+          h: (dY * v) / 5
+        })
+      );
+    }
+  );
+};
+
+const randomness2 = (p: PlayCanvas) => {
+  p.forTiling({ n: 50, margin: 0.1 }, (pt, delta) => {
+    const v = p.poisson(4);
+    p.times(v, n => {
+      p.setFillColour(40 - n * 20, 80, 50, 1 / n);
+      p.fill(
+        new Ellipse({
+          at: add(pt, scale(delta, 0.5)),
+          width: (n * delta[0]) / 5,
+          height: (n * delta[0]) / 5
+        })
+      );
+    });
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -585,6 +632,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: ellipses, name: "Ellipses Demo" },
   { sketch: gradients1, name: "Gradient Demo 1" },
   { sketch: gradients2, name: "Gradient Demo 2" },
-  { sketch: gradients3, name: "Gradient Demo 3" }
+  { sketch: gradients3, name: "Gradient Demo 3" },
+  { sketch: randomness1, name: "Gaussian" },
+  { sketch: randomness2, name: "Poisson" }
 ];
 export default sketches;
