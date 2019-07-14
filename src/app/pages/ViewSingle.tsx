@@ -5,11 +5,12 @@ import SelectFromOptions from "./../components/SelectFromOptions";
 import { aspectRatioChoices, defaultAspectRatio } from "./../config";
 import sketches from "../../sketches";
 import { getNumber, setNumber, getBoolean, setBoolean } from "../../lib/util";
-import Spacer, { SpacerSmall } from "../components/Spacer";
+import Spacer from "../components/Spacer";
 import Flex from "../components/Flex";
 import { Link } from "react-router-dom";
 
-const INDEX_KEY = "play-ts.index";
+export const INDEX_KEY = "play-ts.index";
+export const SEED_KEY = "play-ts.index";
 
 export default function ViewSingle({ match }: { match: any }) {
   const parsedInt = parseInt(match.params.id);
@@ -17,22 +18,40 @@ export default function ViewSingle({ match }: { match: any }) {
   const [sketchNo, setSketchNo] = useState(
     Number.isNaN(parsedInt) ? idx || 0 : parsedInt
   );
+  const goToPrev = () => {
+    let nextNo = sketchNo - 1;
+    if (nextNo < 0) nextNo = sketches.length - 1;
+    setSketchNo(nextNo);
+  };
+  const goToNext = () => {
+    let nextNo = sketchNo + 1;
+    if (nextNo >= sketches.length) nextNo = 0;
+    setSketchNo(nextNo);
+  };
+
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
+
+  const [seed, setSeed] = useState(getNumber(SEED_KEY) || 1);
+  const updateSeed = () => {
+    const newSeed = seed + 1;
+    setNumber(SEED_KEY, newSeed);
+    setSeed(newSeed);
+  };
 
   return (
     <>
       <div className="flex-1 flex flex-col">
-        <Canvas aspectRatio={aspectRatio} sketch={sketches[sketchNo].sketch} />
+        <Canvas
+          aspectRatio={aspectRatio}
+          sketch={sketches[sketchNo].sketch}
+          seed={seed}
+        />
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row">
         <button
           className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded mr-2`}
-          onClick={() => {
-            let nextNo = sketchNo - 1;
-            if (nextNo < 0) nextNo = sketches.length - 1;
-            setSketchNo(nextNo);
-          }}
+          onClick={goToPrev}
         >
           ←
         </button>
@@ -49,13 +68,17 @@ export default function ViewSingle({ match }: { match: any }) {
 
         <button
           className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
-          onClick={() => {
-            let nextNo = sketchNo + 1;
-            if (nextNo >= sketches.length) nextNo = 0;
-            setSketchNo(nextNo);
-          }}
+          onClick={goToNext}
         >
           →
+        </button>
+
+        <Spacer />
+        <button
+          className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
+          onClick={updateSeed}
+        >
+          Refresh
         </button>
 
         <Spacer />

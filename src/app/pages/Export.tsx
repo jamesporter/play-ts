@@ -8,8 +8,11 @@ import {
 import SelectFromChoice from "../components/SelectFromChoice";
 import sketches from "../../sketches";
 import PlayCanvas from "../../lib/play-canvas";
+import { getNumber } from "../../lib/util";
+import { SEED_KEY } from "./ViewSingle";
 
 export function Export({ match }: { match: any }) {
+  const seed = getNumber(SEED_KEY) || 1;
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   const [size, setSize] = useState(defaultSize);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
@@ -25,10 +28,14 @@ export function Export({ match }: { match: any }) {
       (previewRef.current.getContext("2d") as CanvasRenderingContext2D);
     if (ctx) {
       ctx.clearRect(0, 0, w, h);
-      const pts = new PlayCanvas(ctx, {
-        width: w,
-        height: h
-      });
+      const pts = new PlayCanvas(
+        ctx,
+        {
+          width: w,
+          height: h
+        },
+        seed
+      );
       sketch.sketch(pts);
     }
   };

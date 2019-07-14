@@ -1,7 +1,7 @@
 import { Play, Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
-import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
+import vectors, { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 
@@ -20,7 +20,7 @@ const sketch = (pts: PlayCanvas) => {
           [i + di / 4, j + dj / 4],
           [
             i + (di * 3 * j * pts.randomPolarity()) / 4,
-            j + (dj * 5 * (1 + Math.random())) / 4
+            j + (dj * 5 * (1 + pts.random())) / 4
           ]
         );
       });
@@ -38,7 +38,7 @@ const horizontal = (pts: PlayCanvas) => {
 const vertical = (p: PlayCanvas) => {
   p.forVertical({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     const points = p.build(p.range, { from: x, to: x + dX, steps: 20 }, vX => {
-      return vectors.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
+      return p.perturb([vX, y + dY / 2], { magnitude: dY / 4 });
     });
 
     p.setStrokeColour(y * 60, 90, 40);
@@ -75,12 +75,12 @@ const flower = (p: PlayCanvas) => {
 
   const midX = right / 2;
   const midY = bottom / 2;
-  const ir = Math.random() * 0.025 + midX / 4;
+  const ir = p.random() * 0.025 + midX / 4;
   const da = Math.PI / 10;
 
-  const start = perturb([midX, bottom * 0.95]);
+  const start = p.perturb([midX, bottom * 0.95]);
   const end: Point2D = [midX, midY];
-  const second = perturb(pointAlong(start, end, 0.4));
+  const second = p.perturb(pointAlong(start, end, 0.4));
 
   p.setStrokeColour(140, 50, 25);
   p.lineWidth = 0.02;
@@ -102,10 +102,10 @@ const flower = (p: PlayCanvas) => {
     path.addCurveTo(pt, {
       curveSize: 12,
       bulbousness: 2,
-      curveAngle: Math.random() / 6
+      curveAngle: p.random() / 6
     });
   }
-  p.setFillColour(10 + Math.random() * 320, 90, 50, 0.95);
+  p.setFillColour(10 + p.random() * 320, 90, 50, 0.95);
   p.fill(path);
   p.lineWidth = 0.005;
 
@@ -149,7 +149,7 @@ const chaiken = (p: PlayCanvas) => {
   p.times(30, n => {
     let points: Point2D[] = [];
     for (let a = 0; a < Math.PI * 2; a += da) {
-      const rr = 2 * Math.random() + 1;
+      const rr = 2 * p.random() + 1;
       points.push([
         midX + ir * rr * Math.cos(a + da),
         midY + ir * rr * Math.sin(a + da)
@@ -177,7 +177,7 @@ const tilesOfChaiken = (p: PlayCanvas) => {
     p.times(3, n => {
       let points: Point2D[] = [];
       for (let a = 0; a < Math.PI * 2; a += da) {
-        const rr = 2 * Math.random() + 1;
+        const rr = 2 * p.random() + 1;
         points.push([
           midX + ir * rr * Math.cos(a + da),
           midY + ir * rr * Math.sin(a + da)
@@ -199,9 +199,7 @@ const circle = (p: PlayCanvas) => {
 
   p.times(10, n => {
     p.setStrokeColour(0, 0, n + 10, (0.75 * (n + 1)) / 10);
-    const points = p.build(p.aroundCircle, { n: 20 }, pt =>
-      vectors.perturb(pt)
-    );
+    const points = p.build(p.aroundCircle, { n: 20 }, pt => p.perturb(pt));
     const sp = SimplePath.withPoints(points)
       .close()
       .chaiken(n);
@@ -278,8 +276,8 @@ const rectangles = (p: PlayCanvas) => {
       new Rect({
         x: x + dX / 8,
         y: y + dY / 8,
-        w: dX * Math.random() * 0.75,
-        h: dY * Math.random() * 0.75
+        w: dX * p.random() * 0.75,
+        h: dY * p.random() * 0.75
       })
     );
   });
@@ -383,7 +381,7 @@ const circleText = (p: PlayCanvas) => {
       p.setFillColour(i * 5 + n, 75, 35, 0.2 * n);
       p.fillText(
         {
-          at: perturb([x, y]),
+          at: p.perturb([x, y]),
           size: 0.05,
           align: "left"
         },
