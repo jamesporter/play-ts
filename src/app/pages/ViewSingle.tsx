@@ -52,6 +52,7 @@ export default function ViewSingle({ match }: { match: any }) {
         <button
           className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded mr-2`}
           onClick={goToPrev}
+          title="Previous"
         >
           ←
         </button>
@@ -69,6 +70,7 @@ export default function ViewSingle({ match }: { match: any }) {
         <button
           className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
           onClick={goToNext}
+          title="Next"
         >
           →
         </button>
@@ -77,8 +79,9 @@ export default function ViewSingle({ match }: { match: any }) {
         <button
           className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
           onClick={updateSeed}
+          title="Refresh"
         >
-          Refresh
+          ↻
         </button>
 
         <Spacer />

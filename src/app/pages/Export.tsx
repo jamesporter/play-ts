@@ -19,10 +19,10 @@ export function Export({ match }: { match: any }) {
   const sketchNo = match.params.id;
   const sketch = sketches[sketchNo];
 
-  const generate = () => {
-    const w = size;
-    const h = Math.floor(size / aspectRatio);
+  const w = size;
+  const h = Math.floor(size / aspectRatio);
 
+  const generate = () => {
     const ctx =
       previewRef.current &&
       (previewRef.current.getContext("2d") as CanvasRenderingContext2D);
@@ -59,8 +59,10 @@ export function Export({ match }: { match: any }) {
         onClick={generate}
         className="bg-teal-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-3 rounded mt-4"
       >
-        Generate {size}x{Math.floor(size / aspectRatio)}
+        Generate {w}x{h}
       </button>
+
+      <p>Size: {Math.floor((w * h) / 1000000)} MP</p>
 
       <canvas
         width={size}
