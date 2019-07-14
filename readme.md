@@ -67,8 +67,8 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [x] Fix tiling to more sensibly support different aspect ratios (i.e. adjust margins)
 - [x] More consistent text api
 - [x] Gradients: linear and radial (given up on svg, so can better cover canvas api!)
-- [ ] More randomness (support common probability distributions
-- [ ] Seeding for randomness, move into play, initialise
+- [x] More randomness (support common probability distributions
+- [x] Seeding for randomness, move into play, initialise
 - [ ] Scaling (don't plan to allow the canvas to scale, but will probably build some utilities to perform transformations on paths etc)
 - [x] More path classes rect, including subdivision operation on rect
 - [x] More path classes ellipse

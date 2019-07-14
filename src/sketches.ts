@@ -557,6 +557,56 @@ const gradients3 = (p: PlayCanvas) => {
   p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
 };
 
+const randomness1 = (p: PlayCanvas) => {
+  const { bottom } = p.meta;
+  p.forHorizontal(
+    {
+      n: 100,
+      margin: 0.1
+    },
+    ([x, y], [dX, dY]) => {
+      p.setFillGradient(
+        new LinearGradient({
+          from: [0, 0],
+          to: [0, bottom],
+          colours: [
+            [0, { h: 245, s: 80, l: 40 }],
+            [0.45, { h: 180, s: 80, l: 40 }],
+            [0.55, { h: 40, s: 80, l: 40 }],
+            [1, { h: 0, s: 80, l: 40 }]
+          ]
+        })
+      );
+
+      const v = p.gaussian();
+      p.fill(
+        new Rect({
+          x,
+          y: y + dY / 2,
+          w: dX,
+          h: (dY * v) / 5
+        })
+      );
+    }
+  );
+};
+
+const randomness2 = (p: PlayCanvas) => {
+  p.forTiling({ n: 50, margin: 0.1 }, (pt, delta) => {
+    const v = p.poisson(4);
+    p.times(v, n => {
+      p.setFillColour(40 - n * 20, 80, 50, 1 / n);
+      p.fill(
+        new Ellipse({
+          at: add(pt, scale(delta, 0.5)),
+          width: (n * delta[0]) / 5,
+          height: (n * delta[0]) / 5
+        })
+      );
+    });
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -582,6 +632,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: ellipses, name: "Ellipses Demo" },
   { sketch: gradients1, name: "Gradient Demo 1" },
   { sketch: gradients2, name: "Gradient Demo 2" },
-  { sketch: gradients3, name: "Gradient Demo 3" }
+  { sketch: gradients3, name: "Gradient Demo 3" },
+  { sketch: randomness1, name: "Gaussian" },
+  { sketch: randomness2, name: "Poisson" }
 ];
 export default sketches;

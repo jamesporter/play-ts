@@ -336,4 +336,23 @@ export default class PlayCanvas {
       y + magnitude * (this.rng.next() - 0.5)
     ];
   };
+
+  gaussian = (config?: { mean?: number; sd?: number }): number => {
+    const { mean = 0, sd = 1 } = config || {};
+    const a = this.rng.next();
+    const b = this.rng.next();
+    const n = Math.sqrt(-2.0 * Math.log(a)) * Math.cos(2.0 * Math.PI * b);
+    return mean + n * sd;
+  };
+
+  poisson = (lambda: number): number => {
+    const limit = Math.exp(-lambda);
+    let prod = this.rng.next();
+    let n = 0;
+    while (prod >= limit) {
+      n++;
+      prod *= this.rng.next();
+    }
+    return n;
+  };
 }
