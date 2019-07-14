@@ -59,16 +59,26 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 });
 ```
 
-## Plans
+## Plans (Last updated 14th July 2019)
 
-- Revise/clean up core play-canvas api
-- Look at supporting SVG too
-- Improve App to allow for saving at arbitrary sizes
-- Improve App/add show all sketches
-- More randomness (support common probability distributions)
-- Look into gradients
-- Scaling (don't plan to allow the canvas to scale, but will probably build some utilities to perform transformations on paths etc)
-- More path classes (cirlce/ellipse/rect?)
-- Add JSON 'canvas' for easy testing
-- ????
-- Figure out nice way to package/publish
+- [x] Improve App to allow for saving at arbitrary sizes
+- [x] Improve App/add show all sketches
+- [x] Text with nice api
+- [x] Fix tiling to more sensibly support different aspect ratios (i.e. adjust margins)
+- [ ] Gradients: linear and radial (given up on svg, so can better cover canvas api!)
+- [ ] More randomness (support common probability distributions
+- [ ] Seeding for randomness, move into play, initialise
+- [ ] Scaling (don't plan to allow the canvas to scale, but will probably build some utilities to perform transformations on paths etc)
+- [x] More path classes rect, including subdivision operation on rect
+- [ ] More path classes ellipse
+- [ ] Add JSON 'canvas' for easy testing
+- [ ] Revise/clean up core play-canvas api, drop some references to canvas as only going to support that now(!) etc
+- [ ] Publish something to code sandbox that people can try without having to download/install stuff
+- [ ] Documentation both in repo and on demo site
+- [ ] Figure out nice way to package/publish
+
+## Future (Not currently in scope)
+
+- [ ] better export e.g. common paper/dpi sizes, move existing related stuff to utility
+- [ ] 'Play'/time... be able to do dynamic redrawing i.e. requestAnimationFrame, redraw etc
+- [ ] Interactions(!)

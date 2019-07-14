@@ -10,10 +10,6 @@ export interface Textable {
   textIn(ctx: CanvasRenderingContext2D);
 }
 
-export interface SVGPathable {
-  svgPath: string;
-}
-
 export class SimplePath implements Traceable {
   private constructor(private points: Point2D[] = []) {}
 
@@ -77,7 +73,7 @@ type CurveConfig = {
   twist?: number;
 };
 
-export class Path implements Traceable, SVGPathable {
+export class Path implements Traceable {
   private currentPoint: Point2D;
   private edges: PathEdge[] = [];
 
@@ -162,10 +158,6 @@ export class Path implements Traceable, SVGPathable {
       }
     }
   };
-
-  get svgPath(): string {
-    return "TODO";
-  }
 }
 
 export class Arc implements Traceable {
