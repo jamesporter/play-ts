@@ -33,4 +33,37 @@ export class LinearGradient implements Gradientable {
   }
 }
 
-// export class RadialGradient implements Gradientable {}
+export class RadialGradient implements Gradientable {
+  constructor(
+    private config: {
+      start: Point2D;
+      end: Point2D;
+      rStart: number;
+      rEnd: number;
+      colours: [
+        number,
+        {
+          h: number;
+          s: number;
+          l: number;
+          a?: number;
+        }
+      ][];
+    }
+  ) {}
+
+  gradient(ctx: CanvasRenderingContext2D): CanvasGradient {
+    const {
+      start: [x1, y1],
+      end: [x2, y2],
+      rStart,
+      rEnd,
+      colours
+    } = this.config;
+    const lg = ctx.createRadialGradient(x1, y1, rStart, x2, y2, rEnd);
+    for (let [n, { h, s, l, a }] of colours) {
+      lg.addColorStop(n, hsla(h, s, l, a));
+    }
+    return lg;
+  }
+}

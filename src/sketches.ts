@@ -4,7 +4,7 @@ import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
 import vectors, { add, perturb, pointAlong, scale } from "./lib/vectors";
 import r, { samples, sample } from "./lib/randomness";
 import { perlin2 } from "./lib/noise";
-import { LinearGradient } from "./lib/gradient";
+import { LinearGradient, RadialGradient } from "./lib/gradient";
 
 const sketch = (pts: PlayCanvas) => {
   const { top, left, right, bottom } = pts.meta;
@@ -507,6 +507,59 @@ const gradients1 = (p: PlayCanvas) => {
   p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
 };
 
+const gradients2 = (p: PlayCanvas) => {
+  const { right, bottom, center } = p.meta;
+
+  p.setFillGradient(
+    new RadialGradient({
+      start: center,
+      end: [right, bottom],
+      rStart: 0.0,
+      rEnd: 2 * Math.max(bottom, right),
+      colours: [
+        [0, { h: 0, s: 80, l: 60 }],
+        [0.7, { h: 50, s: 80, l: 60 }],
+        [1.0, { h: 1000, s: 80, l: 60 }]
+      ]
+    })
+  );
+  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+};
+
+const gradients3 = (p: PlayCanvas) => {
+  const { right, bottom, center } = p.meta;
+  p.setFillGradient(
+    new LinearGradient({
+      from: [0, 0],
+      to: [0, bottom],
+      colours: [
+        [0, { h: 215, s: 80, l: 60 }],
+        [0.5, { h: 215, s: 80, l: 60 }],
+        [0.55, { h: 240, s: 80, l: 60 }],
+        [1.0, { h: 240, s: 80, l: 60 }]
+      ]
+    })
+  );
+  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+
+  p.setFillGradient(
+    new RadialGradient({
+      start: center,
+      end: center,
+      rStart: 0.0,
+      rEnd: 2 * bottom,
+      colours: [
+        [0, { h: 0, s: 80, l: 60 }],
+        [0.02, { h: 0, s: 80, l: 60 }],
+        [0.1, { h: 0, s: 80, l: 60, a: 0.3 }],
+        [0.15, { h: 0, s: 80, l: 60, a: 0.05 }],
+        [1.0, { h: 0, s: 80, l: 60, a: 0.03 }]
+      ]
+    })
+  );
+  p.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch, name: "Rainbow Drips" },
@@ -530,6 +583,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: circles, name: "Circles" },
   { sketch: circles2, name: "Bubbles" },
   { sketch: ellipses, name: "Ellipses Demo" },
-  { sketch: gradients1, name: "Gradient Demo 1" }
+  { sketch: gradients1, name: "Gradient Demo 1" },
+  { sketch: gradients2, name: "Gradient Demo 2" },
+  { sketch: gradients3, name: "Gradient Demo 3" }
 ];
 export default sketches;
