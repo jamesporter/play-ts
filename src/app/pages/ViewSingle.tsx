@@ -12,8 +12,11 @@ import { Link } from "react-router-dom";
 const INDEX_KEY = "play-ts.index";
 
 export default function ViewSingle({ match }: { match: any }) {
+  const parsedInt = parseInt(match.params.id);
   const idx = getNumber(INDEX_KEY);
-  const [sketchNo, setSketchNo] = useState(match.params.id || idx || 0);
+  const [sketchNo, setSketchNo] = useState(
+    Number.isNaN(parsedInt) ? idx || 0 : parsedInt
+  );
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
 
   return (
