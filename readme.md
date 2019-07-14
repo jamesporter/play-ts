@@ -69,7 +69,6 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [x] Gradients: linear and radial (given up on svg, so can better cover canvas api!)
 - [x] More randomness (support common probability distributions
 - [x] Seeding for randomness, move into play, initialise
-- [ ] Scaling (don't plan to allow the canvas to scale, but will probably build some utilities to perform transformations on paths etc)
 - [x] More path classes rect, including subdivision operation on rect
 - [x] More path classes ellipse
 - [x] Ability to set background
@@ -81,6 +80,7 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 
 ## Future (Not currently in scope)
 
+- [ ] Scaling: original plan was to _not_ allow the canvas to scale, but to build some utilities to perform transformations on paths etc; not sure if this is good idea, maybe better just to do something on top of cavnas approach, particularly as decided to drop svg now?
 - [ ] better export e.g. common paper/dpi sizes, move existing related stuff to utility
 - [ ] 'Play'/time... be able to do dynamic redrawing i.e. requestAnimationFrame, redraw etc
 - [ ] Interactions(!)
