@@ -350,12 +350,11 @@ const helloWorld = (p: PlayCanvas) => {
     n => {
       p.setStrokeColour(n * aspectRatio * 50, 20, 20, 0.75);
       for (let align of ["right", "center", "left"] as const) {
-        p.text(
+        p.drawText(
           {
             at: [n * aspectRatio, n],
             size: 0.2,
             sizing: "fixed",
-            kind: "stroke",
             align,
             weight: "600"
           },
@@ -364,12 +363,11 @@ const helloWorld = (p: PlayCanvas) => {
       }
       p.setFillColour(n * aspectRatio * 50, 80, 50, 0.9);
 
-      p.text(
+      p.fillText(
         {
           at: [n * aspectRatio, n],
           size: 0.2,
           sizing: "fixed",
-          kind: "fill",
           align: "center",
           weight: "600"
         },
@@ -383,10 +381,9 @@ const circleText = (p: PlayCanvas) => {
   p.aroundCircle({ radius: 0.25, n: 12 }, ([x, y], i) => {
     p.times(5, n => {
       p.setFillColour(i * 5 + n, 75, 35, 0.2 * n);
-      p.text(
+      p.fillText(
         {
           at: perturb([x, y]),
-          kind: "fill",
           size: 0.05,
           align: "left"
         },

@@ -388,7 +388,8 @@ export enum Font {
   AvantGarde = "Avant Garde",
   System = "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
 }
-export type TextConfig = {
+
+export type TextConfigWithKind = {
   sizing?: TextSizing;
   align?: TextHorizontalAlign;
   size: number;
@@ -400,13 +401,15 @@ export type TextConfig = {
   variant?: FontVariant;
 };
 
+export type TextConfig = Omit<TextConfigWithKind, "kind">;
+
 export class Text implements Textable {
   /**
    * Text is always vertically aligned
    * By default is fixed (specified vertcial font size) but can choose fitted, then will fit horizontally to size
    * @param config Configuration
    */
-  constructor(private config: TextConfig, private text: string) {}
+  constructor(private config: TextConfigWithKind, private text: string) {}
 
   textIn = (ctx: CanvasRenderingContext2D) => {
     const {

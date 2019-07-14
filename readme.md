@@ -65,6 +65,7 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [x] Improve App/add show all sketches
 - [x] Text with nice api
 - [x] Fix tiling to more sensibly support different aspect ratios (i.e. adjust margins)
+- [x] More consistent text api
 - [ ] Gradients: linear and radial (given up on svg, so can better cover canvas api!)
 - [ ] More randomness (support common probability distributions
 - [ ] Seeding for randomness, move into play, initialise

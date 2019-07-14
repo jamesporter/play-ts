@@ -72,9 +72,12 @@ export default class PlayCanvas {
     this.ctx.fill();
   }
 
-  // pretty inconsistent, might revise above??
-  text(config: TextConfig, text: string) {
-    new Text(config, text).textIn(this.ctx);
+  drawText(config: TextConfig, text: string) {
+    new Text({ ...config, kind: "stroke" }, text).textIn(this.ctx);
+  }
+
+  fillText(config: TextConfig, text: string) {
+    new Text({ ...config, kind: "fill" }, text).textIn(this.ctx);
   }
 
   forTiling = (
