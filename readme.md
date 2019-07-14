@@ -70,7 +70,8 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [ ] Seeding for randomness, move into play, initialise
 - [ ] Scaling (don't plan to allow the canvas to scale, but will probably build some utilities to perform transformations on paths etc)
 - [x] More path classes rect, including subdivision operation on rect
-- [ ] More path classes ellipse
+- [x] More path classes ellipse
+- [x] Ability to set background
 - [ ] Add JSON 'canvas' for easy testing
 - [ ] Revise/clean up core play-canvas api, drop some references to canvas as only going to support that now(!) etc
 - [ ] Publish something to code sandbox that people can try without having to download/install stuff

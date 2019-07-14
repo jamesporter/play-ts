@@ -1,6 +1,6 @@
 import { Size, Point2D, Vector2D } from "../types/play";
 import { hsla } from "./colours";
-import { Traceable, TextConfig, Text } from "./path";
+import { Traceable, TextConfig, Text, Rect } from "./path";
 import { shuffle } from "./collectionOps";
 
 export default class PlayCanvas {
@@ -38,12 +38,18 @@ export default class PlayCanvas {
     this.ctx.lineCap = cap;
   }
 
-  setFillColour(h: number, s: number, l: number, a: number = 1) {
+  background(h: number, s: number, l: number, a: number = 1) {
     this.ctx.fillStyle = hsla(h, s, l, a);
+    const { right, bottom } = this.meta;
+    this.fill(new Rect({ x: 0, y: 0, w: right, h: bottom }));
   }
 
   setStrokeColour(h: number, s: number, l: number, a: number = 1) {
     this.ctx.strokeStyle = hsla(h, s, l, a);
+  }
+
+  setFillColour(h: number, s: number, l: number, a: number = 1) {
+    this.ctx.fillStyle = hsla(h, s, l, a);
   }
 
   // probably reimplement with other thing... want to minimise actual number of drawing ops

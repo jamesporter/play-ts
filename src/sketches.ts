@@ -431,18 +431,66 @@ const doodles = (p: PlayCanvas) => {
   });
 };
 
-const ellipses = (p: PlayCanvas) => {
+const circles = (p: PlayCanvas) => {
   p.forTiling({ n: 10, type: "square", margin: 0.1 }, (pt, delta) => {
     p.setFillColour(pt[0] * 100, 80, 50);
+    const r = Math.sqrt(1.2 * pt[0] * pt[1]);
     p.fill(
       new Ellipse({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        width: delta[1] * (pt[0] + 0.2),
-        height: delta[1] * (pt[1] + 0.2)
+        width: delta[1] * r,
+        height: delta[1] * r
       })
     );
   });
+};
+
+const circles2 = (p: PlayCanvas) => {
+  p.withRandomOrder(
+    p.forTiling,
+    { n: 10, type: "square", margin: 0.1 },
+    (pt, delta) => {
+      p.setFillColour(150 + pt[0] * 50, 80, 50, 0.9);
+      p.setStrokeColour(150, 40, 20);
+      p.lineWidth = 0.005;
+      const r = Math.sqrt(1.2 * pt[0] * pt[1]) * sample([0.7, 1.1, 1.3]);
+      const e = new Ellipse({
+        at: add(pt, scale(delta, 0.5)),
+        align: "center",
+        width: delta[1] * r * 2,
+        height: delta[1] * r * 2
+      });
+
+      p.fill(e);
+      p.draw(e);
+    }
+  );
+};
+
+const ellipses = (p: PlayCanvas) => {
+  p.background(0, 0, 100);
+  p.withRandomOrder(
+    p.forTiling,
+    { n: 15, type: "square", margin: 0.1 },
+    (pt, delta) => {
+      const [x, y] = pt;
+      p.setFillColour(150 + perlin2(x * 10, 1) * 50, 80, 50, 0.9);
+      p.setStrokeColour(150, 40, 100);
+      p.lineWidth = 0.005;
+      const r = Math.sqrt(
+        1.8 * (0.1 + Math.abs(x - 0.5)) * (0.1 + Math.abs(y - 0.5))
+      );
+      const e = new Ellipse({
+        at: add(pt, scale(delta, 0.5)),
+        align: "center",
+        width: delta[1] * r * 3,
+        height: delta[1] * 1.2
+      });
+      p.fill(e);
+      p.draw(e);
+    }
+  );
 };
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
@@ -465,6 +513,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: circleText, name: "Circle Labels" },
   { sketch: scriptLike, name: "Script-ish" },
   { sketch: doodles, name: "Doodles" },
-  { sketch: ellipses, name: "Ellipses" }
+  { sketch: circles, name: "Circles" },
+  { sketch: circles2, name: "Bubbles" },
+  { sketch: ellipses, name: "Ellipses Demo" }
 ];
 export default sketches;
