@@ -16,7 +16,21 @@ export function tripleWise<T>(items: T[]): [T, T, T][] {
   return res;
 }
 
+export function zip2<T, S>(items: T[], other: S[]): [T, S][] {
+  const res: [T, S][] = [];
+  for (let i = 0; i < items.length && i < other.length; i++) {
+    res.push([items[i], other[i]]);
+  }
+  return res;
+}
+
+export function sum(numbers: number[]): number {
+  return numbers.reduce((a, b) => a + b, 0);
+}
+
 export default {
   pairWise,
-  tripleWise
+  tripleWise,
+  zip2,
+  sum
 };

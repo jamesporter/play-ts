@@ -132,7 +132,7 @@ export default class PlayCanvas {
       n: number;
       margin?: number;
     },
-    callback: (point: Point2D, delta: Vector2D) => void
+    callback: (point: Point2D, delta: Vector2D, i: number) => void
   ) => {
     const { n, margin = 0 } = config;
 
@@ -143,7 +143,7 @@ export default class PlayCanvas {
     const dX = (eX - sX) / n;
 
     for (let i = 0; i < n; i++) {
-      callback([sX + i * dX, sY], [dX, dY]);
+      callback([sX + i * dX, sY], [dX, dY], i);
     }
   };
 
@@ -152,7 +152,7 @@ export default class PlayCanvas {
       n: number;
       margin?: number;
     },
-    callback: (point: Point2D, delta: Vector2D) => void
+    callback: (point: Point2D, delta: Vector2D, i: number) => void
   ) => {
     const { n, margin = 0 } = config;
 
@@ -163,7 +163,7 @@ export default class PlayCanvas {
     const dY = (eY - sY) / n;
 
     for (let i = 0; i < n; i++) {
-      callback([sX, sY + i * dY], [dX, dY]);
+      callback([sX, sY + i * dY], [dX, dY], i);
     }
   };
 

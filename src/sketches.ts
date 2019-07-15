@@ -1,9 +1,10 @@
-import { Play, Point2D } from "./types/play";
+import { Point2D } from "./types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc, Rect, Text, Ellipse } from "./lib/path";
-import vectors, { add, pointAlong, scale } from "./lib/vectors";
+import { Path, SimplePath, Arc, Rect, Ellipse } from "./lib/path";
+import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
+import { zip2, sum } from "./lib/collectionOps";
 
 const sketch = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
@@ -333,7 +334,16 @@ const rectanglesDivided = (p: PlayCanvas) => {
   new Rect({ at: [0.1, 0.1], w: right - 0.2, h: bottom - 0.2 })
     .split({ orientation: "vertical", split: [1, 1.5, 2, 2.5] })
     .forEach((r, i) => {
-      p.setFillColour(i * 10, 80, 40);
+      p.setFillGradient(
+        new LinearGradient({
+          from: r.at,
+          to: [r.at[0], r.at[1] + r.h],
+          colours: [
+            [0, { h: i * 10, s: 90, l: 60 }],
+            [1, { h: i * 10, s: 60, l: 40 }]
+          ]
+        })
+      );
       p.fill(r);
       p.draw(r);
     });
@@ -685,6 +695,34 @@ const randomness1 = (p: PlayCanvas) => {
   );
 };
 
+const randomness1b = (p: PlayCanvas) => {
+  p.times(25, n => {
+    p.setFillColour(175 + n, 80, 50, 0.4);
+    const values = p
+      .build(p.times, 50, () => p.gaussian())
+      .sort((a, b) => (a > b ? -1 : 1));
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min;
+    p.forHorizontal(
+      {
+        n: values.length,
+        margin: 0.1
+      },
+      ([x, y], [dX, dY], i) => {
+        const h = dY * ((values[i] - min) / range);
+        p.fill(
+          new Rect({
+            at: [x + n * 0.04 * dX, y + dY / 2 - h / 2],
+            w: dX * 0.2,
+            h
+          })
+        );
+      }
+    );
+  });
+};
+
 const randomness2 = (p: PlayCanvas) => {
   p.forTiling({ n: 50, margin: 0.1 }, (pt, delta) => {
     const v = p.poisson(4);
@@ -698,6 +736,59 @@ const randomness2 = (p: PlayCanvas) => {
         })
       );
     });
+  });
+};
+
+const sunsetThroughBlinds = (p: PlayCanvas) => {
+  const { right, bottom, center } = p.meta;
+
+  p.setFillGradient(
+    new RadialGradient({
+      start: add(center, [0, 0.2]),
+      end: add(center, [0, 0.4]),
+      rStart: 0.0,
+      rEnd: 2 * bottom * right,
+      colours: [
+        [0, { h: 0, s: 80, l: 60 }],
+        [0.6, { h: 215, s: 80, l: 60 }],
+        [1.0, { h: 230, s: 80, l: 60 }]
+      ]
+    })
+  );
+  p.fill(new Rect({ at: [0, 0], w: right, h: bottom }));
+
+  p.forVertical({ n: 15 }, (pt, [w, h]) => {
+    p.setFillGradient(
+      new LinearGradient({
+        from: pt,
+        to: add(pt, [0, h]),
+        colours: [
+          [0, { h: 40, s: 40, l: 90, a: 0.9 }],
+          [0.5, { h: 40, s: 40, l: 50, a: 0.8 }],
+          [0.55, { h: 40, s: 40, l: 50, a: 0.1 }],
+          [1, { h: 40, s: 40, l: 90, a: 0.1 }]
+        ]
+      })
+    );
+    p.fill(new Rect({ at: pt, w, h }));
+  });
+};
+
+const curves = (p: PlayCanvas) => {
+  p.background(215, 30, 20);
+  p.forHorizontal({ n: 75 }, ([x, y], [dX, dY]) => {
+    const vPts = [0, 0, 0, 0].map(_ => p.poisson(5) + 2);
+    const total = sum(vPts);
+    let nVPts = vPts.map(p => (dY * p) / total);
+    nVPts = [y - 0.1].concat(
+      [3, 2, 1, 0].map(i => y + 1.2 * sum(nVPts.slice(i)))
+    );
+    const nHPts = nVPts.map(p => x + dX * 12 * perlin2(10 + p * 60, x * 20));
+    const points = zip2(nHPts, nVPts);
+    const path = SimplePath.withPoints(points);
+    path.chaiken(4);
+    p.setStrokeColour(p.uniformRandomInt({ from: -40, to: 60 }), 90, 60);
+    p.draw(path);
   });
 };
 
@@ -729,7 +820,10 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: gradients3, name: "Gradient Demo 3" },
   { sketch: gradients4, name: "Gradient Demo 4" },
   { sketch: gradients5, name: "Gradient Demo 5" },
+  { sketch: sunsetThroughBlinds, name: "Gradient Demo 6" },
   { sketch: randomness1, name: "Gaussian" },
-  { sketch: randomness2, name: "Poisson" }
+  { sketch: randomness1b, name: "Gaussian 2" },
+  { sketch: randomness2, name: "Poisson" },
+  { sketch: curves, name: "Curves" }
 ];
 export default sketches;
