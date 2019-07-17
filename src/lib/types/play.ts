@@ -1,4 +1,4 @@
-import PlayCanvas from "../lib/play-canvas";
+import PlayCanvas from "../play-canvas";
 
 export type Play = {
   context: CanvasRenderingContext2D;

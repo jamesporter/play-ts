@@ -8,7 +8,7 @@ import {
 import SelectFromChoice from "../components/SelectFromChoice";
 import sketches from "../../sketches";
 import PlayCanvas from "../../lib/play-canvas";
-import { getNumber } from "../../lib/util";
+import { getNumber } from "../util";
 import { SEED_KEY } from "./ViewSingle";
 
 export function Export({ match }: { match: any }) {

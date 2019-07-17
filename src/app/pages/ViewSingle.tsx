@@ -4,7 +4,7 @@ import SelectFromChoice from "./../components/SelectFromChoice";
 import SelectFromOptions from "./../components/SelectFromOptions";
 import { aspectRatioChoices, defaultAspectRatio } from "./../config";
 import sketches from "../../sketches";
-import { getNumber, setNumber, getBoolean, setBoolean } from "../../lib/util";
+import { getNumber, setNumber } from "../util";
 import Spacer from "../components/Spacer";
 import Flex from "../components/Flex";
 import { Link } from "react-router-dom";

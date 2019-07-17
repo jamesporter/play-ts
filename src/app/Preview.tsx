@@ -1,5 +1,5 @@
 import React, { useRef, useLayoutEffect } from "react";
-import { Sketch } from "../types/play";
+import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
 import { Link } from "react-router-dom";
 

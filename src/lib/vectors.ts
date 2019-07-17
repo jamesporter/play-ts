@@ -1,4 +1,4 @@
-import { Point2D } from "../types/play";
+import { Point2D } from "./types/play";
 
 export const add = ([x1, y1]: Point2D, [x2, y2]: Point2D): Point2D => [
   x1 + x2,

@@ -1,4 +1,4 @@
-import { Point2D } from "./types/play";
+import { Point2D } from "./lib/types/play";
 import PlayCanvas from "./lib/play-canvas";
 import { Path, SimplePath, Arc, Rect, Ellipse } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
