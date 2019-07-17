@@ -21,15 +21,16 @@ Opionated, agile (code is easy to change) framework for algorithmic art. See my 
 
 ## Early
 
-Not even packaged nicely as a library yet, but as simple demo using Parcel/React to give UI. [Live Demo](https://focused-agnesi-2a3bda.netlify.com). If you want to play, clone this repo and start 🍽️ by
+Probably best to clone this project to try out as add React powered GUI around stuff but first see: [Live Demo](https://focused-agnesi-2a3bda.netlify.com).
+
+On CodeSandbox, quickly get started: [Simple editable sketch](https://codesandbox.io/embed/festive-boyd-db9n3)
+
+On [NPM](https://www.npmjs.com/package/typeplates) (expect breaking changes!) Install with `npm i typeplates` or `yarn add typeplates`.
+
+If you want to play, clone this repo and start by
 
 ```
 yarn
-```
-
-to get dependencies, then:
-
-```
 yarn start
 ```
 
@@ -59,7 +60,7 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 });
 ```
 
-## Plans (Last updated 14th July 2019)
+## Plans (Last updated 17th July 2019)
 
 - [x] Improve App to allow for saving at arbitrary sizes
 - [x] Improve App/add show all sketches
@@ -73,9 +74,9 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [x] More path classes ellipse
 - [x] Ability to set background
 - [x] Revise/clean up core play-canvas api, drop some references to canvas as only going to support that now(!) etc
-- [ ] Publish something to code sandbox that people can try without having to download/install stuff
+- [x] Publish something to code sandbox that people can try without having to download/install stuff
 - [ ] Documentation both in repo and on demo site
-- [ ] Figure out nice way to package/publish
+- [x] Figure out nice way to package/publish
 
 ## Future (Not currently in scope)
 
