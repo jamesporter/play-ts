@@ -2,5 +2,4 @@ node_modules
 .cache
 dist
 
-package/**/*.js
-package/**/*.d.ts
+package
