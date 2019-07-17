@@ -4,6 +4,7 @@ import SelectFromChoice from "./../components/SelectFromChoice";
 import SelectFromOptions from "./../components/SelectFromOptions";
 import { aspectRatioChoices, defaultAspectRatio } from "./../config";
 import sketches from "../../sketches";
+import source from "../examples.json";
 import { getNumber, setNumber } from "../util";
 import Spacer from "../components/Spacer";
 import Flex from "../components/Flex";
@@ -18,6 +19,7 @@ export default function ViewSingle({ match }: { match: any }) {
   const [sketchNo, setSketchNo] = useState(
     Number.isNaN(parsedInt) ? idx || 0 : parsedInt
   );
+  const [showSource, setShowSource] = useState(false);
   const goToPrev = () => {
     let nextNo = sketchNo - 1;
     if (nextNo < 0) nextNo = sketches.length - 1;
@@ -40,12 +42,17 @@ export default function ViewSingle({ match }: { match: any }) {
 
   return (
     <>
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-row">
         <Canvas
           aspectRatio={aspectRatio}
           sketch={sketches[sketchNo].sketch}
           seed={seed}
         />
+        {showSource && (
+          <pre className="shadow-md bg-gray-700 text-gray-300 p-8 overflow-scroll">
+            {source[sketches[sketchNo].name]}
+          </pre>
+        )}
       </div>
 
       <div className="bg-gray-300 px-8 py-4 flex flex-row">
@@ -94,6 +101,18 @@ export default function ViewSingle({ match }: { match: any }) {
         />
 
         <Flex />
+
+        <button
+          className={`${
+            showSource ? "bg-teal-600" : "bg-gray-500"
+          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
+          onClick={() => setShowSource(!showSource)}
+          title="Toggle Source Code"
+        >
+          Source Code
+        </button>
+
+        <Spacer />
 
         <Link
           to={`/export/${sketchNo}`}

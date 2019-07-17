@@ -6,7 +6,7 @@ import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
 
-const sketch = (p: PlayCanvas) => {
+const rainbow = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
   p.withRandomOrder(
     p.forTiling,
@@ -794,7 +794,7 @@ const curves = (p: PlayCanvas) => {
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
-  { sketch, name: "Rainbow Drips" },
+  { sketch: rainbow, name: "Rainbow Drips" },
   { sketch: horizontal, name: "Horizontal" },
   { sketch: vertical, name: "Vertical" },
   { sketch: curves1, name: "Curves Demo" },
