@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect } from "react";
 import useDimensions from "react-use-dimensions";
-import { Sketch } from "../types/play";
+import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
 
 type CanvasProps = {

@@ -1,4 +1,4 @@
-import { Point2D } from "../types/play";
+import { Point2D } from "./types/play";
 import v from "./vectors";
 import { tripleWise } from "./collectionOps";
 
