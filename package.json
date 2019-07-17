@@ -26,6 +26,7 @@
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html --public-url ./",
-    "test": "jest"
+    "test": "jest",
+    "build:package": "tsc src/lib/play.ts --outDir ./package --lib dom,esnext --target ES2016 --moduleResolution Node -d"
   }
 }
