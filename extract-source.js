@@ -33,7 +33,7 @@ Object.keys(names).forEach(name => {
   exampleScripts[names[name]] = examples[name];
 });
 
-console.log(exampleScripts);
+// console.log(exampleScripts);
 
 fs.writeFileSync(
   path.join("src", "app", "examples.json"),

@@ -28,6 +28,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html --public-url ./",
     "test": "jest",
-    "build:package": "node pre-publish && yarn tsc ./src/lib/index.ts --outDir ./package --lib dom,esnext --target ES2016 --moduleResolution Node -d"
+    "build:package": "node pre-publish && yarn tsc ./src/lib/index.ts --outDir ./package --lib dom,esnext --target ES2016 --moduleResolution Node -d",
+    "build:source": "node extract-source.js"
   }
 }
