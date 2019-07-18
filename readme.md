@@ -169,7 +169,11 @@ fillText(config: TextConfig, text: string): void;
 
 ### Drawable
 
-The core drawing things currently available are, include, for basic paths (a series of points):
+The first (attempt at being a) innovative area of Typeplates is in the drawing APIs. Instead of awkward, low level HTML Canvas APIs we have nicer, more declarative, more agile and more human APIs.
+
+Curves in particular should make more sense. And there are convenience operations on sets of points (smoothing with the Chaiken algorithm) and Rectanges (splitting into smaller rectangles).
+
+The core drawing objects are listed below. For basic paths (a series of points):
 
 ```typescript
 SimplePath implements Traceable
@@ -199,9 +203,19 @@ For circles and ellipses:
 Ellipse implements Traceable
 ```
 
+See the `implements Traceable` bit, yeah, you can do that for custom drawing. It exposes the low level HTML Canvas operations in a simple way. You should assume it will get called in this way (or equivalent for filling) and `ctx` is a 2D Canvas context:
+
+```typescript
+  draw(traceable: Traceable) {
+    this.ctx.beginPath();
+    traceable.traceIn(this.ctx);
+    this.ctx.stroke();
+  }
+```
+
 ### Control Flow
 
-One of the two innovative areas of Typeplates is in bringing into the framework control flow relevant to drawing. We can easily iterate across the canvas, add a margin and so without writing boilerplate. We can even compose these with operations to build data or randomise the order.
+The second innovative area of Typeplates is in bringing into the framework control flow relevant to drawing. We can easily iterate across the canvas, add a margin and so without writing boilerplate. We can even compose these with operations to build data or randomise the order.
 
 2D tiling across the canvas. The type optional parameter allows for square tiles (with adjusted margin) or proportionate tiling.
 
