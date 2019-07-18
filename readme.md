@@ -58,16 +58,13 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 });
 ```
 
-## Guide
-
-Assuming you've set up a way of working with Typeplates in [Getting Started](#Get-Started), let's draw something.
-
 ## Reference
 
-[Metadata](#Metadata)
-[Drawing](#Drawing)
-[Control Flow](#Control-Flow)
-[Randomness](#Randomness)
+- [Metadata](#Metadata)
+- [Drawing](#Drawing)
+- [Drawable](#Drawable)
+- [Control Flow](#Control-Flow)
+- [Randomness](#Randomness)
 
 ### Metadata
 
@@ -164,6 +161,38 @@ Solid text.
 
 ```typescript
 fillText(config: TextConfig, text: string): void;
+```
+
+### Drawable
+
+The core drawing things currently available are, include, for basic paths (a series of points):
+
+```typescript
+SimplePath implements Traceable
+```
+
+For complex paths (with curves):
+
+```typescript
+Path implements Traceable
+```
+
+For arcs (partial circles):
+
+```typescript
+Arc implements Traceable
+```
+
+For rectangles:
+
+```typescript
+Rect implements Traceable
+```
+
+For circles and ellipses:
+
+```typescript
+Ellipse implements Traceable
 ```
 
 ### Control Flow
