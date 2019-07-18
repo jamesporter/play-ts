@@ -55,12 +55,12 @@ export default function ViewSingle({ match }: { match: any }) {
               backgroundColor: "hsla(218,17%,20%,0.9)"
             }}
           >
-            <div className="text-gray-100 px-8 pt-8 flex flex-row justify-between">
-              <h2 className="text-gray-100 px-8 pt-8 font-bold text-xl">
+            <div className="text-gray-100 px-8 pt-8 flex flex-row justify-between items-center">
+              <h2 className="text-gray-100 font-bold text-xl">
                 {sketches[sketchNo].name}
               </h2>
               <button
-                className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
+                className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded`}
                 onClick={() => setShowSource(!showSource)}
                 title="Toggle Source Code"
               >
@@ -124,7 +124,7 @@ export default function ViewSingle({ match }: { match: any }) {
         <button
           className={`${
             showSource ? "bg-teal-700" : "bg-gray-500"
-          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2 hidden md:flex`}
+          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2 hidden md:flex items-center`}
           onClick={() => setShowSource(!showSource)}
           title="Toggle Source Code"
         >
