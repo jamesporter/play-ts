@@ -42,16 +42,35 @@ export default function ViewSingle({ match }: { match: any }) {
 
   return (
     <>
-      <div className="flex-1 flex flex-row">
+      <div className="flex-1 flex flex-row items-stretch">
         <Canvas
           aspectRatio={aspectRatio}
           sketch={sketches[sketchNo].sketch}
           seed={seed}
         />
         {showSource && (
-          <pre className="shadow-md bg-gray-700 text-gray-300 p-8 overflow-scroll">
-            {source[sketches[sketchNo].name]}
-          </pre>
+          <div
+            className="fixed shadow-md bg-gray-700 overflow-scroll inset-y-0 right-0"
+            style={{
+              backgroundColor: "hsla(218,17%,20%,0.9)"
+            }}
+          >
+            <div className="text-gray-100 px-8 pt-8 flex flex-row justify-between">
+              <h2 className="text-gray-100 px-8 pt-8 font-bold text-xl">
+                {sketches[sketchNo].name}
+              </h2>
+              <button
+                className={`bg-gray-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
+                onClick={() => setShowSource(!showSource)}
+                title="Toggle Source Code"
+              >
+                Close
+              </button>
+            </div>
+            <pre className="text-gray-300 p-8">
+              {source[sketches[sketchNo].name]}
+            </pre>
+          </div>
         )}
       </div>
 
@@ -104,8 +123,8 @@ export default function ViewSingle({ match }: { match: any }) {
 
         <button
           className={`${
-            showSource ? "bg-teal-600" : "bg-gray-500"
-          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2`}
+            showSource ? "bg-teal-700" : "bg-gray-500"
+          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2 hidden md:flex`}
           onClick={() => setShowSource(!showSource)}
           title="Toggle Source Code"
         >
@@ -116,7 +135,7 @@ export default function ViewSingle({ match }: { match: any }) {
 
         <Link
           to={`/export/${sketchNo}`}
-          className="bg-teal-500 hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-3 rounded ml-2"
+          className="bg-teal-500 hover:bg-teal-700 focus:outline-none focus:shadow-outline px-2 py-3 rounded ml-2"
         >
           Export
         </Link>
