@@ -101,13 +101,13 @@ lineStyle: {
 };
 ```
 
-Fill the background.
+Fill the background. Colour is always via hsl(a). No more ##RRGGBB that is for computers not humans.
 
 ```typescript
 background(h: number, s: number, l: number, a?: number): void;
 ```
 
-Fill the background with a gradient (either linear or radial).
+Fill the background with a gradient (either linear or radial). See LinearGradient and RadialGradient which provide nice ways to specify the gradients.
 
 ```typescript
 backgroundGradient(gradient: Gradientable): void;
