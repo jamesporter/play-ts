@@ -58,6 +58,8 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 });
 ```
 
+![An example](samples/1.png)
+
 ## Reference
 
 - [Metadata](#Metadata)
@@ -65,6 +67,8 @@ p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
 - [Drawable](#Drawable)
 - [Control Flow](#Control-Flow)
 - [Randomness](#Randomness)
+
+![An example](samples/2.png)
 
 ### Metadata
 
@@ -360,6 +364,8 @@ A Poisson pseudo-random number.
 poisson: (lambda: number) => number;
 ```
 
+![An example](samples/3.png)
+
 ## Phase 1 (done)
 
 - [x] Improve App to allow for saving at arbitrary sizes
@@ -377,6 +383,8 @@ poisson: (lambda: number) => number;
 - [x] Publish something to code sandbox that people can try without having to download/install stuff
 - [x] Documentation
 - [x] Figure out nice way to package/publish
+
+![An example](samples/4.png)
 
 ## Phase 2
 
