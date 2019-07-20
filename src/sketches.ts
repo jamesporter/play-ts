@@ -819,10 +819,11 @@ const transforms2 = (p: PlayCanvas) => {
 
 const transforms3 = (p: PlayCanvas) => {
   const { bottom: h } = p.meta;
+  const a = Math.sin(p.t);
   p.forHorizontal({ n: 20, margin: 0.3 }, ([x, y], [dX, dY]) => {
     p.range({ from: 0, to: 2 * Math.PI, n: 12 }, n =>
       p.withTranslation([x + dX / 2, (h * n) / 6 + dY / 6], () => {
-        p.withRotation(x - n, () => {
+        p.withRotation(x - n + a, () => {
           p.setFillColour(360 - n * 20, 90, 30, 0.5);
           p.fill(new Rect({ at: [-dX / 2, -dY / 2], w: dX / 4, h: 2 * dY }));
         });
