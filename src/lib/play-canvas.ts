@@ -285,6 +285,58 @@ export default class PlayCanvas {
     };
   }
 
+  // Transforms
+
+  private pushState() {
+    this.ctx.save();
+  }
+
+  private popState() {
+    this.ctx.restore();
+  }
+
+  withRotation = (angle: number, callback: () => void) => {
+    this.pushState();
+    this.ctx.rotate(angle);
+    callback();
+    this.popState();
+  };
+
+  withScale = (config: { x: number; y: number }, callback: () => void) => {
+    this.pushState();
+    this.ctx.scale(config.x, config.y);
+    callback();
+    this.popState();
+  };
+
+  withTranslation = (
+    config: { x: number; y: number },
+    callback: () => void
+  ) => {
+    this.pushState();
+    this.ctx.translate(config.x, config.y);
+    callback();
+    this.popState();
+  };
+
+  withTransform = (
+    config: {
+      hScale: number;
+      hskew: number;
+      vSkew: number;
+      vScaling: number;
+      dX: number;
+      dY: number;
+    },
+    callback: () => void
+  ) => {
+    this.pushState();
+    const { hScale, hskew, vSkew, vScaling, dX, dY } = config;
+    this.ctx.transform(hScale, hskew, vSkew, vScaling, dX, dY);
+    callback();
+    this.popState();
+  };
+
   // Randomness
 
   random = (): number => {
