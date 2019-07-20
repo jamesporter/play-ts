@@ -62,21 +62,10 @@ const vertical = (p: PlayCanvas) => {
 const tiling = (p: PlayCanvas) => {
   p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
     p.lineStyle = { cap: "round" };
+    p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
     p.proportionately([
-      [
-        1,
-        () => {
-          p.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
-          p.drawLine([x, y], [x + dX, y + dY]);
-        }
-      ],
-      [
-        2,
-        () => {
-          p.setStrokeColour(120 + x * 120, 90 - 20 * y, 40);
-          p.drawLine([x + dX, y], [x, y + dY]);
-        }
-      ]
+      [1, () => p.drawLine([x, y], [x + dX, y + dY])],
+      [2, () => p.drawLine([x + dX, y], [x, y + dY])]
     ]);
   });
 };

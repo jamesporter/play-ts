@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Canvas from "./../Canvas";
 import SelectFromChoice from "./../components/SelectFromChoice";
 import SelectFromOptions from "./../components/SelectFromOptions";
@@ -8,28 +8,30 @@ import source from "../examples.json";
 import { getNumber, setNumber } from "../util";
 import Spacer from "../components/Spacer";
 import Flex from "../components/Flex";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 export const INDEX_KEY = "play-ts.index";
 export const SEED_KEY = "play-ts.index";
 
-export default function ViewSingle({ match }: { match: any }) {
+function ViewSingle({ match, history }: { match: any; history: any }) {
   const parsedInt = parseInt(match.params.id);
   const idx = getNumber(INDEX_KEY);
-  const [sketchNo, setSketchNo] = useState(
-    Number.isNaN(parsedInt) ? idx || 0 : parsedInt
-  );
+  const sketchNo = Number.isNaN(parsedInt) ? idx || 0 : parsedInt;
   const [showSource, setShowSource] = useState(false);
   const [isPlaying, setPlaying] = useState(true);
   const goToPrev = () => {
     let nextNo = sketchNo - 1;
     if (nextNo < 0) nextNo = sketches.length - 1;
-    setSketchNo(nextNo);
+    history.push({
+      pathname: `/view/${nextNo}`
+    });
   };
   const goToNext = () => {
     let nextNo = sketchNo + 1;
     if (nextNo >= sketches.length) nextNo = 0;
-    setSketchNo(nextNo);
+    history.push({
+      pathname: `/view/${nextNo}`
+    });
   };
 
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
@@ -90,7 +92,10 @@ export default function ViewSingle({ match }: { match: any }) {
           onSelect={name => {
             const idx = sketches.findIndex(s => s.name === name);
             setNumber(INDEX_KEY, idx);
-            if (idx !== null) setSketchNo(idx);
+            if (idx !== null)
+              history.push({
+                pathname: `/view/${idx}`
+              });
           }}
           selection={sketches[sketchNo].name}
         />
@@ -157,3 +162,5 @@ export default function ViewSingle({ match }: { match: any }) {
     </>
   );
 }
+
+export default withRouter(ViewSingle);
