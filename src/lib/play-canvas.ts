@@ -291,6 +291,15 @@ export default class PlayCanvas {
     this.ctx.restore();
   }
 
+  withClipping = (clipArea: Traceable, callback: () => void) => {
+    this.pushState();
+    this.ctx.beginPath();
+    clipArea.traceIn(this.ctx);
+    this.ctx.clip();
+    callback();
+    this.popState();
+  };
+
   /**
    * Within a context all style/colour changes are local.
    */
