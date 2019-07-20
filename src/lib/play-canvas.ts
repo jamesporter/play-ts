@@ -278,19 +278,77 @@ export default class PlayCanvas {
     );
   };
 
-  get info() {
-    return {
-      stroke: this.ctx.strokeStyle,
-      fill: this.ctx.fillStyle
-    };
+  // Transforms and state
+
+  private pushState() {
+    this.ctx.save();
   }
+
+  private popState() {
+    this.ctx.restore();
+  }
+
+  /**
+   * Within a context all style/colour changes are local.
+   */
+  withContext = (callback: () => void) => {
+    this.pushState();
+    callback();
+    this.popState();
+  };
+
+  withRotation = (angle: number, callback: () => void) => {
+    this.pushState();
+    this.ctx.rotate(angle);
+    callback();
+    this.popState();
+  };
+
+  withScale = (scale: Vector2D, callback: () => void) => {
+    this.pushState();
+    this.ctx.scale(scale[0], scale[1]);
+    callback();
+    this.popState();
+  };
+
+  withTranslation = (translation: Vector2D, callback: () => void) => {
+    this.pushState();
+    this.ctx.translate(translation[0], translation[1]);
+    callback();
+    this.popState();
+  };
+
+  withTransform = (
+    config: {
+      hScale: number;
+      hskew: number;
+      vSkew: number;
+      vScaling: number;
+      dX: number;
+      dY: number;
+    },
+    callback: () => void
+  ) => {
+    this.pushState();
+    const { hScale, hskew, vSkew, vScaling, dX, dY } = config;
+    this.ctx.transform(hScale, hskew, vSkew, vScaling, dX, dY);
+    callback();
+    this.popState();
+  };
 
   // Randomness
 
+  /**
+   * A uniform random number betweeon 0 and 1
+   */
   random = (): number => {
     return this.rng.next();
   };
 
+  /**
+   * A uniform random integer. Default lower bound is 0.
+   * Upper bound can be inclusive (default) or exclusive
+   */
   uniformRandomInt = (config: {
     from?: number;
     to: number;
@@ -301,14 +359,23 @@ export default class PlayCanvas {
     return from + Math.floor(this.rng.next() * d);
   };
 
+  /**
+   * A coin toss with result either -1 or 1
+   */
   randomPolarity = (): 1 | -1 => {
     return this.rng.next() > 0.5 ? 1 : -1;
   };
 
+  /**
+   * Sample uniformly from an array
+   */
   sample = <T>(from: T[]): T => {
     return from[Math.floor(this.rng.next() * from.length)];
   };
 
+  /**
+   * n uniform samples from an array
+   */
   samples = <T>(n: number, from: T[]): T[] => {
     let res: T[] = [];
     for (let i = 0; i < n; i++) {
@@ -317,6 +384,9 @@ export default class PlayCanvas {
     return res;
   };
 
+  /**
+   * Shuffle an array
+   */
   shuffle = <T>(items: T[]): T[] => {
     let currentIndex = items.length;
     let temporaryValue: T;
@@ -335,6 +405,11 @@ export default class PlayCanvas {
     return items;
   };
 
+  /**
+   * Perturb a point by a random amount (by default uniform random changes in
+   * -0.05 to 0.05, optional magnitude scales this e.g. magnitude 1 is perturbations
+   * of -0.5 to 0.5)
+   */
   perturb = ([x, y]: Point2D, config: { magnitude?: number } = {}): Point2D => {
     const { magnitude = 0.1 } = config;
     return [
@@ -343,6 +418,9 @@ export default class PlayCanvas {
     ];
   };
 
+  /**
+   * Gaussian random number, default mean 0, default standard deviation 1
+   */
   gaussian = (config?: { mean?: number; sd?: number }): number => {
     const { mean = 0, sd = 1 } = config || {};
     const a = this.rng.next();
@@ -351,6 +429,9 @@ export default class PlayCanvas {
     return mean + n * sd;
   };
 
+  /**
+   * Poisson random number, lambda (the mean and variance) is only parameter
+   */
   poisson = (lambda: number): number => {
     const limit = Math.exp(-lambda);
     let prod = this.rng.next();

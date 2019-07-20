@@ -787,8 +787,50 @@ const curves = (p: PlayCanvas) => {
     const points = zip2(nHPts, nVPts);
     const path = SimplePath.withPoints(points);
     path.chaiken(4);
-    p.setStrokeColour(p.uniformRandomInt({ from: -40, to: 60 }), 90, 60);
+    p.setStrokeColour(p.uniformRandomInt({ from: -40, to: 60 }), 90, 60, 0.95);
     p.draw(path);
+  });
+};
+
+const transforms = (p: PlayCanvas) => {
+  p.forTiling({ n: 8, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(120 + x * 100, 90, 50);
+    p.withTranslation([x + dX / 2, y + dY / 2], () =>
+      p.withRotation(x + y, () => {
+        p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
+      })
+    );
+  });
+};
+
+const transforms2 = (p: PlayCanvas) => {
+  const { bottom: h } = p.meta;
+  p.forTiling({ n: 32, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(320 - x * 100, 90, 50, 0.8);
+    p.withTranslation([x + dX / 2, y + dY / 2], () =>
+      p.withRotation(x + y, () =>
+        p.withScale(
+          [10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y / h)],
+          () => {
+            p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
+          }
+        )
+      )
+    );
+  });
+};
+
+const transforms3 = (p: PlayCanvas) => {
+  const { bottom: h } = p.meta;
+  p.forHorizontal({ n: 20, margin: 0.3 }, ([x, y], [dX, dY]) => {
+    p.range({ from: 0, to: 2 * Math.PI, n: 12 }, n =>
+      p.withTranslation([x + dX / 2, n / (6 * h) + dY / 2], () => {
+        p.withRotation(x - n, () => {
+          p.setFillColour(360 - n * 20, 90, 30, 0.5);
+          p.fill(new Rect({ at: [-dX / 2, -dY / 2], w: dX / 4, h: dY }));
+        });
+      })
+    );
   });
 };
 
@@ -824,6 +866,9 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: randomness1, name: "Gaussian" },
   { sketch: randomness1b, name: "Gaussian 2" },
   { sketch: randomness2, name: "Poisson" },
-  { sketch: curves, name: "Curves" }
+  { sketch: curves, name: "Curves" },
+  { sketch: transforms, name: "Transforms Demo" },
+  { sketch: transforms2, name: "Transforms Demo 2" },
+  { sketch: transforms3, name: "Transforms Demo 3" }
 ];
 export default sketches;
