@@ -792,6 +792,28 @@ const curves = (p: PlayCanvas) => {
   });
 };
 
+const transforms = (p: PlayCanvas) => {
+  p.forTiling({ n: 8, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(120 + x * 100, 90, 50);
+    p.withTranslation([x + dX / 2, y + dY / 2], () =>
+      p.withRotation(x + y, () => {
+        p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
+      })
+    );
+  });
+};
+
+const transforms2 = (p: PlayCanvas) => {
+  p.forTiling({ n: 22, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(320 - x * 100, 90, 50, 0.9);
+    p.withTranslation([x + dX / 2, y + dY / 2], () =>
+      p.withScale([10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y)], () => {
+        p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -824,6 +846,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: randomness1, name: "Gaussian" },
   { sketch: randomness1b, name: "Gaussian 2" },
   { sketch: randomness2, name: "Poisson" },
-  { sketch: curves, name: "Curves" }
+  { sketch: curves, name: "Curves" },
+  { sketch: transforms, name: "Transforms Demo" },
+  { sketch: transforms2, name: "Transforms Demo 2" }
 ];
 export default sketches;

@@ -302,19 +302,16 @@ export default class PlayCanvas {
     this.popState();
   };
 
-  withScale = (config: { x: number; y: number }, callback: () => void) => {
+  withScale = (scale: Vector2D, callback: () => void) => {
     this.pushState();
-    this.ctx.scale(config.x, config.y);
+    this.ctx.scale(scale[0], scale[1]);
     callback();
     this.popState();
   };
 
-  withTranslation = (
-    config: { x: number; y: number },
-    callback: () => void
-  ) => {
+  withTranslation = (translation: Vector2D, callback: () => void) => {
     this.pushState();
-    this.ctx.translate(config.x, config.y);
+    this.ctx.translate(translation[0], translation[1]);
     callback();
     this.popState();
   };
