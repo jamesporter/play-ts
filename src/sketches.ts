@@ -828,6 +828,23 @@ const transforms3 = (p: PlayCanvas) => {
   });
 };
 
+const time = (p: PlayCanvas) => {
+  const times = 4;
+  p.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.times(times, n => {
+      const h = dY * 0.5 * (1 + perlin2(x, 100 + n + p.t / 4));
+      p.setFillColour((n * 60) / times, 80, 60);
+      p.fill(
+        new Rect({
+          at: [x + (dX / times) * n, y + dY - h],
+          h,
+          w: dX / times
+        })
+      );
+    });
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -863,6 +880,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: curves, name: "Curves" },
   { sketch: transforms, name: "Transforms Demo" },
   { sketch: transforms2, name: "Transforms Demo 2" },
-  { sketch: transforms3, name: "Transforms Demo 3" }
+  { sketch: transforms3, name: "Transforms Demo 3" },
+  { sketch: time, name: "Time" }
 ];
 export default sketches;

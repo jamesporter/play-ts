@@ -9,10 +9,11 @@ import SelectFromChoice from "../components/SelectFromChoice";
 import sketches from "../../sketches";
 import PlayCanvas from "../../lib/play-canvas";
 import { getNumber } from "../util";
-import { SEED_KEY } from "./ViewSingle";
+import { SEED_KEY, TIME_KEY } from "./ViewSingle";
 
 export function Export({ match }: { match: any }) {
   const seed = getNumber(SEED_KEY) || 1;
+  const time = getNumber(TIME_KEY) || 0;
   const [aspectRatio, setAspectRatio] = useState(defaultAspectRatio);
   const [size, setSize] = useState(defaultSize);
   const previewRef = useRef<HTMLCanvasElement | null>(null);
@@ -34,7 +35,8 @@ export function Export({ match }: { match: any }) {
           width: w,
           height: h
         },
-        seed
+        seed,
+        time
       );
       sketch.sketch(pts);
     }

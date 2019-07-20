@@ -8,6 +8,8 @@ import React, {
 import useDimensions from "react-use-dimensions";
 import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
+import { setNumber, getNumber } from "./util";
+import { TIME_KEY } from "./pages/ViewSingle";
 
 type CanvasProps = {
   sketch: Sketch;
@@ -25,13 +27,15 @@ class CanvasPainterService {
   sketch?: Sketch;
   seed = 0;
   playing = false;
-  time = 0;
+  time: number;
   width = 100;
   height = 100;
   aspectRatio = 100;
   af: number | null = null;
 
-  constructor() {}
+  constructor() {
+    this.time = getNumber(TIME_KEY) || 0;
+  }
 
   configure({
     width,
@@ -60,6 +64,10 @@ class CanvasPainterService {
 
     this.sketch = sketch;
     this.seed = seed;
+    if (this.playing && !playing) {
+      // Paused, so save time for the export?
+      setNumber(TIME_KEY, this.time);
+    }
     this.playing = playing;
 
     this.canvas!.height = this.height;

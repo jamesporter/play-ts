@@ -11,14 +11,15 @@ import Flex from "../components/Flex";
 import { Link, withRouter } from "react-router-dom";
 
 export const INDEX_KEY = "play-ts.index";
-export const SEED_KEY = "play-ts.index";
+export const SEED_KEY = "play-ts.seed";
+export const TIME_KEY = "play-ts.time";
 
 function ViewSingle({ match, history }: { match: any; history: any }) {
   const parsedInt = parseInt(match.params.id);
   const idx = getNumber(INDEX_KEY);
   const sketchNo = Number.isNaN(parsedInt) ? idx || 0 : parsedInt;
   const [showSource, setShowSource] = useState(false);
-  const [isPlaying, setPlaying] = useState(true);
+  const [isPlaying, setPlaying] = useState(false);
   const goToPrev = () => {
     let nextNo = sketchNo - 1;
     if (nextNo < 0) nextNo = sketches.length - 1;
@@ -135,7 +136,7 @@ function ViewSingle({ match, history }: { match: any; history: any }) {
           onClick={() => setPlaying(!isPlaying)}
           title={isPlaying ? "Pause" : "Play"}
         >
-          {isPlaying ? "Pause" : "▶️"}
+          {isPlaying ? "Pause" : "Play"}
         </button>
 
         <Spacer />
