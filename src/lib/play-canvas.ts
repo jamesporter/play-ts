@@ -11,11 +11,13 @@ export default class PlayCanvas {
   readonly aspectRatio: number;
   readonly originalScale: number;
   readonly rng: Prando;
+  readonly t: number;
 
   constructor(
     private ctx: CanvasRenderingContext2D,
     { width, height }: Size,
-    rngSeed?: string | number
+    rngSeed?: string | number,
+    time?: number
   ) {
     ctx.resetTransform();
     this.aspectRatio = width / height;
@@ -28,6 +30,7 @@ export default class PlayCanvas {
     ctx.fillStyle = "gray";
 
     this.rng = new Prando(rngSeed);
+    this.t = time || 0;
   }
 
   get meta() {

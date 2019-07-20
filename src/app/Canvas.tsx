@@ -1,4 +1,10 @@
-import React, { useRef, useLayoutEffect } from "react";
+import React, {
+  useRef,
+  useLayoutEffect,
+  useCallback,
+  useState,
+  useEffect
+} from "react";
 import useDimensions from "react-use-dimensions";
 import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
@@ -7,25 +13,97 @@ type CanvasProps = {
   sketch: Sketch;
   aspectRatio: number;
   seed: number;
+  playing?: boolean;
 };
 
-export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
+/**
+ * Because this is actually a massive pain to do with hooks
+ */
+class CanvasPainterService {
+  ctx?: CanvasRenderingContext2D;
+  canvas?: HTMLCanvasElement;
+  sketch?: Sketch;
+  seed = 0;
+  playing = false;
+  time = 0;
+  width = 100;
+  height = 100;
+  aspectRatio = 100;
+  af: number | null = null;
+
+  constructor() {}
+
+  configure({
+    width,
+    height,
+    aspectRatio,
+    sketch,
+    seed,
+    playing
+  }: {
+    width: number;
+    height: number;
+    aspectRatio: number;
+    sketch: Sketch;
+    seed: number;
+    playing: boolean;
+  }) {
+    if (width && height) {
+      if (width / height > aspectRatio) {
+        this.height = height - 20;
+        this.width = this.height * aspectRatio;
+      } else {
+        this.width = width - 20;
+        this.height = this.width / aspectRatio;
+      }
+    }
+
+    this.sketch = sketch;
+    this.seed = seed;
+    this.playing = playing;
+
+    this.canvas!.height = this.height;
+    this.canvas!.width = this.width;
+    this.af && cancelAnimationFrame(this.af);
+    this.updateTime();
+  }
+
+  updateTime = () => {
+    if (this.playing) {
+      this.time += 0.01666666666;
+      this.af = requestAnimationFrame(this.updateTime);
+    }
+    this.draw();
+  };
+
+  draw = () => {
+    if (this.ctx) {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+      const pts = new PlayCanvas(
+        this.ctx,
+        {
+          width: this.width,
+          height: this.height
+        },
+        this.seed,
+        this.time
+      );
+      this.sketch && this.sketch(pts);
+    }
+  };
+}
+
+export default function Canvas({
+  aspectRatio,
+  sketch,
+  seed,
+  playing = false
+}: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
   const canvasRef = useRef(null);
   // seems to be way more performant to re-use context
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
-
-  let w: null | number = null,
-    h: null | number = null;
-  if (width && height) {
-    if (width / height > aspectRatio) {
-      h = height - 20;
-      w = h * aspectRatio;
-    } else {
-      w = width - 20;
-      h = w / aspectRatio;
-    }
-  }
+  const [painterRef] = useState(new CanvasPainterService());
 
   useLayoutEffect(() => {
     let ctx;
@@ -33,39 +111,29 @@ export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
       const cvs = canvasRef.current;
       if (cvs) {
         ctx = (cvs as HTMLCanvasElement).getContext("2d");
+        painterRef.canvas = cvs;
       }
     } else {
       ctx = ctxRef.current;
     }
 
-    if (ctx) {
-      ctx.clearRect(0, 0, w, h);
-      const pts = new PlayCanvas(
-        ctx,
-        {
-          width: w || 100 * aspectRatio,
-          height: h || 100
-        },
-        seed
-      );
-      sketch(pts);
-    }
-  });
+    painterRef.ctx = ctx;
+    painterRef.configure({
+      width,
+      height,
+      aspectRatio,
+      sketch,
+      seed,
+      playing
+    });
+  }, [playing, seed, sketch, aspectRatio, width, height]);
 
   return (
     <div
       className="flex-1 self-stretch flex items-center justify-center"
       ref={ref}
     >
-      {w && h && (
-        <canvas
-          id="myCanvas"
-          width={w}
-          height={h}
-          ref={canvasRef}
-          className="shadow-md bg-white"
-        />
-      )}
+      <canvas id="myCanvas" ref={canvasRef} className="shadow-md bg-white" />
     </div>
   );
 }
