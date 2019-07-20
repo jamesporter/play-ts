@@ -806,11 +806,16 @@ const transforms = (p: PlayCanvas) => {
 const transforms2 = (p: PlayCanvas) => {
   const { bottom: h } = p.meta;
   p.forTiling({ n: 32, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
-    p.setFillColour(320 - x * 100, 90, 50, 0.9);
+    p.setFillColour(320 - x * 100, 90, 50, 0.8);
     p.withTranslation([x + dX / 2, y + dY / 2], () =>
-      p.withScale([10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y / h)], () => {
-        p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
-      })
+      p.withRotation(x + y, () =>
+        p.withScale(
+          [10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y / h)],
+          () => {
+            p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
+          }
+        )
+      )
     );
   });
 };
