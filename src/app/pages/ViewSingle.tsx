@@ -47,6 +47,7 @@ export default function ViewSingle({ match }: { match: any }) {
           aspectRatio={aspectRatio}
           sketch={sketches[sketchNo].sketch}
           seed={seed}
+          playing={true}
         />
         {showSource && (
           <div

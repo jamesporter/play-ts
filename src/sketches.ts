@@ -548,9 +548,9 @@ const gradients1 = (p: PlayCanvas) => {
       from: [0, 0],
       to: [right, bottom],
       colours: [
-        [0, { h: 210, s: 80, l: 60 }],
-        [0.5, { h: 250, s: 80, l: 60 }],
-        [1.0, { h: 280, s: 80, l: 60 }]
+        [0, { h: 210 + p.t * 100, s: 80, l: 60 }],
+        [0.5, { h: 250 + p.t * 100, s: 80, l: 60 }],
+        [1.0, { h: 280 + p.t * 100, s: 80, l: 60 }]
       ]
     })
   );
@@ -796,7 +796,7 @@ const transforms = (p: PlayCanvas) => {
   p.forTiling({ n: 8, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setFillColour(120 + x * 100, 90, 50);
     p.withTranslation([x + dX / 2, y + dY / 2], () =>
-      p.withRotation(x + y, () => {
+      p.withRotation(x + y + p.t, () => {
         p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
       })
     );
@@ -806,9 +806,9 @@ const transforms = (p: PlayCanvas) => {
 const transforms2 = (p: PlayCanvas) => {
   const { bottom: h } = p.meta;
   p.forTiling({ n: 32, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
-    p.setFillColour(320 - x * 100, 90, 50, 0.8);
+    p.setFillColour(320 - x * 100 + p.t * 10, 90, 50, 0.8);
     p.withTranslation([x + dX / 2, y + dY / 2], () =>
-      p.withRotation(x + y, () =>
+      p.withRotation(x + y + p.t, () =>
         p.withScale(
           [10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y / h)],
           () => {

@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useLayoutEffect, useCallback } from "react";
 import useDimensions from "react-use-dimensions";
 import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
@@ -7,13 +7,21 @@ type CanvasProps = {
   sketch: Sketch;
   aspectRatio: number;
   seed: number;
+  playing?: boolean;
 };
 
-export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
+export default function Canvas({
+  aspectRatio,
+  sketch,
+  seed,
+  playing = false
+}: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
   const canvasRef = useRef(null);
   // seems to be way more performant to re-use context
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const startTimeRef = useRef(new Date().getTime());
+  const pending = useRef(false);
 
   let w: null | number = null,
     h: null | number = null;
@@ -27,7 +35,8 @@ export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
     }
   }
 
-  useLayoutEffect(() => {
+  const redraw = useCallback(() => {
+    pending.current = false;
     let ctx;
     if (!ctxRef.current) {
       const cvs = canvasRef.current;
@@ -39,6 +48,8 @@ export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
     }
 
     if (ctx) {
+      const time = (new Date().getTime() - startTimeRef.current) / 1000;
+
       ctx.clearRect(0, 0, w, h);
       const pts = new PlayCanvas(
         ctx,
@@ -46,10 +57,21 @@ export default function Canvas({ aspectRatio, sketch, seed }: CanvasProps) {
           width: w || 100 * aspectRatio,
           height: h || 100
         },
-        seed
+        seed,
+        time
       );
       sketch(pts);
+
+      if (playing && !pending.current) {
+        // simplistic way to prevent deluge of requests
+        pending.current = true;
+        requestAnimationFrame(redraw);
+      }
     }
+  }, [width, height, sketch, seed, aspectRatio]);
+
+  useLayoutEffect(() => {
+    redraw();
   });
 
   return (
