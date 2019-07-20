@@ -469,6 +469,7 @@ const doodles = (p: PlayCanvas) => {
 };
 
 const circles = (p: PlayCanvas) => {
+  p.background(120, 5, 95);
   p.forTiling({ n: 10, type: "square", margin: 0.1 }, (pt, delta) => {
     p.setFillColour(pt[0] * 100, 80, 50);
     const r = Math.sqrt(1.2 * pt[0] * pt[1]);
@@ -484,6 +485,7 @@ const circles = (p: PlayCanvas) => {
 };
 
 const circles2 = (p: PlayCanvas) => {
+  p.background(220, 30, 90);
   p.withRandomOrder(
     p.forTiling,
     { n: 10, type: "square", margin: 0.1 },
@@ -556,9 +558,9 @@ const gradients2 = (p: PlayCanvas) => {
       rStart: 0.0,
       rEnd: 2 * Math.max(bottom, right),
       colours: [
-        [0, { h: 0, s: 80, l: 60 }],
-        [0.7, { h: 50, s: 80, l: 60 }],
-        [1.0, { h: 1000, s: 80, l: 60 }]
+        [0, { h: 0 + p.t * 40, s: 80, l: 60 }],
+        [0.7, { h: 50 + p.t * 20, s: 90, l: 60 }],
+        [1.0, { h: 1000 + p.t * 20, s: 80, l: 60 }]
       ]
     })
   );
@@ -713,6 +715,7 @@ const randomness1b = (p: PlayCanvas) => {
 };
 
 const randomness2 = (p: PlayCanvas) => {
+  p.background(320, 10, 90);
   p.forTiling({ n: 50, margin: 0.1 }, (pt, delta) => {
     const v = p.poisson(4);
     p.times(v, n => {
@@ -796,7 +799,7 @@ const transforms2 = (p: PlayCanvas) => {
   p.background(0, 0, 0);
   const baseSize = (1 + Math.sin(2 * p.t)) / 2;
   const { bottom: h } = p.meta;
-  p.forTiling({ n: 32, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+  p.forTiling({ n: 32, type: "square" }, ([x, y], [dX, dY]) => {
     p.setFillColour(320 - x * 100 + p.t * 10, 90, 50, 0.8);
     p.withTranslation([x + dX / 2, y + dY / 2], () =>
       p.withRotation(x + y + p.t * 2, () =>
@@ -829,6 +832,7 @@ const transforms3 = (p: PlayCanvas) => {
 };
 
 const time = (p: PlayCanvas) => {
+  p.background(50, 20, 90);
   const times = 4;
   p.forHorizontal({ n: 20, margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.times(times, n => {
