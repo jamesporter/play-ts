@@ -849,6 +849,35 @@ const time = (p: PlayCanvas) => {
   });
 };
 
+const clipping = (p: PlayCanvas) => {
+  const { center, bottom, right } = p.meta;
+  const size = Math.min(bottom, right) * 0.8;
+  p.background(120 + p.t * 50, 40, 90);
+  p.lineWidth = 0.005;
+  p.range({ from: 1, to: 4, n: 4 }, n =>
+    p.withTranslation([0.037 * n * n, bottom * 0.037 * n * n], () =>
+      p.withScale([0.1 * n, 0.1 * n], () =>
+        p.withClipping(
+          new Ellipse({ at: center, width: size, height: size }),
+          () =>
+            p.forTiling(
+              { n: 60 / (8 - n), type: "square" },
+              ([x, y], [dX, dY]) => {
+                p.lineStyle = { cap: "round" };
+                p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
+                p.proportionately([
+                  [1, () => p.drawLine([x, y], [x + dX, y + dY])],
+                  [2, () => p.drawLine([x + dX, y], [x, y + dY])],
+                  [1, () => p.drawLine([x, y], [x, y + dY])]
+                ]);
+              }
+            )
+        )
+      )
+    )
+  );
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -885,6 +914,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: transforms, name: "Transforms Demo" },
   { sketch: transforms2, name: "Transforms Demo 2" },
   { sketch: transforms3, name: "Transforms Demo 3" },
-  { sketch: time, name: "Time" }
+  { sketch: time, name: "Time" },
+  { sketch: clipping, name: "Clipping Demo" }
 ];
 export default sketches;
