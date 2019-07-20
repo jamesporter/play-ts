@@ -71,9 +71,9 @@ class CanvasPainterService {
   updateTime = () => {
     if (this.playing) {
       this.time += 0.01666666666;
+      this.af = requestAnimationFrame(this.updateTime);
     }
     this.draw();
-    this.af = requestAnimationFrame(this.updateTime);
   };
 
   draw = () => {
