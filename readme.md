@@ -402,7 +402,7 @@ poisson: (lambda: number) => number;
 
 ## Phase 2
 
-- [ ] Scaling: original plan was to _not_ allow the canvas to scale, but to build some utilities to perform transformations on paths etc; not sure if this is good idea, maybe better just to do something on top of cavnas approach, particularly as decided to drop svg now?
+- [x] Scaling: original plan was to _not_ allow the canvas to scale, but to build some utilities to perform transformations on paths etc; not sure if this is good idea, maybe better just to do something on top of cavnas approach, particularly as decided to drop svg now?
 - [ ] better export e.g. common paper/dpi sizes, move existing related stuff to utility
 - [ ] 'Play'/time... be able to do dynamic redrawing i.e. requestAnimationFrame, redraw etc
 - [ ] Interactions(!)
