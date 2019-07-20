@@ -20,6 +20,7 @@ export default function ViewSingle({ match }: { match: any }) {
     Number.isNaN(parsedInt) ? idx || 0 : parsedInt
   );
   const [showSource, setShowSource] = useState(false);
+  const [isPlaying, setPlaying] = useState(true);
   const goToPrev = () => {
     let nextNo = sketchNo - 1;
     if (nextNo < 0) nextNo = sketches.length - 1;
@@ -47,7 +48,7 @@ export default function ViewSingle({ match }: { match: any }) {
           aspectRatio={aspectRatio}
           sketch={sketches[sketchNo].sketch}
           seed={seed}
-          playing={true}
+          playing={isPlaying}
         />
         {showSource && (
           <div
@@ -121,6 +122,18 @@ export default function ViewSingle({ match }: { match: any }) {
         />
 
         <Flex />
+
+        <button
+          className={`${
+            isPlaying ? "bg-teal-700" : "bg-gray-500"
+          } hover:bg-teal-600 focus:outline-none focus:shadow-outline px-2 py-1 rounded ml-2 hidden md:flex items-center`}
+          onClick={() => setPlaying(!isPlaying)}
+          title={isPlaying ? "Pause" : "Play"}
+        >
+          {isPlaying ? "Pause" : "▶️"}
+        </button>
+
+        <Spacer />
 
         <button
           className={`${

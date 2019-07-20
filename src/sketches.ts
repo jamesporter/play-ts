@@ -804,13 +804,18 @@ const transforms = (p: PlayCanvas) => {
 };
 
 const transforms2 = (p: PlayCanvas) => {
+  p.background(0, 0, 0);
+  const baseSize = (1 + Math.sin(2 * p.t)) / 2;
   const { bottom: h } = p.meta;
   p.forTiling({ n: 32, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setFillColour(320 - x * 100 + p.t * 10, 90, 50, 0.8);
     p.withTranslation([x + dX / 2, y + dY / 2], () =>
-      p.withRotation(x + y + p.t, () =>
+      p.withRotation(x + y + p.t * 2, () =>
         p.withScale(
-          [10 * Math.abs(0.5 - x), 10 * Math.abs(0.5 - y / h)],
+          [
+            baseSize + 6 * Math.abs(0.5 - x),
+            baseSize + 12 * Math.abs(0.5 - y / h)
+          ],
           () => {
             p.fill(new Rect({ at: [-dX / 4, -dY / 4], w: dX / 2, h: dY / 2 }));
           }
@@ -824,10 +829,10 @@ const transforms3 = (p: PlayCanvas) => {
   const { bottom: h } = p.meta;
   p.forHorizontal({ n: 20, margin: 0.3 }, ([x, y], [dX, dY]) => {
     p.range({ from: 0, to: 2 * Math.PI, n: 12 }, n =>
-      p.withTranslation([x + dX / 2, n / (6 * h) + dY / 2], () => {
+      p.withTranslation([x + dX / 2, (h * n) / 6 + dY / 6], () => {
         p.withRotation(x - n, () => {
           p.setFillColour(360 - n * 20, 90, 30, 0.5);
-          p.fill(new Rect({ at: [-dX / 2, -dY / 2], w: dX / 4, h: dY }));
+          p.fill(new Rect({ at: [-dX / 2, -dY / 2], w: dX / 4, h: 2 * dY }));
         });
       })
     );
