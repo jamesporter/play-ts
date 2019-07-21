@@ -1,6 +1,6 @@
 import { Point2D } from "./lib/types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc, Rect, Ellipse } from "./lib/path";
+import { Path, SimplePath, Arc, Rect, Ellipse, RoundedRect } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
@@ -879,6 +879,57 @@ const clipping = (p: PlayCanvas) => {
   );
 };
 
+const roundedRects = (p: PlayCanvas) => {
+  p.forTiling(
+    { n: 5, type: "proportionate", margin: 0.1 },
+    ([x, y], [dX, dY]) => {
+      p.setFillColour(p.t * 50 + 150 + x * 100, y * 40 + 60, 40);
+      p.fill(
+        new RoundedRect({
+          at: [x + dX / 6, y + dY / 6],
+          w: (dX * 2) / 3,
+          h: (dY * 2) / 3,
+          r: dX / 8
+        })
+      );
+    }
+  );
+};
+
+const cards = (p: PlayCanvas) => {
+  p.forTiling({ n: 6, type: "square", margin: 0.05 }, ([x, y], [dX, dY]) => {
+    p.withClipping(
+      new RoundedRect({
+        at: [x + dX / 6, y + dX / 4],
+        w: (dX * 2) / 3,
+        h: dY / 2,
+        r: dX / 12
+      }),
+      () => {
+        p.setFillColour(175 + x * 70, y * 40 + 60, 40);
+        p.fill(
+          new Rect({
+            at: [x + dX / 6, y + dX / 4],
+            w: (dX * 2) / 3,
+            h: dY / 2
+          })
+        );
+
+        p.setFillColour(0, 0, 100, 0.4);
+        p.times(5, () =>
+          p.fill(
+            new Ellipse({
+              at: p.perturb([x + dX / 2, y + dY / 2]),
+              width: dX / 2,
+              height: dX / 2
+            })
+          )
+        );
+      }
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -916,6 +967,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: transforms2, name: "Transforms Demo 2" },
   { sketch: transforms3, name: "Transforms Demo 3" },
   { sketch: time, name: "Time" },
-  { sketch: clipping, name: "Clipping Demo" }
+  { sketch: clipping, name: "Clipping Demo" },
+  { sketch: roundedRects, name: "Rounded Rectangles Demo" },
+  { sketch: cards, name: "Cards" }
 ];
 export default sketches;
