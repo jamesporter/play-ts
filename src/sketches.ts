@@ -906,7 +906,7 @@ const cards = (p: PlayCanvas) => {
         r: dX / 12
       }),
       () => {
-        p.setFillColour(175 + x * 70, y * 40 + 60, 40);
+        p.setFillColour(175 + x * 60 + y * 100, y * 40 + 60, 40);
         p.fill(
           new Rect({
             at: [x + dX / 6, y + dX / 4],
