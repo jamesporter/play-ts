@@ -995,12 +995,10 @@ const hatching2 = (p: PlayCanvas) => {
   p.background(0, 0, 10);
   p.lineWidth = 0.005;
   const { center } = p.meta;
-  const count = p.uniformRandomInt({ from: 3, to: 10 });
-  console.log(count);
+  const count = p.uniformRandomInt({ from: 5, to: 35 });
   const points = p.build(p.times, count, n => {
-    return p.perturb(center, { magnitude: 0.7 - 0.1 * n });
+    return p.perturb(center, { magnitude: 0.1 * n });
   });
-
   points.forEach(pt => {
     p.setStrokeColour(15 + pt[0] * 50, 90, 40, 0.9);
     const r = 0.2 + 0.3 * p.random();
