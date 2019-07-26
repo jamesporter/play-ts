@@ -8,13 +8,15 @@ import {
   Ellipse,
   RoundedRect,
   RegularPolygon,
-  Star
+  Star,
+  Hatching
 } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
 import { parsePath } from "history";
+import { v } from "../package";
 
 const rainbow = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
@@ -974,6 +976,47 @@ const stars = (p: PlayCanvas) => {
   });
 };
 
+const hatching = (p: PlayCanvas) => {
+  p.lineWidth = 0.001;
+  p.range({ from: 1, to: 0.2, n: 4, inclusive: true }, n => {
+    p.setStrokeColour(215 - n * 75, 90, 10 + n * 30);
+    p.draw(
+      new Hatching({
+        at: [p.meta.center[0] - n / 6, p.meta.center[1] + n / 4],
+        r: n,
+        delta: 0.01,
+        a: p.t + (n * 16) / Math.PI
+      })
+    );
+  });
+};
+
+const hatching2 = (p: PlayCanvas) => {
+  p.background(0, 0, 10);
+  p.lineWidth = 0.005;
+  const { center } = p.meta;
+  const count = p.uniformRandomInt({ from: 3, to: 10 });
+  console.log(count);
+  const points = p.build(p.times, count, n => {
+    return p.perturb(center, { magnitude: 0.7 - 0.1 * n });
+  });
+
+  points.forEach(pt => {
+    p.setStrokeColour(15 + pt[0] * 50, 90, 40, 0.9);
+    const r = 0.2 + 0.3 * p.random();
+    p.withClipping(new Ellipse({ at: pt, width: r, height: r }), () =>
+      p.draw(
+        new Hatching({
+          at: pt,
+          r: 1,
+          delta: 0.01,
+          a: (pt[1] * Math.PI) / 12
+        })
+      )
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1015,6 +1058,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: roundedRects, name: "Rounded Rectangles Demo" },
   { sketch: cards, name: "Cards" },
   { sketch: polygons, name: "Polygons" },
-  { sketch: stars, name: "Stars" }
+  { sketch: stars, name: "Stars" },
+  { sketch: hatching, name: "Hatching Demo 1" },
+  { sketch: hatching2, name: "Hatching Demo 2" }
 ];
 export default sketches;
