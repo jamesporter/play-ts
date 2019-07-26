@@ -467,6 +467,30 @@ export class Star implements Traceable {
   };
 }
 
+export class Hatching implements Traceable {
+  constructor(
+    private config: {
+      at: Point2D;
+      w: number;
+      h: number;
+      a: number;
+      delta: number;
+    }
+  ) {}
+
+  traceIn = (ctx: CanvasRenderingContext2D) => {
+    const {
+      at: [x, y],
+      w,
+      h,
+      a,
+      delta
+    } = this.config;
+  };
+
+  // TODO
+}
+
 export type TextSizing = "fixed" | "fitted";
 export type TextHorizontalAlign = CanvasRenderingContext2D["textAlign"];
 export type FontStyle = "normal" | "italic" | "oblique";
