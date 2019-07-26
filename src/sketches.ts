@@ -1,6 +1,14 @@
 import { Point2D } from "./lib/types/play";
 import PlayCanvas from "./lib/play-canvas";
-import { Path, SimplePath, Arc, Rect, Ellipse, RoundedRect } from "./lib/path";
+import {
+  Path,
+  SimplePath,
+  Arc,
+  Rect,
+  Ellipse,
+  RoundedRect,
+  RegularPolygon
+} from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
@@ -930,6 +938,22 @@ const cards = (p: PlayCanvas) => {
   });
 };
 
+const polygons = (p: PlayCanvas) => {
+  let n = 3;
+  p.forTiling({ n: 4, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(180 + 40 * x, 50 + 50 * y, 60);
+    p.fill(
+      new RegularPolygon({
+        at: [x + dX / 2, y + dY / 2],
+        n,
+        r: dX / 2.1,
+        startAngle: p.t
+      })
+    );
+    n++;
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -969,6 +993,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: time, name: "Time" },
   { sketch: clipping, name: "Clipping Demo" },
   { sketch: roundedRects, name: "Rounded Rectangles Demo" },
-  { sketch: cards, name: "Cards" }
+  { sketch: cards, name: "Cards" },
+  { sketch: polygons, name: "Polygons" }
 ];
 export default sketches;
