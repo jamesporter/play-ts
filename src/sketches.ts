@@ -7,12 +7,14 @@ import {
   Rect,
   Ellipse,
   RoundedRect,
-  RegularPolygon
+  RegularPolygon,
+  Star
 } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
+import { parsePath } from "history";
 
 const rainbow = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
@@ -954,6 +956,23 @@ const polygons = (p: PlayCanvas) => {
   });
 };
 
+const stars = (p: PlayCanvas) => {
+  let n = 3;
+  p.background(30, 20, 80);
+  p.forTiling({ n: 4, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
+    p.setFillColour(20 + 30 * x, 25 + 75 * y, 45 + 5 * (1 + Math.sin(p.t + x)));
+    p.fill(
+      new Star({
+        at: [x + dX / 2, y + dY / 2],
+        n,
+        r: (dX * (2.2 + Math.cos(x + y + p.t))) / 6.1,
+        startAngle: p.t
+      })
+    );
+    n++;
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -994,6 +1013,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: clipping, name: "Clipping Demo" },
   { sketch: roundedRects, name: "Rounded Rectangles Demo" },
   { sketch: cards, name: "Cards" },
-  { sketch: polygons, name: "Polygons" }
+  { sketch: polygons, name: "Polygons" },
+  { sketch: stars, name: "Stars" }
 ];
 export default sketches;
