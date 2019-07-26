@@ -941,6 +941,7 @@ const cards = (p: PlayCanvas) => {
 };
 
 const polygons = (p: PlayCanvas) => {
+  p.background(330, 70, 30);
   let n = 3;
   p.forTiling({ n: 4, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setFillColour(180 + 40 * x, 50 + 50 * y, 60);
