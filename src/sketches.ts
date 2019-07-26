@@ -980,12 +980,13 @@ const hatching = (p: PlayCanvas) => {
   p.lineWidth = 0.001;
   p.range({ from: 1, to: 0.2, n: 4, inclusive: true }, n => {
     p.setStrokeColour(215 - n * 75, 90, 10 + n * 30);
+    const s = (1.5 + Math.cos(p.t)) / 2;
     p.draw(
       new Hatching({
-        at: [p.meta.center[0] - n / 6, p.meta.center[1] + n / 4],
-        r: n,
+        at: p.meta.center,
+        r: n * s,
         delta: 0.01,
-        a: p.t + (n * 16) / Math.PI
+        a: (n * 16) / Math.PI
       })
     );
   });
