@@ -9,7 +9,8 @@ import {
   RoundedRect,
   RegularPolygon,
   Star,
-  Hatching
+  Hatching,
+  HollowArc
 } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
@@ -151,11 +152,10 @@ const flower = (p: PlayCanvas) => {
   p.setFillColour(40, 90, 90);
   p.fill(
     new Arc({
-      cX: midX,
-      cY: midY,
-      radius: ir / 1.4,
-      startAngle: 0,
-      endAngle: Math.PI * 2
+      at: [midX, midY],
+      r: ir / 1.4,
+      a: 0,
+      a2: Math.PI * 2
     })
   );
 };
@@ -263,11 +263,10 @@ const arcs = (p: PlayCanvas) => {
     p.setFillColour(n * 2.5, 90, 50, 0.5);
     p.fill(
       new Arc({
-        cX,
-        cY,
-        radius: (0.3 * Math.sqrt(n + 1)) / 3,
-        startAngle: (n * Math.PI) / 10,
-        endAngle: ((n + 2) * Math.PI) / 10
+        at: [cX, cY],
+        r: (0.3 * Math.sqrt(n + 1)) / 3,
+        a: (n * Math.PI) / 10,
+        a2: ((n + 2) * Math.PI) / 10
       })
     );
   });
@@ -276,14 +275,13 @@ const arcs = (p: PlayCanvas) => {
 const noise = (p: PlayCanvas) => {
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
     const v = perlin2(x, y) * Math.PI * 2;
-    p.setFillColour(120 + v * 20, 80, 40);
+    p.setFillColour(p.t * 10 + 120 + v * 20, 80, 40);
     p.fill(
       new Arc({
-        cX: x + dX / 2,
-        cY: y + dY / 2,
-        radius: dX / 2,
-        startAngle: v,
-        endAngle: v + Math.PI / 2
+        at: [x + dX / 2, y + dY / 2],
+        r: dX / 2,
+        a: p.t + v,
+        a2: p.t + v + Math.PI / 2
       })
     );
   });
@@ -1016,6 +1014,24 @@ const hatching2 = (p: PlayCanvas) => {
   });
 };
 
+const moreArcs = (p: PlayCanvas) => {
+  const s = p.meta.right / 4;
+  p.times(100, () => {
+    const a = p.random() * 2 * Math.PI;
+    const a2 = a + p.random();
+    p.setFillColour(a * 30, 90, 30, 0.2);
+    p.fill(
+      new HollowArc({
+        at: p.meta.center,
+        r: s + (p.random() * s) / 2,
+        r2: s - (p.random() * s) / 2,
+        a,
+        a2
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1059,6 +1075,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: polygons, name: "Polygons" },
   { sketch: stars, name: "Stars" },
   { sketch: hatching, name: "Hatching Demo 1" },
-  { sketch: hatching2, name: "Hatching Demo 2" }
+  { sketch: hatching2, name: "Hatching Demo 2" },
+  { sketch: moreArcs, name: "More Arcs" }
 ];
 export default sketches;
