@@ -113,7 +113,7 @@ const flower = (p: PlayCanvas) => {
     SimplePath.startAt(start)
       .addPoint(second)
       .addPoint(end)
-      .chaiken(3)
+      .chaiken({ n: 3 })
   );
 
   p.lineWidth = 0.01;
@@ -198,7 +198,7 @@ const chaiken = (p: PlayCanvas) => {
     const sp = SimplePath.startAt(points[0]);
     points.slice(1).forEach(p => sp.addPoint(p));
     sp.close();
-    sp.chaiken(4);
+    sp.chaiken({ n: 4, looped: true });
     p.lineWidth = 0.005;
     p.setStrokeColour(190 + n, 90, 40, 0.75);
     p.draw(sp);
@@ -224,7 +224,7 @@ const tilesOfChaiken = (p: PlayCanvas) => {
       const sp = SimplePath.startAt(points[0]);
       points.slice(1).forEach(p => sp.addPoint(p));
       sp.close();
-      sp.chaiken(1 + n);
+      sp.chaiken({ n: 2 + n, looped: true });
       p.lineWidth = 0.005;
       p.setStrokeColour(190 + x * 100, 90, 40 + y * 10, 0.75 * ((n + 3) / 5));
       p.draw(sp);
@@ -238,7 +238,7 @@ const circle = (p: PlayCanvas) => {
     const points = p.build(p.aroundCircle, { n: 20 }, pt => p.perturb(pt));
     const sp = SimplePath.withPoints(points)
       .close()
-      .chaiken(n);
+      .chaiken({ n: n + 1, looped: true });
     p.draw(sp);
   });
 };
@@ -296,7 +296,7 @@ const noiseField = (p: PlayCanvas) => {
         break;
       }
     }
-    p.draw(sp.chaiken(2));
+    p.draw(sp.chaiken({ n: 2 }));
   });
 };
 
@@ -444,23 +444,20 @@ const scriptLike = (p: PlayCanvas) => {
         m + perlin2(n * 100 + m * 100, 0.1) / (6 * aspectRatio)
       ]);
     });
-    p.draw(SimplePath.withPoints(points).chaiken(4));
+    p.draw(SimplePath.withPoints(points).chaiken({ n: 4 }));
   });
 };
 
 const doodles = (p: PlayCanvas) => {
   p.forTiling({ n: 7, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     const center = add([x, y], scale([dX, dY], 0.5));
-    const [cX, cY] = center;
     let path = Path.startAt(center);
     p.setStrokeColour(100 * x + y * 33, 60 + 45 * y, 40);
     p.lineWidth = 0.005;
     p.withRandomOrder(
       p.aroundCircle,
-      { cX, cY, radius: dX / 2.8, n: 7 },
-      (pt, i) => {
-        path.addCurveTo(pt);
-      }
+      { at: center, radius: dX / 2.8, n: 7 },
+      pt => path.addCurveTo(pt)
     );
     path.addCurveTo(center);
     p.draw(path);
@@ -787,7 +784,7 @@ const curves = (p: PlayCanvas) => {
     const nHPts = nVPts.map(p => x + dX * 12 * perlin2(10 + p * 60, x * 20));
     const points = zip2(nHPts, nVPts);
     const path = SimplePath.withPoints(points);
-    path.chaiken(4);
+    path.chaiken({ n: 4 });
     p.setStrokeColour(p.uniformRandomInt({ from: -40, to: 60 }), 90, 60, 0.95);
     p.draw(path);
   });
@@ -1233,6 +1230,27 @@ const stackPolys = (p: PlayCanvas) => {
   });
 };
 
+const blob = (p: PlayCanvas) => {
+  p.setFillColour(205, 75, 45);
+  p.times(3, n => {
+    p.fill(
+      SimplePath.withPoints(
+        p.build(p.aroundCircle, { n: 12 }, (pt, i) =>
+          add(
+            pt,
+            scale(
+              [perlin2(i / 12, 1 + n + p.t), perlin2(-i / 12, n + p.t)],
+              0.25
+            )
+          )
+        )
+      )
+        .close()
+        .chaiken({ n: 3, looped: true })
+    );
+  });
+};
+
 const fancyTiling = (p: PlayCanvas) => {
   const baseHue = p.uniformRandomInt({ from: 0, to: 360 });
 
@@ -1342,7 +1360,7 @@ const lissajous = (p: PlayCanvas) => {
     ]);
   }
 
-  p.draw(sp.chaiken(3));
+  p.draw(sp.chaiken({ n: 3 }));
 };
 
 const sketchingCurves = (p: PlayCanvas) => {
@@ -1358,7 +1376,7 @@ const sketchingCurves = (p: PlayCanvas) => {
     }
   );
 
-  const curve = SimplePath.withPoints(points).chaiken(2);
+  const curve = SimplePath.withPoints(points).chaiken({ n: 2 });
   for (let i = 1; i < 200; i += i / 4) {
     p.draw(curve);
     curve
@@ -1422,6 +1440,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: colourWheel, name: "Colour Wheel" },
   { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
   { sketch: stackPolys, name: "Stack Polygons" },
+  { sketch: blob, name: "Blob" },
   { sketch: sunburst, name: "Sunburst" },
   { sketch: fancyTiling, name: "Fancy Tiling" },
   { sketch: anotherTiling, name: "Another Tiling" },
