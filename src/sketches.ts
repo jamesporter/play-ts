@@ -1075,7 +1075,40 @@ const colourWheel = (p: PlayCanvas) => {
   }
 };
 
+const colourPaletteGenerator = (p: PlayCanvas) => {
+  const baseColour = p.uniformRandomInt({ from: 0, to: 360 });
+
+  p.proportionately([
+    [1, () => p.background(0, 0, 10)],
+    [1, () => p.background(0, 0, 90)]
+  ]);
+
+  const colours = [
+    baseColour + 90,
+    baseColour + 45,
+    baseColour,
+    baseColour - 45,
+    baseColour - 90,
+    baseColour + 180
+  ];
+
+  p.forVertical({ n: 6, margin: 0.1 }, ([x, y], [dX, dY], i) => {
+    const c = colours[i];
+    p.range({ from: x, to: x + dX, n: 6, inclusive: false }, xV => {
+      p.setFillColour(c, 80, 10 + xV * 70);
+      p.fill(
+        new Rect({
+          at: [xV + 0.01, y + 0.01],
+          w: (dX - 0.02 * 6) / 6,
+          h: dY - 0.02
+        })
+      );
+    });
+  });
+};
+
 const stackPolys = (p: PlayCanvas) => {
+  p.background(320, 10, 90);
   p.lineWidth = 0.0025;
   const v = p.uniformRandomInt({ from: 5, to: 8 });
   const m = p.uniformRandomInt({ from: 30, to: 80 });
@@ -1142,6 +1175,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: moreArcs, name: "More Arcs" },
   { sketch: curls, name: "Curls" },
   { sketch: colourWheel, name: "Colour Wheel" },
+  { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
   { sketch: stackPolys, name: "Stack Polygons" }
 ];
 export default sketches;
