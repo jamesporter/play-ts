@@ -2,7 +2,7 @@ import React, { useRef, useLayoutEffect, useState } from "react";
 import useDimensions from "react-use-dimensions";
 import { StatefulSketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
-import { setNumber, getNumber } from "./util";
+import { getNumber } from "./util";
 import { TIME_KEY } from "./pages/ViewSingle";
 
 type CanvasProps<S> = {
@@ -35,36 +35,23 @@ class CanvasPainterService<S> {
   configure({
     width,
     height,
-    aspectRatio,
     sketch,
-    seed,
-    playing
+    seed
   }: {
     width: number;
     height: number;
     aspectRatio: number;
     sketch: StatefulSketch<S>;
     seed: number;
-    playing: boolean;
   }) {
     if (width && height) {
-      if (width / height > aspectRatio) {
-        this.height = height - 20;
-        this.width = this.height * aspectRatio;
-      } else {
-        this.width = width - 20;
-        this.height = this.width / aspectRatio;
-      }
+      this.width = width;
+      this.height = height;
     }
 
     this.state = sketch.initialState();
     this.sketch = sketch;
     this.seed = seed;
-    if (this.playing && !playing) {
-      // Paused, so save time for the export?
-      setNumber(TIME_KEY, this.time);
-    }
-    this.playing = playing;
 
     this.canvas!.height = this.height;
     this.canvas!.width = this.width;
@@ -72,11 +59,22 @@ class CanvasPainterService<S> {
     this.updateTime();
   }
 
-  updateTime = () => {
-    if (this.playing) {
-      this.time += 0.01666666666;
-      this.af = requestAnimationFrame(this.updateTime);
+  handleClick(x: number, y: number) {
+    const top = this.canvas!.getBoundingClientRect().top;
+    const xRel = x / this.width;
+    const yRel = (y - top) / this.width;
+
+    if (this.sketch && this.sketch.handleMessage) {
+      this.state = this.sketch.handleMessage(
+        { type: "click", at: [xRel, yRel] },
+        this.state!
+      );
     }
+  }
+
+  updateTime = () => {
+    this.time += 0.01666666666;
+    this.af = requestAnimationFrame(this.updateTime);
     this.draw();
   };
 
@@ -127,8 +125,7 @@ export default function StatefulCanvas<S>({
       height,
       aspectRatio,
       sketch,
-      seed,
-      playing
+      seed
     });
   }, [playing, seed, sketch, aspectRatio, width, height]);
 
@@ -137,7 +134,12 @@ export default function StatefulCanvas<S>({
       className="flex-1 self-stretch flex items-center justify-center"
       ref={ref}
     >
-      <canvas id="myCanvas" ref={canvasRef} className="shadow-md bg-white" />
+      <canvas
+        id="myCanvas"
+        ref={canvasRef}
+        className="shadow-md bg-white"
+        onClick={evt => painterRef.handleClick(evt.clientX, evt.clientY)}
+      />
     </div>
   );
 }

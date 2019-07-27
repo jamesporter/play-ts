@@ -1,5 +1,4 @@
 import React from "react";
-import Canvas from "../Canvas";
 
 import sketches from "../../stateful-sketches";
 import { getNumber } from "../util";
