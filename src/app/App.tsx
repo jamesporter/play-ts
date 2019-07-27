@@ -3,6 +3,7 @@ import { HashRouter as Router, Route, Link } from "react-router-dom";
 import ViewSingle from "./pages/ViewSingle";
 import { Main } from "./pages/Main";
 import { Export } from "./pages/Export";
+import ViewStateful from "./pages/ViewStateful";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <div className="flex flex-col flex-1 bg-gray-200 overflow-scroll">
           <Route path="/" exact component={Main} />
           <Route path="/view/:id" component={ViewSingle} />
+          <Route path="/viewStateful/:id" component={ViewStateful} />
           <Route path="/export/:id" component={Export} />
         </div>
       </div>
