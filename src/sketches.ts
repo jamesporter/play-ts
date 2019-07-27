@@ -953,6 +953,37 @@ const polygons = (p: PlayCanvas) => {
   });
 };
 
+const polygons2 = (p: PlayCanvas) => {
+  p.background(330, 70, 10);
+  p.times(5, n => {
+    const sides = 10 - n;
+    const r = 0.4 - n * 0.05;
+    p.setFillColour(330, 70, 10 + n * 12);
+    p.fill(
+      new RegularPolygon({
+        at: p.meta.center,
+        n: sides,
+        r
+      })
+    );
+  });
+};
+
+const polygons3 = (p: PlayCanvas) => {
+  p.background(210, 70, 90);
+  p.forHorizontal({ n: 4, margin: 0.1 }, (_pt, [dX], c, i) => {
+    p.setFillColour([215, 225, 235, 245][i], 90, 30);
+    p.fill(
+      new RegularPolygon({
+        at: c,
+        n: 6,
+        r: dX / 2,
+        a: (i * Math.PI) / 6 + p.t * (i % 2 === 0 ? 1 : -1)
+      })
+    );
+  });
+};
+
 const stars = (p: PlayCanvas) => {
   let n = 3;
   p.background(30, 20, 80);
@@ -1276,6 +1307,44 @@ const fancyTiling = (p: PlayCanvas) => {
   );
 };
 
+const anotherTiling = (p: PlayCanvas) => {
+  p.background(240, 20, 90);
+  p.forTiling({ n: 25, margin: 0.1, type: "square" }, (at, [dX, dY]) => {
+    p.withTranslation(add(at, scale([dX, dY], 0.5)), () =>
+      p.withRotation(p.sample([0, Math.PI / 2, Math.PI]), () => {
+        p.setFillColour(p.sample([160, 175, 220]), 80, 40);
+        p.fill(
+          SimplePath.withPoints([
+            [-dX / 2, -dY / 2],
+            [dX / 2, -dY / 2],
+            [-dX / 2, dY / 2]
+          ]).close()
+        );
+      })
+    );
+  });
+};
+
+const lissajous = (p: PlayCanvas) => {
+  p.background(140, 20, 10);
+  p.lineWidth = 0.005;
+  p.setStrokeColour(140, 80, 60, 0.5);
+
+  const a = 1;
+  const b = 2.4;
+
+  const sp = SimplePath.withPoints([]);
+
+  for (let t = 0; t < 50; t += 0.1) {
+    sp.addPoint([
+      0.5 + 0.4 * Math.sin(a * t),
+      p.meta.bottom * (0.5 + 0.4 * Math.sin(b * t + p.t))
+    ]);
+  }
+
+  p.draw(sp.chaiken(3));
+};
+
 const sketchingCurves = (p: PlayCanvas) => {
   p.background(30, 30, 95);
   p.lineWidth = 0.005;
@@ -1343,6 +1412,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: roundedRects, name: "Rounded Rectangles Demo" },
   { sketch: cards, name: "Cards" },
   { sketch: polygons, name: "Polygons" },
+  { sketch: polygons2, name: "Polygons 2" },
+  { sketch: polygons3, name: "Polygons 3" },
   { sketch: stars, name: "Stars" },
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
@@ -1353,6 +1424,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: stackPolys, name: "Stack Polygons" },
   { sketch: sunburst, name: "Sunburst" },
   { sketch: fancyTiling, name: "Fancy Tiling" },
+  { sketch: anotherTiling, name: "Another Tiling" },
+  { sketch: lissajous, name: "Lissajous" },
   { sketch: sketchingCurves, name: "Sketching Curves" }
 ];
 
