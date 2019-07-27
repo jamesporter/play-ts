@@ -13,6 +13,9 @@ export const subtract = ([x1, y1]: Point2D, [x2, y2]: Point2D): Point2D => [
 export const magnitude = ([x, y]: Point2D): number =>
   Math.sqrt(x ** 2 + y ** 2);
 
+export const distance = (a: Point2D, b: Point2D): number =>
+  magnitude(subtract(a, b));
+
 export const rotate = ([x, y]: Point2D, a: number): Point2D => [
   x * Math.cos(a) - y * Math.sin(a),
   x * Math.sin(a) + y * Math.cos(a)
@@ -54,5 +57,6 @@ export default {
   scale,
   polarToCartesian,
   pointAlong,
-  dot
+  dot,
+  distance
 };

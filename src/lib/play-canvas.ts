@@ -30,6 +30,9 @@ export default class PlayCanvas {
     ctx.fillStyle = "gray";
 
     this.rng = new Prando(rngSeed);
+    // RNG is pretty poor with similar integer seeds, iterates it 100 times which seems to improve
+    // will probably replace with better RNG?
+    this.rng.skip(100);
     this.t = time || 0;
   }
 
@@ -368,7 +371,7 @@ export default class PlayCanvas {
   }) => {
     const { to, from = 0, inclusive = true } = config;
     const d = to - from + (inclusive ? 1 : 0);
-    return from + Math.floor(this.rng.next() * d);
+    return from + Math.floor(this.random() * d);
   };
 
   /**

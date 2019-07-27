@@ -13,7 +13,7 @@ import {
   HollowArc,
   Circle
 } from "./lib/path";
-import { add, pointAlong, scale } from "./lib/vectors";
+import { add, pointAlong, scale, distance } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
@@ -1028,6 +1028,43 @@ const moreArcs = (p: PlayCanvas) => {
   });
 };
 
+const curls = (p: PlayCanvas) => {
+  const baseColour = p.uniformRandomInt({ from: 150, to: 250 });
+  p.background(baseColour, 20, 90);
+  p.lineStyle = {
+    cap: "round"
+  };
+  p.setFillColour(baseColour, 60, 30);
+  p.setStrokeColour(baseColour - 40, 80, 35, 0.9);
+  p.times(p.uniformRandomInt({ from: 20, to: 100 }), () => {
+    const c = p.randomPoint;
+    let tail = p.perturb(c, { magnitude: 0.2 });
+    while (distance(c, tail) < 0.1) {
+      tail = p.perturb(c, { magnitude: 0.2 });
+    }
+    p.fill(
+      new Circle({
+        at: c,
+        r: 0.03
+      })
+    );
+    p.fill(
+      new Circle({
+        at: tail,
+        r: 0.03
+      })
+    );
+    p.draw(
+      Path.startAt(c).addCurveTo(tail, {
+        curveSize: p.gaussian({
+          mean: 2,
+          sd: 1
+        })
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1072,6 +1109,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: stars, name: "Stars" },
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
-  { sketch: moreArcs, name: "More Arcs" }
+  { sketch: moreArcs, name: "More Arcs" },
+  { sketch: curls, name: "Curls" }
 ];
 export default sketches;
