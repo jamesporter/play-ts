@@ -476,8 +476,8 @@ export class Circle extends Ellipse {
   }) {
     super({
       at: config.at,
-      w: config.r,
-      h: config.r,
+      w: config.r * 2,
+      h: config.r * 2,
       align: config.align
     });
   }

@@ -114,8 +114,14 @@ export default class PlayCanvas {
 
   forTiling = (
     config: { n: number; type?: "square" | "proportionate"; margin?: number },
-    callback: (point: Point2D, delta: Vector2D) => void
+    callback: (
+      point: Point2D,
+      delta: Vector2D,
+      center: Point2D,
+      i: number
+    ) => void
   ) => {
+    let k = 0;
     const { n, type = "proportionate", margin = 0 } = config;
     const nY = type === "square" ? Math.floor(n * (1 / this.aspectRatio)) : n;
     const deltaX = (1 - margin * 2) / n;
@@ -129,7 +135,13 @@ export default class PlayCanvas {
 
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < nY; j++) {
-        callback([sX + i * deltaX, sY + j * deltaY], [deltaX, deltaY]);
+        callback(
+          [sX + i * deltaX, sY + j * deltaY],
+          [deltaX, deltaY],
+          [sX + i * deltaX + deltaX / 2, sY + j * deltaY + deltaY / 2],
+          k
+        );
+        k++;
       }
     }
   };

@@ -16,7 +16,7 @@ import {
 import { add, pointAlong, scale, distance } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
-import { zip2, sum } from "./lib/collectionOps";
+import { zip2, sum, arrayOf } from "./lib/collectionOps";
 import { clamp } from "./lib";
 
 const rainbow = (p: PlayCanvas) => {
@@ -496,7 +496,7 @@ const circles2 = (p: PlayCanvas) => {
       const e = new Circle({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        r: delta[1] * r * 2
+        r: delta[1] * r
       });
 
       p.fill(e);
@@ -709,6 +709,17 @@ const randomness1b = (p: PlayCanvas) => {
         );
       }
     );
+  });
+};
+
+const randomness1c = (p: PlayCanvas) => {
+  p.background(205, 20, 85);
+  p.forTiling({ n: 20, type: "square", margin: 0.1 }, (_pt, [w], at) => {
+    p.setFillColour(195, 70, 40);
+    p.fill(new Circle({ at, r: w * 0.45 }));
+
+    p.setFillColour(205, 70, 80);
+    p.fill(new Circle({ at: p.perturb(at, { magnitude: w / 3 }), r: w * 0.3 }));
   });
 };
 
@@ -985,7 +996,7 @@ const hatching2 = (p: PlayCanvas) => {
   });
   points.forEach(pt => {
     p.setStrokeColour(15 + pt[0] * 50, 90, 40, 0.9);
-    const r = 0.2 + 0.3 * p.random();
+    const r = 0.1 + 0.15 * p.random();
     p.withClipping(new Circle({ at: pt, r }), () =>
       p.draw(
         new Hatching({
@@ -1034,13 +1045,13 @@ const curls = (p: PlayCanvas) => {
     p.fill(
       new Circle({
         at: c,
-        r: 0.03
+        r: 0.015
       })
     );
     p.fill(
       new Circle({
         at: tail,
-        r: 0.03
+        r: 0.015
       })
     );
     p.draw(
@@ -1155,6 +1166,7 @@ const sunburst = (p: PlayCanvas) => {
     layers.push(nextLayer(layers[i - 1]));
   }
 
+  const prop = (1.2 + Math.cos(p.t / 2)) / 2.2;
   layers.flat().forEach(({ start, end, depth }, i) => {
     p.setFillColour(i, 90, 60);
     p.fill(
@@ -1162,8 +1174,8 @@ const sunburst = (p: PlayCanvas) => {
         at: p.meta.center,
         r: (0.35 * (depth + 1)) / n - 0.005,
         r2: (0.35 * depth) / n,
-        a: start,
-        a2: end
+        a: start * prop,
+        a2: end * prop
       })
     );
   });
@@ -1188,6 +1200,80 @@ const stackPolys = (p: PlayCanvas) => {
       })
     );
   });
+};
+
+const fancyTiling = (p: PlayCanvas) => {
+  const baseHue = p.uniformRandomInt({ from: 0, to: 360 });
+
+  const generateTile = (): ((
+    x: number,
+    y: number,
+    dX: number,
+    dY: number
+  ) => void) => {
+    const colour: [number, number, number] = [
+      p.uniformRandomInt({ from: baseHue, to: baseHue + 60 }),
+      p.uniformRandomInt({ from: 60, to: 90 }),
+      p.uniformRandomInt({ from: 30, to: 60 })
+    ];
+    const lw = clamp(
+      { from: 0.005, to: 0.02 },
+      p.gaussian({ mean: 0.01, sd: 0.01 })
+    );
+
+    return p.proportionately([
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x + dX, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x + dX, y], [x, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x + dX, y]);
+        }
+      ]
+    ]);
+  };
+
+  const rules = arrayOf(
+    p.uniformRandomInt({ from: 2, to: 5, inclusive: true }),
+    generateTile
+  );
+
+  p.forTiling(
+    {
+      n: p.uniformRandomInt({ from: 15, to: 25 }),
+      margin: 0.1,
+      type: "square"
+    },
+    ([x, y], [dX, dY]) => {
+      p.proportionately(
+        rules.map(r => [p.poisson(3) + 1, () => r(x, y, dX, dY)])
+      );
+    }
+  );
 };
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
@@ -1221,6 +1307,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sunsetThroughBlinds, name: "Gradient Demo 6" },
   { sketch: randomness1, name: "Gaussian" },
   { sketch: randomness1b, name: "Gaussian 2" },
+  { sketch: randomness1c, name: "Gaussian 3" },
   { sketch: randomness2, name: "Poisson" },
   { sketch: curves, name: "Curves" },
   { sketch: transforms, name: "Transforms Demo" },
@@ -1239,6 +1326,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: colourWheel, name: "Colour Wheel" },
   { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
   { sketch: stackPolys, name: "Stack Polygons" },
-  { sketch: sunburst, name: "Sunburst" }
+  { sketch: sunburst, name: "Sunburst" },
+  { sketch: fancyTiling, name: "Fancy Tiling" }
 ];
+
 export default sketches;
