@@ -67,6 +67,15 @@ export class SimplePath implements Traceable {
     this.points = this.points.map(pt => v.add(pt, delta));
     return this;
   }
+
+  /**
+   * Warning mutates
+   * @param delta Vector to move path by
+   */
+  transformPoints(transform: (point: Point2D) => Point2D): SimplePath {
+    this.points = this.points.map(transform);
+    return this;
+  }
 }
 
 type PathEdge =

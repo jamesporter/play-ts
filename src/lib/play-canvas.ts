@@ -151,7 +151,12 @@ export default class PlayCanvas {
       n: number;
       margin?: number;
     },
-    callback: (point: Point2D, delta: Vector2D, i: number) => void
+    callback: (
+      point: Point2D,
+      delta: Vector2D,
+      center: Point2D,
+      i: number
+    ) => void
   ) => {
     const { n, margin = 0 } = config;
 
@@ -162,7 +167,12 @@ export default class PlayCanvas {
     const dX = (eX - sX) / n;
 
     for (let i = 0; i < n; i++) {
-      callback([sX + i * dX, sY], [dX, dY], i);
+      callback(
+        [sX + i * dX, sY],
+        [dX, dY],
+        [sX + i * dX + dX / 2, sY + dY / 2],
+        i
+      );
     }
   };
 
@@ -171,7 +181,12 @@ export default class PlayCanvas {
       n: number;
       margin?: number;
     },
-    callback: (point: Point2D, delta: Vector2D, i: number) => void
+    callback: (
+      point: Point2D,
+      delta: Vector2D,
+      center: Point2D,
+      i: number
+    ) => void
   ) => {
     const { n, margin = 0 } = config;
 
@@ -182,7 +197,12 @@ export default class PlayCanvas {
     const dY = (eY - sY) / n;
 
     for (let i = 0; i < n; i++) {
-      callback([sX, sY + i * dY], [dX, dY], i);
+      callback(
+        [sX, sY + i * dY],
+        [dX, dY],
+        [sX + dX / 2, sY + i * dY + dY / 2],
+        i
+      );
     }
   };
 

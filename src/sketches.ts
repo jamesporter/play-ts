@@ -1,4 +1,4 @@
-import { Point2D } from "./lib/types/play";
+import { Point2D, Play } from "./lib/types/play";
 import PlayCanvas from "./lib/play-canvas";
 import {
   Path,
@@ -698,7 +698,7 @@ const randomness1b = (p: PlayCanvas) => {
         n: values.length,
         margin: 0.1
       },
-      ([x, y], [dX, dY], i) => {
+      ([x, y], [dX, dY], _c, i) => {
         const h = dY * ((values[i] - min) / range);
         p.fill(
           new Rect({
@@ -1103,7 +1103,7 @@ const colourPaletteGenerator = (p: PlayCanvas) => {
     baseColour + 180
   ];
 
-  p.forVertical({ n: 6, margin: 0.1 }, ([x, y], [dX, dY], i) => {
+  p.forVertical({ n: 6, margin: 0.1 }, ([x, y], [dX, dY], _c, i) => {
     const c = colours[i];
     p.range({ from: x, to: x + dX, n: 6, inclusive: false }, xV => {
       p.setFillColour(c, 80, 10 + xV * 70);
@@ -1276,6 +1276,31 @@ const fancyTiling = (p: PlayCanvas) => {
   );
 };
 
+const sketchingCurves = (p: PlayCanvas) => {
+  p.background(30, 30, 95);
+  p.lineWidth = 0.005;
+  p.setStrokeColour(230, 90, 25, 0.6);
+
+  const points = p.build(
+    p.forHorizontal,
+    { n: 40, margin: 0.05 },
+    (_pt, [dX, dY], [x, y]): Point2D => {
+      return [x, y + dY / 2.2 + 0.1 * perlin2(x * 4, 0)];
+    }
+  );
+
+  const curve = SimplePath.withPoints(points).chaiken(2);
+  for (let i = 1; i < 200; i += i / 4) {
+    p.draw(curve);
+    curve
+      .move([0, -i / 1024])
+      .transformPoints(pt => [
+        pt[0],
+        pt[1] + 0.017 * perlin2(pt[0] * 4, pt[1])
+      ]);
+  }
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1327,7 +1352,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
   { sketch: stackPolys, name: "Stack Polygons" },
   { sketch: sunburst, name: "Sunburst" },
-  { sketch: fancyTiling, name: "Fancy Tiling" }
+  { sketch: fancyTiling, name: "Fancy Tiling" },
+  { sketch: sketchingCurves, name: "Sketching Curves" }
 ];
 
 export default sketches;
