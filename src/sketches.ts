@@ -13,13 +13,13 @@ import {
   HollowArc,
   Circle
 } from "./lib/path";
-import { add, pointAlong, scale } from "./lib/vectors";
+import { add, pointAlong, scale, distance } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
-import { zip2, sum } from "./lib/collectionOps";
+import { zip2, sum, arrayOf } from "./lib/collectionOps";
+import { clamp } from "./lib";
 
 const rainbow = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
   p.withRandomOrder(
     p.forTiling,
     { n: 20, type: "square", margin: 0.1 },
@@ -73,7 +73,6 @@ const vertical = (p: PlayCanvas) => {
 
 const tiling = (p: PlayCanvas) => {
   p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
-    p.lineStyle = { cap: "round" };
     p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
     p.proportionately([
       [1, () => p.drawLine([x, y], [x + dX, y + dY])],
@@ -96,7 +95,6 @@ const flower = (p: PlayCanvas) => {
       ]
     })
   );
-  p.lineStyle = { cap: "round" };
 
   const { right, bottom } = p.meta;
 
@@ -167,7 +165,6 @@ const curves1 = (p: PlayCanvas) => {
       colours: [[0, { h: 215, s: 20, l: 90 }], [1, { h: 140, s: 20, l: 90 }]]
     })
   );
-  p.lineStyle = { cap: "round" };
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setStrokeColour(20 + x * 40, 90 - 20 * y, 50);
     p.draw(
@@ -183,8 +180,6 @@ const curves1 = (p: PlayCanvas) => {
 
 const chaiken = (p: PlayCanvas) => {
   const { right, bottom } = p.meta;
-
-  p.lineStyle = { cap: "round" };
 
   const midX = right / 2;
   const midY = bottom / 2;
@@ -211,8 +206,6 @@ const chaiken = (p: PlayCanvas) => {
 };
 
 const tilesOfChaiken = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
-
   p.forTiling({ n: 6, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     const midX = x + dX / 2;
     const midY = y + dY / 2;
@@ -240,8 +233,6 @@ const tilesOfChaiken = (p: PlayCanvas) => {
 };
 
 const circle = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
-
   p.times(10, n => {
     p.setStrokeColour(0, 0, n + 10, (0.75 * (n + 1)) / 10);
     const points = p.build(p.aroundCircle, { n: 20 }, pt => p.perturb(pt));
@@ -290,7 +281,6 @@ const noiseField = (p: PlayCanvas) => {
   const delta = 0.01;
   const s = 8;
   p.lineWidth = 0.0025;
-  p.lineStyle = { cap: "round" };
 
   p.times(250, n => {
     p.setStrokeColour(195 + n / 12.5, 90, 30, 0.7);
@@ -506,7 +496,7 @@ const circles2 = (p: PlayCanvas) => {
       const e = new Circle({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        r: delta[1] * r * 2
+        r: delta[1] * r
       });
 
       p.fill(e);
@@ -722,6 +712,17 @@ const randomness1b = (p: PlayCanvas) => {
   });
 };
 
+const randomness1c = (p: PlayCanvas) => {
+  p.background(205, 20, 85);
+  p.forTiling({ n: 20, type: "square", margin: 0.1 }, (_pt, [w], at) => {
+    p.setFillColour(195, 70, 40);
+    p.fill(new Circle({ at, r: w * 0.45 }));
+
+    p.setFillColour(205, 70, 80);
+    p.fill(new Circle({ at: p.perturb(at, { magnitude: w / 3 }), r: w * 0.3 }));
+  });
+};
+
 const randomness2 = (p: PlayCanvas) => {
   p.background(320, 10, 90);
   p.forTiling({ n: 50, margin: 0.1 }, (pt, delta) => {
@@ -870,7 +871,6 @@ const clipping = (p: PlayCanvas) => {
           p.forTiling(
             { n: 60 / (8 - n), type: "square" },
             ([x, y], [dX, dY]) => {
-              p.lineStyle = { cap: "round" };
               p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
               p.proportionately([
                 [1, () => p.drawLine([x, y], [x + dX, y + dY])],
@@ -996,7 +996,7 @@ const hatching2 = (p: PlayCanvas) => {
   });
   points.forEach(pt => {
     p.setStrokeColour(15 + pt[0] * 50, 90, 40, 0.9);
-    const r = 0.2 + 0.3 * p.random();
+    const r = 0.1 + 0.15 * p.random();
     p.withClipping(new Circle({ at: pt, r }), () =>
       p.draw(
         new Hatching({
@@ -1026,6 +1026,254 @@ const moreArcs = (p: PlayCanvas) => {
       })
     );
   });
+};
+
+const curls = (p: PlayCanvas) => {
+  const baseColour = p.uniformRandomInt({ from: 150, to: 250 });
+  p.background(baseColour, 20, 90);
+  p.lineStyle = {
+    cap: "round"
+  };
+  p.setFillColour(baseColour, 60, 30);
+  p.setStrokeColour(baseColour - 40, 80, 35, 0.9);
+  p.times(p.uniformRandomInt({ from: 20, to: 100 }), () => {
+    const c = p.randomPoint;
+    let tail = p.perturb(c, { magnitude: 0.2 });
+    while (distance(c, tail) < 0.1) {
+      tail = p.perturb(c, { magnitude: 0.2 });
+    }
+    p.fill(
+      new Circle({
+        at: c,
+        r: 0.015
+      })
+    );
+    p.fill(
+      new Circle({
+        at: tail,
+        r: 0.015
+      })
+    );
+    p.draw(
+      Path.startAt(c).addCurveTo(tail, {
+        curveSize: p.gaussian({
+          mean: 2,
+          sd: 1
+        })
+      })
+    );
+  });
+};
+
+const colourWheel = (p: PlayCanvas) => {
+  const dA = Math.PI / 20;
+  const dR = 0.05;
+  for (let a = 0; a < Math.PI * 2; a += dA) {
+    for (let r = 0.1; r < 0.4; r += dR) {
+      p.doProportion(0.6, () => {
+        p.setFillColour((180 * a) / Math.PI, r * 220, 50);
+        p.fill(
+          new HollowArc({
+            at: p.meta.center,
+            r,
+            r2: r - dR,
+            a,
+            a2: a + dA
+          })
+        );
+      });
+    }
+  }
+};
+
+const colourPaletteGenerator = (p: PlayCanvas) => {
+  const baseColour = p.uniformRandomInt({ from: 0, to: 360 });
+
+  p.proportionately([
+    [1, () => p.background(0, 0, 10)],
+    [1, () => p.background(0, 0, 90)]
+  ]);
+
+  const colours = [
+    baseColour + 90,
+    baseColour + 45,
+    baseColour,
+    baseColour - 45,
+    baseColour - 90,
+    baseColour + 180
+  ];
+
+  p.forVertical({ n: 6, margin: 0.1 }, ([x, y], [dX, dY], i) => {
+    const c = colours[i];
+    p.range({ from: x, to: x + dX, n: 6, inclusive: false }, xV => {
+      p.setFillColour(c, 80, 10 + xV * 70);
+      p.fill(
+        new Rect({
+          at: [xV + 0.01, y + 0.01],
+          w: (dX - 0.02 * 6) / 6,
+          h: dY - 0.02
+        })
+      );
+    });
+  });
+};
+
+const sunburst = (p: PlayCanvas) => {
+  p.background(0, 0, 10);
+
+  const nextLayer = (
+    layer: { start: number; end: number; depth: number }[]
+  ): { start: number; end: number; depth: number }[] => {
+    return layer
+      .flatMap(({ start, end, depth }) => {
+        const prop = 0.1 + 0.8 * p.random();
+        return p.proportionately([
+          [
+            10,
+            () => [
+              { start, end: (end - start) * prop + start, depth: depth + 1 },
+              { start: (end - start) * prop + start, end, depth: depth + 1 }
+            ]
+          ],
+          [
+            depth,
+            () => [
+              { start, end: (end - start) * prop + start, depth: depth + 1 }
+            ]
+          ],
+          [
+            depth,
+            () => [
+              { start: (end - start) * prop + start, end, depth: depth + 1 }
+            ]
+          ]
+        ]);
+      })
+      .filter(l => l.end - l.start > 0.01);
+  };
+
+  const layerZero: { start: number; end: number; depth: number }[] = [
+    {
+      start: 0,
+      end: Math.PI * 2,
+      depth: 1
+    }
+  ];
+
+  const layers: { start: number; end: number; depth: number }[][] = [layerZero];
+  const n = p.uniformRandomInt({ from: 5, to: 8 });
+  for (let i = 1; i < n; i++) {
+    layers.push(nextLayer(layers[i - 1]));
+  }
+
+  const prop = (1.2 + Math.cos(p.t / 2)) / 2.2;
+  layers.flat().forEach(({ start, end, depth }, i) => {
+    p.setFillColour(i, 90, 60);
+    p.fill(
+      new HollowArc({
+        at: p.meta.center,
+        r: (0.35 * (depth + 1)) / n - 0.005,
+        r2: (0.35 * depth) / n,
+        a: start * prop,
+        a2: end * prop
+      })
+    );
+  });
+};
+
+const stackPolys = (p: PlayCanvas) => {
+  p.background(320, 10, 90);
+  p.lineWidth = 0.0025;
+  const v = p.uniformRandomInt({ from: 5, to: 8 });
+  const m = p.uniformRandomInt({ from: 30, to: 80 });
+
+  p.times(m, n => {
+    p.setStrokeColour(p.uniformRandomInt({ from: 320, to: 360 }), 80, 50);
+    p.draw(
+      new RegularPolygon({
+        at: p.meta.center,
+        n: v,
+        r: clamp(
+          { from: 0, to: 0.45 * Math.min(p.meta.bottom, p.meta.right) },
+          (n / m) * 0.35 + p.gaussian({ sd: 0.1 })
+        )
+      })
+    );
+  });
+};
+
+const fancyTiling = (p: PlayCanvas) => {
+  const baseHue = p.uniformRandomInt({ from: 0, to: 360 });
+
+  const generateTile = (): ((
+    x: number,
+    y: number,
+    dX: number,
+    dY: number
+  ) => void) => {
+    const colour: [number, number, number] = [
+      p.uniformRandomInt({ from: baseHue, to: baseHue + 60 }),
+      p.uniformRandomInt({ from: 60, to: 90 }),
+      p.uniformRandomInt({ from: 30, to: 60 })
+    ];
+    const lw = clamp(
+      { from: 0.005, to: 0.02 },
+      p.gaussian({ mean: 0.01, sd: 0.01 })
+    );
+
+    return p.proportionately([
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x + dX, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x + dX, y], [x, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x, y + dY]);
+        }
+      ],
+      [
+        1,
+        () => (x: number, y: number, dX: number, dY: number) => {
+          p.lineWidth = lw;
+          p.setStrokeColour(...colour);
+          p.drawLine([x, y], [x + dX, y]);
+        }
+      ]
+    ]);
+  };
+
+  const rules = arrayOf(
+    p.uniformRandomInt({ from: 2, to: 5, inclusive: true }),
+    generateTile
+  );
+
+  p.forTiling(
+    {
+      n: p.uniformRandomInt({ from: 15, to: 25 }),
+      margin: 0.1,
+      type: "square"
+    },
+    ([x, y], [dX, dY]) => {
+      p.proportionately(
+        rules.map(r => [p.poisson(3) + 1, () => r(x, y, dX, dY)])
+      );
+    }
+  );
 };
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
@@ -1059,6 +1307,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sunsetThroughBlinds, name: "Gradient Demo 6" },
   { sketch: randomness1, name: "Gaussian" },
   { sketch: randomness1b, name: "Gaussian 2" },
+  { sketch: randomness1c, name: "Gaussian 3" },
   { sketch: randomness2, name: "Poisson" },
   { sketch: curves, name: "Curves" },
   { sketch: transforms, name: "Transforms Demo" },
@@ -1072,6 +1321,13 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: stars, name: "Stars" },
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
-  { sketch: moreArcs, name: "More Arcs" }
+  { sketch: moreArcs, name: "More Arcs" },
+  { sketch: curls, name: "Curls" },
+  { sketch: colourWheel, name: "Colour Wheel" },
+  { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
+  { sketch: stackPolys, name: "Stack Polygons" },
+  { sketch: sunburst, name: "Sunburst" },
+  { sketch: fancyTiling, name: "Fancy Tiling" }
 ];
+
 export default sketches;

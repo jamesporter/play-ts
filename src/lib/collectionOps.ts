@@ -28,9 +28,14 @@ export function sum(numbers: number[]): number {
   return numbers.reduce((a, b) => a + b, 0);
 }
 
+export function arrayOf<T>(n: number, init: () => T): T[] {
+  return Array.from({ length: n }, _ => init());
+}
+
 export default {
   pairWise,
   tripleWise,
   zip2,
-  sum
+  sum,
+  arrayOf
 };
