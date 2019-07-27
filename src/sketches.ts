@@ -1296,7 +1296,7 @@ const sketchingCurves = (p: PlayCanvas) => {
       .move([0, -i / 1024])
       .transformPoints(pt => [
         pt[0],
-        pt[1] + 0.017 * perlin2(pt[0] * 4, pt[1])
+        pt[1] + 0.017 * perlin2(pt[0] * 4, pt[1] + p.t)
       ]);
   }
 };
