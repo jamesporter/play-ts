@@ -1107,6 +1107,68 @@ const colourPaletteGenerator = (p: PlayCanvas) => {
   });
 };
 
+const sunburst = (p: PlayCanvas) => {
+  p.background(0, 0, 10);
+
+  const nextLayer = (
+    layer: { start: number; end: number; depth: number }[]
+  ): { start: number; end: number; depth: number }[] => {
+    return layer
+      .flatMap(({ start, end, depth }) => {
+        const prop = 0.1 + 0.8 * p.random();
+        return p.proportionately([
+          [
+            10,
+            () => [
+              { start, end: (end - start) * prop + start, depth: depth + 1 },
+              { start: (end - start) * prop + start, end, depth: depth + 1 }
+            ]
+          ],
+          [
+            depth,
+            () => [
+              { start, end: (end - start) * prop + start, depth: depth + 1 }
+            ]
+          ],
+          [
+            depth,
+            () => [
+              { start: (end - start) * prop + start, end, depth: depth + 1 }
+            ]
+          ]
+        ]);
+      })
+      .filter(l => l.end - l.start > 0.01);
+  };
+
+  const layerZero: { start: number; end: number; depth: number }[] = [
+    {
+      start: 0,
+      end: Math.PI * 2,
+      depth: 1
+    }
+  ];
+
+  const layers: { start: number; end: number; depth: number }[][] = [layerZero];
+  const n = p.uniformRandomInt({ from: 5, to: 8 });
+  for (let i = 1; i < n; i++) {
+    layers.push(nextLayer(layers[i - 1]));
+  }
+
+  layers.flat().forEach(({ start, end, depth }, i) => {
+    p.setFillColour(i, 90, 60);
+    p.fill(
+      new HollowArc({
+        at: p.meta.center,
+        r: (0.35 * (depth + 1)) / n - 0.005,
+        r2: (0.35 * depth) / n,
+        a: start,
+        a2: end
+      })
+    );
+  });
+};
+
 const stackPolys = (p: PlayCanvas) => {
   p.background(320, 10, 90);
   p.lineWidth = 0.0025;
@@ -1176,6 +1238,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: curls, name: "Curls" },
   { sketch: colourWheel, name: "Colour Wheel" },
   { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
-  { sketch: stackPolys, name: "Stack Polygons" }
+  { sketch: stackPolys, name: "Stack Polygons" },
+  { sketch: sunburst, name: "Sunburst" }
 ];
 export default sketches;
