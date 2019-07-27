@@ -1294,6 +1294,26 @@ const anotherTiling = (p: PlayCanvas) => {
   });
 };
 
+const lissajous = (p: PlayCanvas) => {
+  p.background(140, 20, 10);
+  p.lineWidth = 0.005;
+  p.setStrokeColour(140, 80, 60, 0.5);
+
+  const a = 1;
+  const b = 2.4;
+
+  const sp = SimplePath.withPoints([]);
+
+  for (let t = 0; t < 50; t += 0.1) {
+    sp.addPoint([
+      0.5 + 0.4 * Math.sin(a * t),
+      p.meta.bottom * (0.5 + 0.4 * Math.sin(b * t + p.t))
+    ]);
+  }
+
+  p.draw(sp.chaiken(3));
+};
+
 const sketchingCurves = (p: PlayCanvas) => {
   p.background(30, 30, 95);
   p.lineWidth = 0.005;
@@ -1372,6 +1392,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sunburst, name: "Sunburst" },
   { sketch: fancyTiling, name: "Fancy Tiling" },
   { sketch: anotherTiling, name: "Another Tiling" },
+  { sketch: lissajous, name: "Lissajous" },
   { sketch: sketchingCurves, name: "Sketching Curves" }
 ];
 
