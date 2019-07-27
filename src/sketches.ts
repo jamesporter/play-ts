@@ -10,14 +10,13 @@ import {
   RegularPolygon,
   Star,
   Hatching,
-  HollowArc
+  HollowArc,
+  Circle
 } from "./lib/path";
 import { add, pointAlong, scale } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
-import { parsePath } from "history";
-import { v } from "../package";
 
 const rainbow = (p: PlayCanvas) => {
   p.lineStyle = { cap: "round" };
@@ -487,8 +486,8 @@ const circles = (p: PlayCanvas) => {
       new Ellipse({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        width: delta[1] * r,
-        height: delta[1] * r
+        w: delta[1] * r,
+        h: delta[1] * r
       })
     );
   });
@@ -504,11 +503,10 @@ const circles2 = (p: PlayCanvas) => {
       p.setStrokeColour(150, 40, 20);
       p.lineWidth = 0.005;
       const r = Math.sqrt(1.2 * pt[0] * pt[1]) * p.sample([0.7, 1.1, 1.3]);
-      const e = new Ellipse({
+      const e = new Circle({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        width: delta[1] * r * 2,
-        height: delta[1] * r * 2
+        r: delta[1] * r * 2
       });
 
       p.fill(e);
@@ -533,8 +531,8 @@ const ellipses = (p: PlayCanvas) => {
       const e = new Ellipse({
         at: add(pt, scale(delta, 0.5)),
         align: "center",
-        width: delta[1] * r * 3,
-        height: delta[1] * 1.2
+        w: delta[1] * r * 3,
+        h: delta[1] * 1.2
       });
       p.fill(e);
       p.draw(e);
@@ -733,8 +731,8 @@ const randomness2 = (p: PlayCanvas) => {
       p.fill(
         new Ellipse({
           at: add(pt, scale(delta, 0.5)),
-          width: (n * delta[0]) / 5,
-          height: (n * delta[0]) / 5
+          w: (n * delta[0]) / 5,
+          h: (n * delta[0]) / 5
         })
       );
     });
@@ -868,21 +866,19 @@ const clipping = (p: PlayCanvas) => {
   p.range({ from: 1, to: 4, n: 4 }, n =>
     p.withTranslation([0.037 * n * n, bottom * 0.037 * n * n], () =>
       p.withScale([0.1 * n, 0.1 * n], () =>
-        p.withClipping(
-          new Ellipse({ at: center, width: size, height: size }),
-          () =>
-            p.forTiling(
-              { n: 60 / (8 - n), type: "square" },
-              ([x, y], [dX, dY]) => {
-                p.lineStyle = { cap: "round" };
-                p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
-                p.proportionately([
-                  [1, () => p.drawLine([x, y], [x + dX, y + dY])],
-                  [2, () => p.drawLine([x + dX, y], [x, y + dY])],
-                  [1, () => p.drawLine([x, y], [x, y + dY])]
-                ]);
-              }
-            )
+        p.withClipping(new Ellipse({ at: center, w: size, h: size }), () =>
+          p.forTiling(
+            { n: 60 / (8 - n), type: "square" },
+            ([x, y], [dX, dY]) => {
+              p.lineStyle = { cap: "round" };
+              p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
+              p.proportionately([
+                [1, () => p.drawLine([x, y], [x + dX, y + dY])],
+                [2, () => p.drawLine([x + dX, y], [x, y + dY])],
+                [1, () => p.drawLine([x, y], [x, y + dY])]
+              ]);
+            }
+          )
         )
       )
     )
@@ -930,8 +926,8 @@ const cards = (p: PlayCanvas) => {
           p.fill(
             new Ellipse({
               at: p.perturb([x + dX / 2, y + dY / 2]),
-              width: dX / 2,
-              height: dX / 2
+              w: dX / 2,
+              h: dX / 2
             })
           )
         );
@@ -950,7 +946,7 @@ const polygons = (p: PlayCanvas) => {
         at: [x + dX / 2, y + dY / 2],
         n,
         r: dX / 2.1,
-        startAngle: p.t
+        a: p.t
       })
     );
     n++;
@@ -967,7 +963,7 @@ const stars = (p: PlayCanvas) => {
         at: [x + dX / 2, y + dY / 2],
         n,
         r: (dX * (2.2 + Math.cos(x + y + p.t))) / 6.1,
-        startAngle: p.t
+        a: p.t
       })
     );
     n++;
@@ -1001,7 +997,7 @@ const hatching2 = (p: PlayCanvas) => {
   points.forEach(pt => {
     p.setStrokeColour(15 + pt[0] * 50, 90, 40, 0.9);
     const r = 0.2 + 0.3 * p.random();
-    p.withClipping(new Ellipse({ at: pt, width: r, height: r }), () =>
+    p.withClipping(new Circle({ at: pt, r }), () =>
       p.draw(
         new Hatching({
           at: pt,

@@ -1,6 +1,7 @@
 import { Point2D } from "./types/play";
 import v from "./vectors";
 import { tripleWise } from "./collectionOps";
+import { Vector2D } from "../../package";
 
 export interface Traceable {
   traceIn(ctx: CanvasRenderingContext2D);
@@ -31,6 +32,10 @@ export class SimplePath implements Traceable {
     return this;
   }
 
+  /**
+   * Smooth out path by adding more points to give curvy result
+   * @param iterations
+   */
   chaiken(iterations: number = 1): SimplePath {
     for (let i = 0; i < iterations; i++) {
       this.points = this.points
@@ -53,6 +58,15 @@ export class SimplePath implements Traceable {
       ctx.lineTo(...point);
     }
   };
+
+  /**
+   * Warning mutates
+   * @param delta Vector to move path by
+   */
+  move(delta: Vector2D): SimplePath {
+    this.points = this.points.map(pt => v.add(pt, delta));
+    return this;
+  }
 }
 
 type PathEdge =
@@ -390,7 +404,6 @@ export class RoundedRect implements Traceable {
 
 /**
  * Technically you can't do ellipses/circles properly with cubic beziers, but you can come very, very close
- * which as I dont' want to use
  *
  * Uses 4 point, cubic beziers, approximation of (4/3)*tan(pi/8) for control points
  *
@@ -398,16 +411,16 @@ export class RoundedRect implements Traceable {
  */
 export class Ellipse implements Traceable {
   constructor(
-    private config: {
+    protected config: {
       at: Point2D;
-      width: number;
-      height: number;
+      w: number;
+      h: number;
       align?: "center" | "topLeft";
     }
   ) {}
 
   traceIn = (ctx: CanvasRenderingContext2D) => {
-    const { at, width, height, align = "center" } = this.config;
+    const { at, w: width, h: height, align = "center" } = this.config;
     const [cX, cY] =
       align === "center" ? at : [at[0] + width / 2, at[1] + height / 2];
 
@@ -452,13 +465,31 @@ export class Ellipse implements Traceable {
   };
 }
 
+/**
+ * Just an ellipse with width = height
+ */
+export class Circle extends Ellipse {
+  constructor(config: {
+    at: Point2D;
+    r: number;
+    align?: "center" | "topLeft";
+  }) {
+    super({
+      at: config.at,
+      w: config.r,
+      h: config.r,
+      align: config.align
+    });
+  }
+}
+
 export class RegularPolygon implements Traceable {
   constructor(
     private config: {
       at: Point2D;
       n: number;
       r: number;
-      startAngle?: number;
+      a?: number;
     }
   ) {
     if (this.config.n < 3)
@@ -472,7 +503,7 @@ export class RegularPolygon implements Traceable {
       at: [x, y],
       n,
       r,
-      startAngle = 0
+      a: startAngle = 0
     } = this.config;
     // Start from top... feels more natural?
     startAngle -= Math.PI / 2;
@@ -495,7 +526,7 @@ export class Star implements Traceable {
       n: number;
       r: number;
       r2?: number;
-      startAngle?: number;
+      a?: number;
     }
   ) {
     if (this.config.n < 3)
@@ -509,7 +540,7 @@ export class Star implements Traceable {
       at: [x, y],
       n,
       r,
-      startAngle = 0,
+      a: startAngle = 0,
       r2
     } = this.config;
     // Start from top... feels more natural?
