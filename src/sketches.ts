@@ -953,6 +953,37 @@ const polygons = (p: PlayCanvas) => {
   });
 };
 
+const polygons2 = (p: PlayCanvas) => {
+  p.background(330, 70, 10);
+  p.times(5, n => {
+    const sides = 10 - n;
+    const r = 0.4 - n * 0.05;
+    p.setFillColour(330, 70, 10 + n * 12);
+    p.fill(
+      new RegularPolygon({
+        at: p.meta.center,
+        n: sides,
+        r
+      })
+    );
+  });
+};
+
+const polygons3 = (p: PlayCanvas) => {
+  p.background(210, 70, 90);
+  p.forHorizontal({ n: 4, margin: 0.1 }, (_pt, [dX], c, i) => {
+    p.setFillColour([215, 225, 235, 245][i], 90, 30);
+    p.fill(
+      new RegularPolygon({
+        at: c,
+        n: 6,
+        r: dX / 2,
+        a: (i * Math.PI) / 6 + p.t * (i % 2 === 0 ? 1 : -1)
+      })
+    );
+  });
+};
+
 const stars = (p: PlayCanvas) => {
   let n = 3;
   p.background(30, 20, 80);
@@ -1381,6 +1412,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: roundedRects, name: "Rounded Rectangles Demo" },
   { sketch: cards, name: "Cards" },
   { sketch: polygons, name: "Polygons" },
+  { sketch: polygons2, name: "Polygons 2" },
+  { sketch: polygons3, name: "Polygons 3" },
   { sketch: stars, name: "Stars" },
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
