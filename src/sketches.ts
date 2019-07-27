@@ -1065,6 +1065,27 @@ const curls = (p: PlayCanvas) => {
   });
 };
 
+const colourWheel = (p: PlayCanvas) => {
+  const dA = Math.PI / 20;
+  const dR = 0.05;
+  for (let a = 0; a < Math.PI * 2; a += dA) {
+    for (let r = 0.1; r < 0.4; r += dR) {
+      p.doProportion(0.6, () => {
+        p.setFillColour((180 * a) / Math.PI, r * 220, 50);
+        p.fill(
+          new HollowArc({
+            at: p.meta.center,
+            r,
+            r2: r - dR,
+            a,
+            a2: a + dA
+          })
+        );
+      });
+    }
+  }
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1110,6 +1131,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
   { sketch: moreArcs, name: "More Arcs" },
-  { sketch: curls, name: "Curls" }
+  { sketch: curls, name: "Curls" },
+  { sketch: colourWheel, name: "Colour Wheel" }
 ];
 export default sketches;
