@@ -26,6 +26,7 @@ export default class PlayCanvas {
     // i.e. size 1/100 of width
     ctx.scale(width, width);
     ctx.lineWidth = 0.01;
+    ctx.lineJoin = "round";
     ctx.strokeStyle = "black";
     ctx.fillStyle = "gray";
     this.lineStyle = { cap: "round" };
