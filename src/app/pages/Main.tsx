@@ -9,6 +9,7 @@ export function Main() {
         return (
           <Preview
             sketch={s.sketch}
+            initialState={s.initalState}
             name={s.name}
             size={240}
             id={id}

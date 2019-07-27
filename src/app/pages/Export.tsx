@@ -35,6 +35,7 @@ export function Export({ match }: { match: any }) {
           width: w,
           height: h
         },
+        sketch.initalState && sketch.initalState(),
         seed,
         time
       );

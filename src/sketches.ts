@@ -1,4 +1,4 @@
-import { Point2D, Play } from "./lib/types/play";
+import { Point2D, Play, Sketch, SketchExample } from "./lib/types/play";
 import PlayCanvas from "./lib/play-canvas";
 import {
   Path,
@@ -18,6 +18,7 @@ import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum, arrayOf } from "./lib/collectionOps";
 import { clamp } from "./lib";
+import { Vector2D } from "../package";
 
 const rainbow = (p: PlayCanvas) => {
   p.withRandomOrder(
@@ -1301,7 +1302,46 @@ const sketchingCurves = (p: PlayCanvas) => {
   }
 };
 
-const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
+const ball = (
+  p: PlayCanvas<{ position: Point2D; velocity: Vector2D; hue: number }>
+) => {
+  p.background(p.state.hue, 50, 90);
+
+  p.setFillColour(p.state.hue, 80, 40, 0.2);
+  p.fill(
+    new RoundedRect({
+      at: [
+        clamp({ from: 0, to: p.meta.right - 0.3 }, p.state.position[0] - 0.15),
+        clamp({ from: 0, to: p.meta.bottom - 0.3 }, p.state.position[1] - 0.15)
+      ],
+      w: 0.3,
+      h: 0.3,
+      r: 0.05
+    })
+  );
+  p.setFillColour(p.state.hue, 80, 40);
+  p.fill(new Circle({ at: p.state.position, r: 0.05 }));
+  p.state.position = add(p.state.position, scale(p.state.velocity, 0.016));
+
+  if (p.state.position[0] > p.meta.right - 0.05) {
+    p.state.velocity[0] *= -1;
+    p.state.hue += 5;
+  }
+  if (p.state.position[0] < p.meta.left + 0.05) {
+    p.state.velocity[0] *= -1;
+    p.state.hue += 5;
+  }
+  if (p.state.position[1] > p.meta.bottom - 0.05) {
+    p.state.velocity[1] *= -1;
+    p.state.hue += 5;
+  }
+  if (p.state.position[1] < p.meta.top + 0.05) {
+    p.state.velocity[1] *= -1;
+    p.state.hue += 5;
+  }
+};
+
+const sketches: SketchExample[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
   { sketch: horizontal, name: "Horizontal" },
@@ -1353,7 +1393,12 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: stackPolys, name: "Stack Polygons" },
   { sketch: sunburst, name: "Sunburst" },
   { sketch: fancyTiling, name: "Fancy Tiling" },
-  { sketch: sketchingCurves, name: "Sketching Curves" }
+  { sketch: sketchingCurves, name: "Sketching Curves" },
+  {
+    sketch: ball,
+    name: "State",
+    initalState: () => ({ velocity: [1, 1], position: [0.33, 0.52], hue: 175 })
+  }
 ];
 
 export default sketches;

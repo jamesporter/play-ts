@@ -5,7 +5,7 @@ const source = fs.readFileSync(path.join("src", "sketches.ts")).toString();
 
 //ha!
 const matches = source.match(
-  /const .*? = \(p: PlayCanvas\) => {(.|[\n])*?(?=(const .*? = \(p: PlayCanvas\) =>)|(const sketches: {))/gim
+  /const .*?\s+=\s+\(p: PlayCanvas.*?(?=(const .*? = \(p: PlayCanvas)|(const sketches: Sketc))/gim
 );
 
 const examples = {};
@@ -22,8 +22,8 @@ matches.forEach(m => {
 const names = {};
 
 const metaMatches = source
-  .match(/{ sketch: ([^,]*), name: "([^"]*)" }/gi)
-  .map(nm => nm.match(/{ sketch: ([^,]*), name: "([^"]*)" }/i).slice(1, 3))
+  .match(/{ sketch: ([^,]*), name: "([^"]*)".* }/gi)
+  .map(nm => nm.match(/{ sketch: ([^,]*), name: "([^"]*)".* }/i).slice(1, 3))
   .forEach(([n, l]) => (names[n] = l));
 
 // console.log(names);

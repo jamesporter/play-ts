@@ -7,15 +7,17 @@ export interface Gradientable {
   gradient(ctx: CanvasRenderingContext2D): CanvasGradient;
 }
 
-export default class PlayCanvas {
+export default class PlayCanvas<S = undefined> {
   readonly aspectRatio: number;
   readonly originalScale: number;
   readonly rng: Prando;
   readonly t: number;
+  state: S;
 
   constructor(
     private ctx: CanvasRenderingContext2D,
     { width, height }: Size,
+    initialState: S,
     rngSeed?: string | number,
     time?: number
   ) {
@@ -35,6 +37,8 @@ export default class PlayCanvas {
     // will probably replace with better RNG?
     this.rng.skip(100);
     this.t = time || 0;
+
+    this.state = initialState;
   }
 
   get meta() {

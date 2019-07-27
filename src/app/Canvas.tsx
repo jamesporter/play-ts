@@ -5,11 +5,12 @@ import PlayCanvas from "../lib/play-canvas";
 import { setNumber, getNumber } from "./util";
 import { TIME_KEY } from "./pages/ViewSingle";
 
-type CanvasProps = {
+type CanvasProps<S = undefined> = {
   sketch: Sketch;
   aspectRatio: number;
   seed: number;
   playing?: boolean;
+  initialState: S | undefined;
 };
 
 /**
@@ -26,6 +27,7 @@ class CanvasPainterService {
   height = 100;
   aspectRatio = 100;
   af: number | null = null;
+  state: any;
 
   constructor() {
     this.time = getNumber(TIME_KEY) || 0;
@@ -37,7 +39,8 @@ class CanvasPainterService {
     aspectRatio,
     sketch,
     seed,
-    playing
+    playing,
+    initialState
   }: {
     width: number;
     height: number;
@@ -45,7 +48,11 @@ class CanvasPainterService {
     sketch: Sketch;
     seed: number;
     playing: boolean;
+    initialState: any;
   }) {
+    // generate state from init function if none there already
+    if (!this.state && initialState) this.state = initialState();
+
     if (width && height) {
       if (width / height > aspectRatio) {
         this.height = height - 20;
@@ -87,10 +94,13 @@ class CanvasPainterService {
           width: this.width,
           height: this.height
         },
+        this.state,
         this.seed,
         this.time
       );
       this.sketch && this.sketch(pts);
+      // copy state back over the local version as don't keep the Play object
+      this.state = pts.state;
     }
   };
 }
@@ -99,7 +109,8 @@ export default function Canvas({
   aspectRatio,
   sketch,
   seed,
-  playing = false
+  playing = false,
+  initialState
 }: CanvasProps) {
   const [ref, { width, height }] = useDimensions();
   const canvasRef = useRef(null);
@@ -126,9 +137,10 @@ export default function Canvas({
       aspectRatio,
       sketch,
       seed,
-      playing
+      playing,
+      initialState
     });
-  }, [playing, seed, sketch, aspectRatio, width, height]);
+  }, [playing, seed, sketch, aspectRatio, width, height, initialState]);
 
   return (
     <div

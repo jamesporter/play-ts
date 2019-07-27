@@ -52,6 +52,7 @@ function ViewSingle({ match, history }: { match: any; history: any }) {
           sketch={sketches[sketchNo].sketch}
           seed={seed}
           playing={isPlaying}
+          initialState={sketches[sketchNo].initalState}
         />
         {showSource && (
           <div
