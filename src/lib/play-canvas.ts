@@ -28,6 +28,7 @@ export default class PlayCanvas {
     ctx.lineWidth = 0.01;
     ctx.strokeStyle = "black";
     ctx.fillStyle = "gray";
+    this.lineStyle = { cap: "round" };
 
     this.rng = new Prando(rngSeed);
     // RNG is pretty poor with similar integer seeds, iterates it 100 times which seems to improve

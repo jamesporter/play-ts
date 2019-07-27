@@ -6,3 +6,4 @@ export { default as v } from "./vectors";
 export * from "./gradient";
 export { default as c } from "./collectionOps";
 export * from "./types/play";
+export * from "./util";

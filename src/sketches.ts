@@ -17,9 +17,9 @@ import { add, pointAlong, scale, distance } from "./lib/vectors";
 import { perlin2 } from "./lib/noise";
 import { LinearGradient, RadialGradient } from "./lib/gradient";
 import { zip2, sum } from "./lib/collectionOps";
+import { clamp } from "./lib";
 
 const rainbow = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
   p.withRandomOrder(
     p.forTiling,
     { n: 20, type: "square", margin: 0.1 },
@@ -73,7 +73,6 @@ const vertical = (p: PlayCanvas) => {
 
 const tiling = (p: PlayCanvas) => {
   p.forTiling({ n: 20, margin: 0.1, type: "square" }, ([x, y], [dX, dY]) => {
-    p.lineStyle = { cap: "round" };
     p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
     p.proportionately([
       [1, () => p.drawLine([x, y], [x + dX, y + dY])],
@@ -96,7 +95,6 @@ const flower = (p: PlayCanvas) => {
       ]
     })
   );
-  p.lineStyle = { cap: "round" };
 
   const { right, bottom } = p.meta;
 
@@ -167,7 +165,6 @@ const curves1 = (p: PlayCanvas) => {
       colours: [[0, { h: 215, s: 20, l: 90 }], [1, { h: 140, s: 20, l: 90 }]]
     })
   );
-  p.lineStyle = { cap: "round" };
   p.forTiling({ n: 12, margin: 0.1 }, ([x, y], [dX, dY]) => {
     p.setStrokeColour(20 + x * 40, 90 - 20 * y, 50);
     p.draw(
@@ -183,8 +180,6 @@ const curves1 = (p: PlayCanvas) => {
 
 const chaiken = (p: PlayCanvas) => {
   const { right, bottom } = p.meta;
-
-  p.lineStyle = { cap: "round" };
 
   const midX = right / 2;
   const midY = bottom / 2;
@@ -211,8 +206,6 @@ const chaiken = (p: PlayCanvas) => {
 };
 
 const tilesOfChaiken = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
-
   p.forTiling({ n: 6, type: "square", margin: 0.1 }, ([x, y], [dX, dY]) => {
     const midX = x + dX / 2;
     const midY = y + dY / 2;
@@ -240,8 +233,6 @@ const tilesOfChaiken = (p: PlayCanvas) => {
 };
 
 const circle = (p: PlayCanvas) => {
-  p.lineStyle = { cap: "round" };
-
   p.times(10, n => {
     p.setStrokeColour(0, 0, n + 10, (0.75 * (n + 1)) / 10);
     const points = p.build(p.aroundCircle, { n: 20 }, pt => p.perturb(pt));
@@ -290,7 +281,6 @@ const noiseField = (p: PlayCanvas) => {
   const delta = 0.01;
   const s = 8;
   p.lineWidth = 0.0025;
-  p.lineStyle = { cap: "round" };
 
   p.times(250, n => {
     p.setStrokeColour(195 + n / 12.5, 90, 30, 0.7);
@@ -870,7 +860,6 @@ const clipping = (p: PlayCanvas) => {
           p.forTiling(
             { n: 60 / (8 - n), type: "square" },
             ([x, y], [dX, dY]) => {
-              p.lineStyle = { cap: "round" };
               p.setStrokeColour(120 + x * 120 + p.t * 50, 90 - 20 * y, 40);
               p.proportionately([
                 [1, () => p.drawLine([x, y], [x + dX, y + dY])],
@@ -1086,6 +1075,26 @@ const colourWheel = (p: PlayCanvas) => {
   }
 };
 
+const stackPolys = (p: PlayCanvas) => {
+  p.lineWidth = 0.0025;
+  const v = p.uniformRandomInt({ from: 5, to: 8 });
+  const m = p.uniformRandomInt({ from: 30, to: 80 });
+
+  p.times(m, n => {
+    p.setStrokeColour(p.uniformRandomInt({ from: 320, to: 360 }), 80, 50);
+    p.draw(
+      new RegularPolygon({
+        at: p.meta.center,
+        n: v,
+        r: clamp(
+          { from: 0, to: 0.45 * Math.min(p.meta.bottom, p.meta.right) },
+          (n / m) * 0.35 + p.gaussian({ sd: 0.1 })
+        )
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1132,6 +1141,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: hatching2, name: "Hatching Demo 2" },
   { sketch: moreArcs, name: "More Arcs" },
   { sketch: curls, name: "Curls" },
-  { sketch: colourWheel, name: "Colour Wheel" }
+  { sketch: colourWheel, name: "Colour Wheel" },
+  { sketch: stackPolys, name: "Stack Polygons" }
 ];
 export default sketches;

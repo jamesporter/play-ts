@@ -1,10 +1,4 @@
-import React, {
-  useRef,
-  useLayoutEffect,
-  useCallback,
-  useState,
-  useEffect
-} from "react";
+import React, { useRef, useLayoutEffect, useState } from "react";
 import useDimensions from "react-use-dimensions";
 import { Sketch } from "../lib/types/play";
 import PlayCanvas from "../lib/play-canvas";
