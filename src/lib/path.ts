@@ -398,16 +398,16 @@ export class RoundedRect implements Traceable {
  */
 export class Ellipse implements Traceable {
   constructor(
-    private config: {
+    protected config: {
       at: Point2D;
-      width: number;
-      height: number;
+      w: number;
+      h: number;
       align?: "center" | "topLeft";
     }
   ) {}
 
   traceIn = (ctx: CanvasRenderingContext2D) => {
-    const { at, width, height, align = "center" } = this.config;
+    const { at, w: width, h: height, align = "center" } = this.config;
     const [cX, cY] =
       align === "center" ? at : [at[0] + width / 2, at[1] + height / 2];
 
@@ -452,13 +452,28 @@ export class Ellipse implements Traceable {
   };
 }
 
+export class Circle extends Ellipse {
+  constructor(config: {
+    at: Point2D;
+    r: number;
+    align?: "center" | "topLeft";
+  }) {
+    super({
+      at: config.at,
+      w: config.r,
+      h: config.r,
+      align: config.align
+    });
+  }
+}
+
 export class RegularPolygon implements Traceable {
   constructor(
     private config: {
       at: Point2D;
       n: number;
       r: number;
-      startAngle?: number;
+      a?: number;
     }
   ) {
     if (this.config.n < 3)
@@ -472,7 +487,7 @@ export class RegularPolygon implements Traceable {
       at: [x, y],
       n,
       r,
-      startAngle = 0
+      a: startAngle = 0
     } = this.config;
     // Start from top... feels more natural?
     startAngle -= Math.PI / 2;
@@ -495,7 +510,7 @@ export class Star implements Traceable {
       n: number;
       r: number;
       r2?: number;
-      startAngle?: number;
+      a?: number;
     }
   ) {
     if (this.config.n < 3)
@@ -509,7 +524,7 @@ export class Star implements Traceable {
       at: [x, y],
       n,
       r,
-      startAngle = 0,
+      a: startAngle = 0,
       r2
     } = this.config;
     // Start from top... feels more natural?
