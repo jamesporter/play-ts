@@ -1466,6 +1466,38 @@ const shading2 = (p: PlayCanvas) => {
   });
 };
 
+const shadingArcs = (p: PlayCanvas) => {
+  const { center } = p.meta;
+  p.backgroundGradient(
+    new RadialGradient({
+      start: center,
+      end: center,
+      rStart: 0,
+      rEnd: 1,
+      colours: [[0, { h: 50, s: 0, l: 40 }], [1, { h: 50, s: 0, l: 0 }]]
+    })
+  );
+  p.lineWidth = 0.005;
+  p.times(20, () => {
+    p.setStrokeColour(p.sample([20, 40, 50]), 30, 80, 0.85);
+    const a = p.random() * Math.PI * 2;
+    const r = p.random() * 0.4 + 0.2;
+    const dR = p.random() * 0.1 + 0.1;
+    p.withClipping(
+      new HollowArc({
+        at: p.meta.center,
+        r,
+        r2: r - dR,
+        a,
+        a2: a + p.random() * 0.2 + Math.PI / 4
+      }),
+      () => {
+        p.draw(new Hatching({ at: p.meta.center, r: 1, a, delta: 0.01 }));
+      }
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1526,7 +1558,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: lissajous, name: "Lissajous" },
   { sketch: sketchingCurves, name: "Sketching Curves" },
   { sketch: shading, name: "Shading In" },
-  { sketch: shading2, name: "Shading Again" }
+  { sketch: shading2, name: "Shading Again" },
+  { sketch: shadingArcs, name: "Shaded Arcs" }
 ];
 
 export default sketches;
