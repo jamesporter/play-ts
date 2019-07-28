@@ -1424,12 +1424,46 @@ const sketchingCurves = (p: PlayCanvas) => {
   for (let i = 1; i < 200; i += i / 4) {
     p.draw(curve);
     curve
-      .move([0, -i / 1024])
+      .move([0, (-i * p.meta.bottom) / 1024])
       .transformPoints(pt => [
         pt[0],
-        pt[1] + 0.017 * perlin2(pt[0] * 4, pt[1] + p.t)
+        pt[1] + 0.017 * p.meta.bottom * perlin2(pt[0] * 4, pt[1] + p.t)
       ]);
   }
+};
+
+const shading = (p: PlayCanvas) => {
+  const delta = 0.005;
+  p.background(50, 80, 85);
+  p.lineWidth = 0.0005;
+  p.forTiling({ n: 8, type: "square", margin: 0.1 }, (at, [dX], c, i) => {
+    p.withClipping(
+      new Rect({ at: add(at, [dX / 10, dX / 10]), w: dX * 0.8, h: dX * 0.8 }),
+      () => {
+        p.draw(new Hatching({ at: c, r: dX, a: 0, delta }));
+        p.draw(new Hatching({ at: c, r: dX, a: (Math.PI * i) / 64, delta }));
+      }
+    );
+  });
+};
+
+const shading2 = (p: PlayCanvas) => {
+  const delta = 0.005;
+  p.background(0, 80, 85);
+  p.lineWidth = 0.001;
+  p.forTiling({ n: 12, margin: 0.1, type: "square" }, (at, [dX, dY], c, i) => {
+    p.withClipping(new Rect({ at, w: dX, h: dY }), () => {
+      p.setStrokeColour(220, 90 - i / 4, 20);
+      p.draw(
+        new Hatching({
+          at: c,
+          r: Math.max(dY, dX),
+          a: (i * Math.PI) / 16,
+          delta: (delta * p.sample([3, 5])) / Math.sqrt(12 + i)
+        })
+      );
+    });
+  });
 };
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
@@ -1490,7 +1524,9 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: fancyTiling, name: "Fancy Tiling" },
   { sketch: anotherTiling, name: "Another Tiling" },
   { sketch: lissajous, name: "Lissajous" },
-  { sketch: sketchingCurves, name: "Sketching Curves" }
+  { sketch: sketchingCurves, name: "Sketching Curves" },
+  { sketch: shading, name: "Shading In" },
+  { sketch: shading2, name: "Shading Again" }
 ];
 
 export default sketches;
