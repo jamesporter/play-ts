@@ -1056,6 +1056,39 @@ const moreArcs = (p: PlayCanvas) => {
   });
 };
 
+const evenMoreArcs = (p: PlayCanvas) => {
+  p.background(30, 50, 90);
+  p.times(24, () => {
+    const a = p.random() * Math.PI * 2;
+    const r = p.sample([0.2, 0.25, 0.3, 0.35, 0.4]);
+    p.setFillColour(p.sample([20, 30, 35, 40]), 90, 60, 0.8);
+    p.fill(
+      new HollowArc({
+        at: p.meta.center,
+        a,
+        a2: a + p.gaussian({ mean: 0.5, sd: 0.2 }),
+        r,
+        r2: r - 0.1
+      })
+    );
+  });
+
+  p.times(48, () => {
+    const a = p.random() * Math.PI * 2;
+    const r = p.sample([0.325, 0.375, 0.425]);
+    p.setFillColour(p.sample([20, 30, 35, 40]), 80, 30, 0.95);
+    p.fill(
+      new HollowArc({
+        at: p.meta.center,
+        a,
+        a2: a + Math.PI / 96,
+        r,
+        r2: r - 0.3
+      })
+    );
+  });
+};
+
 const curls = (p: PlayCanvas) => {
   const baseColour = p.uniformRandomInt({ from: 150, to: 250 });
   p.background(baseColour, 20, 90);
@@ -1231,23 +1264,34 @@ const stackPolys = (p: PlayCanvas) => {
 };
 
 const blob = (p: PlayCanvas) => {
-  p.setFillColour(205, 75, 45);
-  p.times(3, n => {
-    p.fill(
-      SimplePath.withPoints(
-        p.build(p.aroundCircle, { n: 12 }, (pt, i) =>
-          add(
-            pt,
-            scale(
-              [perlin2(i / 12, 1 + n + p.t), perlin2(-i / 12, n + p.t)],
-              0.25
-            )
-          )
+  p.background(205, 55, 95);
+  const paths = p.build(p.times, 3, n =>
+    SimplePath.withPoints(
+      p.build(p.aroundCircle, { n: 12, at: [0, 0] }, (pt, i) =>
+        add(
+          pt,
+          scale([perlin2(i / 12, 1 + n + p.t), perlin2(-i / 12, n + p.t)], 0.25)
         )
       )
-        .close()
-        .chaiken({ n: 3, looped: true })
-    );
+    )
+      .close()
+      .chaiken({ n: 3, looped: true })
+  );
+
+  paths.forEach(pt => {
+    p.withTranslation([0.5, 0.5], () => {
+      p.withScale([1.2, 1.2], () => {
+        p.setFillColour(205, 75, 90);
+        p.fill(pt);
+      });
+    });
+  });
+
+  paths.forEach(pt => {
+    p.withTranslation([0.5, 0.5], () => {
+      p.setFillColour(205, 75, 45);
+      p.fill(pt);
+    });
   });
 };
 
@@ -1436,6 +1480,7 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: hatching, name: "Hatching Demo 1" },
   { sketch: hatching2, name: "Hatching Demo 2" },
   { sketch: moreArcs, name: "More Arcs" },
+  { sketch: evenMoreArcs, name: "Even More Arcs" },
   { sketch: curls, name: "Curls" },
   { sketch: colourWheel, name: "Colour Wheel" },
   { sketch: colourPaletteGenerator, name: "Colour Palette Generator" },
