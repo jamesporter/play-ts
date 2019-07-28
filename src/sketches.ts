@@ -1530,6 +1530,41 @@ const bars = (p: PlayCanvas) => {
   });
 };
 
+const littleAbstracts = (p: PlayCanvas) => {
+  p.background(200, 10, 20);
+  p.forTiling({ n: 8, margin: 0.1, type: "square" }, (at, d, c, i) => {
+    p.setFillColour(p.uniformRandomInt({ from: 200, to: 260 }), 50, 50);
+    const rect = new Rect({
+      at: add(at, scale(d, 0.1)),
+      w: d[0] * 0.8,
+      h: d[1] * 0.8
+    });
+    p.fill(rect);
+    p.withClipping(rect, () => {
+      p.setFillColour(0, 0, 100, 0.2);
+      const h = (p.random() * 0.5 + 0.1) * d[1] * 0.8;
+      p.fill(
+        new Rect({
+          at: add(add(at, scale(d, 0.1)), [0, d[1] * 0.8 - h]),
+          w: d[0] * 0.8,
+          h
+        })
+      );
+
+      p.times(3, () => {
+        p.setFillColour(200, p.sample([20, 40]), 90, 0.4);
+        p.fill(
+          new RegularPolygon({
+            at: p.perturb(c, { magnitude: d[0] / 1.5 }),
+            n: p.poisson(4) + 3,
+            r: d[0] / 6
+          })
+        );
+      });
+    });
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1593,7 +1628,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: shading2, name: "Shading Again" },
   { sketch: shadingArcs, name: "Shaded Arcs" },
   { sketch: arcChart, name: "Arc Chart" },
-  { sketch: bars, name: "Bars" }
+  { sketch: bars, name: "Bars" },
+  { sketch: littleAbstracts, name: "Little Abstracts" }
 ];
 
 export default sketches;
