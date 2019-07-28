@@ -1498,6 +1498,23 @@ const shadingArcs = (p: PlayCanvas) => {
   });
 };
 
+const arcChart = (p: PlayCanvas) => {
+  p.background(30, 30, 20);
+  const { center: at } = p.meta;
+  p.range({ from: 0, to: Math.PI * 2, inclusive: false, n: 32 }, n => {
+    p.setFillColour((180 * n) / Math.PI, 100, 60);
+    p.fill(
+      new HollowArc({
+        at,
+        a: n,
+        a2: n + Math.PI / 32,
+        r: 0.1 + p.poisson(4) * 0.04 + Math.cos(p.t) * 0.025,
+        r2: 0.05
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1559,7 +1576,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: sketchingCurves, name: "Sketching Curves" },
   { sketch: shading, name: "Shading In" },
   { sketch: shading2, name: "Shading Again" },
-  { sketch: shadingArcs, name: "Shaded Arcs" }
+  { sketch: shadingArcs, name: "Shaded Arcs" },
+  { sketch: arcChart, name: "Arc Chart" }
 ];
 
 export default sketches;
