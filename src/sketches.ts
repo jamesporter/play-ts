@@ -1515,6 +1515,21 @@ const arcChart = (p: PlayCanvas) => {
   });
 };
 
+const bars = (p: PlayCanvas) => {
+  p.background(150, 30, 20);
+  p.forHorizontal({ n: 32, margin: 0.1 }, (at, [dX, dY]) => {
+    const v = (dY * (1 + perlin2(at[0] + p.t, at[1]))) / 2;
+    p.setFillColour(p.sample([190, 170]), 40 + v * 40, 80);
+    p.fill(
+      new Rect({
+        at: [at[0] + dX / 10, at[1] + (dY - v) / 2],
+        h: v,
+        w: dX * 0.8
+      })
+    );
+  });
+};
+
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: tiling, name: "Tiling" },
   { sketch: rainbow, name: "Rainbow Drips" },
@@ -1577,7 +1592,8 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: shading, name: "Shading In" },
   { sketch: shading2, name: "Shading Again" },
   { sketch: shadingArcs, name: "Shaded Arcs" },
-  { sketch: arcChart, name: "Arc Chart" }
+  { sketch: arcChart, name: "Arc Chart" },
+  { sketch: bars, name: "Bars" }
 ];
 
 export default sketches;
