@@ -1424,12 +1424,145 @@ const sketchingCurves = (p: PlayCanvas) => {
   for (let i = 1; i < 200; i += i / 4) {
     p.draw(curve);
     curve
-      .move([0, -i / 1024])
+      .move([0, (-i * p.meta.bottom) / 1024])
       .transformPoints(pt => [
         pt[0],
-        pt[1] + 0.017 * perlin2(pt[0] * 4, pt[1] + p.t)
+        pt[1] + 0.017 * p.meta.bottom * perlin2(pt[0] * 4, pt[1] + p.t)
       ]);
   }
+};
+
+const shading = (p: PlayCanvas) => {
+  const delta = 0.005;
+  p.background(50, 80, 85);
+  p.lineWidth = 0.0005;
+  p.forTiling({ n: 8, type: "square", margin: 0.1 }, (at, [dX], c, i) => {
+    p.withClipping(
+      new Rect({ at: add(at, [dX / 10, dX / 10]), w: dX * 0.8, h: dX * 0.8 }),
+      () => {
+        p.draw(new Hatching({ at: c, r: dX, a: 0, delta }));
+        p.draw(new Hatching({ at: c, r: dX, a: (Math.PI * i) / 64, delta }));
+      }
+    );
+  });
+};
+
+const shading2 = (p: PlayCanvas) => {
+  const delta = 0.005;
+  p.background(0, 80, 85);
+  p.lineWidth = 0.001;
+  p.forTiling({ n: 12, margin: 0.1, type: "square" }, (at, [dX, dY], c, i) => {
+    p.withClipping(new Rect({ at, w: dX, h: dY }), () => {
+      p.setStrokeColour(220, 90 - i / 4, 20);
+      p.draw(
+        new Hatching({
+          at: c,
+          r: Math.max(dY, dX),
+          a: (i * Math.PI) / 16,
+          delta: (delta * p.sample([3, 5])) / Math.sqrt(12 + i)
+        })
+      );
+    });
+  });
+};
+
+const shadingArcs = (p: PlayCanvas) => {
+  const { center } = p.meta;
+  p.backgroundGradient(
+    new RadialGradient({
+      start: center,
+      end: center,
+      rStart: 0,
+      rEnd: 1,
+      colours: [[0, { h: 50, s: 0, l: 40 }], [1, { h: 50, s: 0, l: 0 }]]
+    })
+  );
+  p.lineWidth = 0.005;
+  p.times(20, () => {
+    p.setStrokeColour(p.sample([20, 40, 50]), 30, 80, 0.85);
+    const a = p.random() * Math.PI * 2;
+    const r = p.random() * 0.4 + 0.2;
+    const dR = p.random() * 0.1 + 0.1;
+    p.withClipping(
+      new HollowArc({
+        at: p.meta.center,
+        r,
+        r2: r - dR,
+        a,
+        a2: a + p.random() * 0.2 + Math.PI / 4
+      }),
+      () => {
+        p.draw(new Hatching({ at: p.meta.center, r: 1, a, delta: 0.01 }));
+      }
+    );
+  });
+};
+
+const arcChart = (p: PlayCanvas) => {
+  p.background(30, 30, 20);
+  const { center: at } = p.meta;
+  p.range({ from: 0, to: Math.PI * 2, inclusive: false, n: 32 }, n => {
+    p.setFillColour((180 * n) / Math.PI, 100, 60);
+    p.fill(
+      new HollowArc({
+        at,
+        a: n,
+        a2: n + Math.PI / 32,
+        r: 0.1 + p.poisson(4) * 0.04 + Math.cos(p.t) * 0.025,
+        r2: 0.05
+      })
+    );
+  });
+};
+
+const bars = (p: PlayCanvas) => {
+  p.background(150, 30, 20);
+  p.forHorizontal({ n: 32, margin: 0.1 }, (at, [dX, dY]) => {
+    const v = (dY * (1 + perlin2(at[0] + p.t, at[1]))) / 2;
+    p.setFillColour(p.sample([190, 170]), 40 + v * 40, 80);
+    p.fill(
+      new Rect({
+        at: [at[0] + dX / 10, at[1] + (dY - v) / 2],
+        h: v,
+        w: dX * 0.8
+      })
+    );
+  });
+};
+
+const littleAbstracts = (p: PlayCanvas) => {
+  p.background(200, 10, 20);
+  p.forTiling({ n: 8, margin: 0.1, type: "square" }, (at, d, c, i) => {
+    p.setFillColour(p.uniformRandomInt({ from: 200, to: 260 }), 50, 50);
+    const rect = new Rect({
+      at: add(at, scale(d, 0.1)),
+      w: d[0] * 0.8,
+      h: d[1] * 0.8
+    });
+    p.fill(rect);
+    p.withClipping(rect, () => {
+      p.setFillColour(0, 0, 100, 0.2);
+      const h = (p.random() * 0.5 + 0.1) * d[1] * 0.8;
+      p.fill(
+        new Rect({
+          at: add(add(at, scale(d, 0.1)), [0, d[1] * 0.8 - h]),
+          w: d[0] * 0.8,
+          h
+        })
+      );
+
+      p.times(3, () => {
+        p.setFillColour(200, p.sample([20, 40]), 90, 0.4);
+        p.fill(
+          new RegularPolygon({
+            at: p.perturb(c, { magnitude: d[0] / 1.5 }),
+            n: p.poisson(4) + 3,
+            r: d[0] / 6
+          })
+        );
+      });
+    });
+  });
 };
 
 const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
@@ -1490,7 +1623,13 @@ const sketches: { name: string; sketch: (p: PlayCanvas) => void }[] = [
   { sketch: fancyTiling, name: "Fancy Tiling" },
   { sketch: anotherTiling, name: "Another Tiling" },
   { sketch: lissajous, name: "Lissajous" },
-  { sketch: sketchingCurves, name: "Sketching Curves" }
+  { sketch: sketchingCurves, name: "Sketching Curves" },
+  { sketch: shading, name: "Shading In" },
+  { sketch: shading2, name: "Shading Again" },
+  { sketch: shadingArcs, name: "Shaded Arcs" },
+  { sketch: arcChart, name: "Arc Chart" },
+  { sketch: bars, name: "Bars" },
+  { sketch: littleAbstracts, name: "Little Abstracts" }
 ];
 
 export default sketches;
