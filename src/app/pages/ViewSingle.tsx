@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SyntaxHighlighter from "react-syntax-highlighter";
 import Canvas from "./../Canvas";
 import SelectFromChoice from "./../components/SelectFromChoice";
 import SelectFromOptions from "./../components/SelectFromOptions";
@@ -72,9 +73,9 @@ function ViewSingle({ match, history }: { match: any; history: any }) {
                 Close
               </button>
             </div>
-            <pre className="text-gray-300 p-8">
+            <SyntaxHighlighter language="typescript">
               {source[sketches[sketchNo].name]}
-            </pre>
+            </SyntaxHighlighter>
           </div>
         )}
       </div>
