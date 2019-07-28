@@ -36,18 +36,25 @@ export class SimplePath implements Traceable {
    * Smooth out path by adding more points to give curvy result
    * @param iterations
    */
-  chaiken(iterations: number = 1): SimplePath {
-    for (let i = 0; i < iterations; i++) {
-      this.points = this.points
-        .slice(0, 1)
+  chaiken({
+    n = 1,
+    looped = false
+  }: {
+    n: number;
+    looped?: boolean;
+  }): SimplePath {
+    for (let i = 0; i < n; i++) {
+      this.points = (looped ? [] : this.points.slice(0, 1))
         .concat(
-          tripleWise(this.points).flatMap(([a, b, c]) => [
+          tripleWise(this.points, looped).flatMap(([a, b, c]) => [
             v.pointAlong(b, a, 0.25),
             v.pointAlong(b, c, 0.25)
           ])
         )
-        .concat(this.points.slice(this.points.length - 1));
+        .concat(looped ? [] : this.points.slice(this.points.length - 1))
+        .slice(looped ? 1 : 0);
     }
+    if (looped) this.points[0] = this.points[this.points.length - 1];
     return this;
   }
 

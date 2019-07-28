@@ -257,14 +257,17 @@ export default class PlayCanvas {
 
   aroundCircle = (
     config: {
-      cX?: number;
-      cY?: number;
+      at?: Point2D;
       radius?: number;
       n: number;
     },
     callback: (point: Point2D, i: number) => void
   ) => {
-    const { n, cX = 0.5, cY = 0.5 / this.aspectRatio, radius = 0.25 } = config;
+    const {
+      n,
+      at: [cX, cY] = [0.5, 0.5 / this.aspectRatio],
+      radius = 0.25
+    } = config;
     const da = (Math.PI * 2) / n;
 
     let a = -Math.PI * 0.5;
