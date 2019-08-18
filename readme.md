@@ -1,4 +1,6 @@
-# Typeplates
+This project is now [Solandra](https://github.com/jamesporter/solandra/)
+
+# ~~Typeplates~~
 
 ## Principles
 
@@ -407,3 +409,5 @@ poisson: (lambda: number) => number;
 - [x] 'Play'/time... be able to do dynamic redrawing i.e. requestAnimationFrame, redraw etc
 - [ ] Interactions(!)
 - [ ] Maybe add JSON 'canvas' for easy testing
+
+NB This project is now [Solandra](https://github.com/jamesporter/solandra/)
